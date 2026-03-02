@@ -5,7 +5,7 @@ This document explains how to set up and run the Multi-App Portal system locally
 #### 1. Prerequisites
 To run all components locally, ensure you have the following installed:
 *   **Docker & Docker Compose:** For running infrastructure (Postgres, Keycloak).
-*   **Java 21 (JDK):** For the Spring Boot backend.
+*   **Java (JDK):** Java 25 (Latest) for the Spring Boot backend.
 *   **Node.js (v20+):** For the Next.js frontend.
 *   **IDE:** IntelliJ IDEA (recommended for Java) and VS Code (recommended for Frontend).
 
