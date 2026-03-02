@@ -7,7 +7,7 @@ This document outlines the step-by-step implementation strategy for the Multi-Ap
 
 | Task ID | Task Description | Success Criteria |
 | :--- | :--- | :--- |
-| **1.1** | Initialize Monorepo (Git, README) | Folder structure defined for `backend/`, `frontend/`, `infra/`, and `docs/`. |
+| **1.1** | Initialize Monorepo (Git, README) | Folder structure defined for `backend/`, `frontend/`, `infra/`, and `docs/`. [✓] |
 | **1.2** | Configure Backend Baseline (Spring Boot) | Java 21, Gradle/Maven, basic health check endpoint, Biome/Checkstyle. |
 | **1.3** | Configure Frontend Baseline (Next.js) | Next.js 14+, Biome, Tailwind CSS, shadcn/ui. |
 | **1.4** | Setup GitHub Actions (CI) | Pipeline runs on PRs: build, lint, and unit tests for both stacks. |

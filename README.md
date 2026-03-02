@@ -2,6 +2,14 @@
 
 A scalable, low-cost, and secure system designed to host multiple independent applications (e.g., Spice Tracker, Checklistz, Housework Tracker) with shared identity and data-sharing capabilities.
 
+## Project Structure
+
+This project is organized as a monorepo:
+- **`backend/`**: Java (Spring Boot) modular monolith.
+- **`frontend/`**: Next.js (React) portal and sub-apps.
+- **`infra/`**: Infrastructure as Code (K3s manifests, Docker Compose, etc.).
+- **`docs/`**: System documentation and architectural decision records.
+
 ## Project Overview
 
 This system is built as a **Modular Monolith** within a **Monorepo**. It provides a central "Portal" for user authentication and application selection, while allowing individual sub-apps to remain independent and easily added with minimal effort.
