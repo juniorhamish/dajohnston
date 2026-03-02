@@ -1,4 +1,4 @@
-package com.dajohnston.portal.controller;
+package uk.co.dajohnston.portal.controller;
 
 import java.util.Map;
 import org.springframework.web.bind.annotation.GetMapping;

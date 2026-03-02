@@ -1,4 +1,4 @@
-package com.dajohnston.portal;
+package uk.co.dajohnston.portal;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
