@@ -6,7 +6,7 @@ This document outlines the strategy for measuring and maintaining high code qual
 To maintain a consistent coding style and catch potential bugs early, we use the following tools:
 
 *   **Java (Backend):**
-    *   **Checkstyle:** Enforces coding standards (e.g., Google Java Style).
+    *   **Spotless + google-java-format:** Enforces Google Java Style formatting and import organization.
     *   **SpotBugs:** Finds potential bugs (e.g., null pointer dereferences, resource leaks).
     *   **Lombok:** Reduces boilerplate code (must be used consistently).
 *   **Next.js (Frontend):**
@@ -22,7 +22,7 @@ We measure how much of our code is exercised by tests to identify untested paths
 #### 3. Quality Gates (CI/CD)
 Code quality is enforced via **GitHub Actions** on every Pull Request (PR). A PR cannot be merged unless:
 1.  **Build Passes:** The code compiles and all tests pass.
-2.  **Linting Passes:** No Biome/Checkstyle errors are found.
+2.  **Linting Passes:** No Biome/Spotless errors are found.
 3.  **Coverage Threshold:** Total code coverage does not drop below the defined threshold (80%).
 4.  **Security Scan:** No high-severity vulnerabilities are detected in dependencies (using `npm audit` and `dependency-check`).
 

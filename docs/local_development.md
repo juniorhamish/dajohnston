@@ -70,7 +70,7 @@ For detailed information on the multi-layered testing approach (Unit, Component,
 
 #### 6. Code Quality & Linting
 To ensure your code meets the project standards before pushing:
-*   **Backend:** Run `./gradlew checkstyleMain` to verify Java formatting.
+*   **Backend:** Run `./gradlew spotlessCheck` to verify Java formatting. Run `./gradlew spotlessApply` to automatically fix it.
 *   **Frontend:** Run `npx biome check` to check for linting and formatting errors. Run `npx biome check --apply` to automatically fix them.
 *   **Formatting:** Formatting is handled automatically by Biome on commit via **Husky**.
 
