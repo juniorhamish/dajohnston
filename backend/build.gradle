@@ -3,6 +3,7 @@ plugins {
   id 'org.springframework.boot' version '4.0.3'
   id 'io.spring.dependency-management' version '1.1.7'
   id 'com.diffplug.spotless' version '8.2.1'
+  id 'com.github.ben-manes.versions' version '0.53.0'
 }
 
 group = 'uk.co.dajohnston'
@@ -42,6 +43,18 @@ spotless {
     target '*.gradle'
     greclipse()
     leadingTabsToSpaces(2)
+  }
+}
+
+def isNonStable = { String version ->
+  def stableKeyword = ['RELEASE', 'FINAL', 'GA'].any { it -> version.toUpperCase().contains(it) }
+  def regex = /^[0-9,.v-]+(-r)?$/
+  return !stableKeyword && !(version ==~ regex)
+}
+
+tasks.named("dependencyUpdates").configure {
+  rejectVersionIf {
+    isNonStable(it.candidate.version) && !isNonStable(it.currentVersion)
   }
 }
 
