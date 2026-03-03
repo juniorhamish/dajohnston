@@ -19,7 +19,7 @@ services:
   keycloak:
     image: quay.io/keycloak/keycloak:26.5.4
     container_name: portal-keycloak
-    command: start-dev
+    command: start-dev --import-realm
     environment:
       KC_BOOTSTRAP_ADMIN_USERNAME: admin
       KC_BOOTSTRAP_ADMIN_PASSWORD: admin
@@ -36,6 +36,7 @@ services:
         condition: service_healthy
     volumes:
       - keycloak_data:/opt/keycloak/data
+      - ./infra/keycloak:/opt/keycloak/data/import:ro
 
 volumes:
   postgres_data:

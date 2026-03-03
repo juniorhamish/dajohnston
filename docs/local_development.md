@@ -15,7 +15,8 @@ To run all components locally, ensure you have the following installed:
 #### 2. Running Infrastructure with Docker Compose
 
 To simplify local setup, we use a `docker-compose.yml` file located in the project root to spin up
-the necessary services.
+the necessary services. The Keycloak instance is pre-configured with the `portal-realm`,
+`portal-frontend` client, and `portal-backend` resource server via an automatic import.
 
 ```bash
 docker compose up -d
@@ -26,11 +27,17 @@ This will start:
 * **PostgreSQL:** Accessible at `localhost:5432` (User: `portal_user`, Password: `portal_password`,
   DB: `portal_db`).
 * **Keycloak:** Accessible at `http://localhost:8080` (Admin: `admin`/`admin`).
+    * **Realm:** `portal-realm`
+    * **Frontend Client:** `portal-frontend` (Public)
+    * **Backend Client:** `portal-backend` (Bearer-only)
+    * **Test User:** `portal_user` / `password`
 
 **Steps:**
 
 1. Run `docker compose up -d`.
-2. Access Keycloak at `http://localhost:8080` to configure realms/clients.
+2. Access Keycloak at `http://localhost:8080` to verify the `portal-realm` configuration.
+3. (Optional) Configure social logins (Google, GitHub, etc.) by following the *
+   *[Authentication & Identity Provider Guide](authentication_configuration.md)**.
 
 #### 3. Running the Backend (Spring Boot)
 
