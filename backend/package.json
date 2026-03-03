@@ -1,0 +1,9 @@
+{
+  "name": "portal-backend",
+  "private": true,
+  "lint-staged": {
+    "**/*.{java,gradle}": [
+      "bash -c 'cd \"$(git rev-parse --show-toplevel)/backend\" && ./gradlew spotlessApply'"
+    ]
+  }
+}
