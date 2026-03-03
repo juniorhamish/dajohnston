@@ -22,7 +22,7 @@
       "npx biome check --write --no-errors-on-unmatched"
     ],
     "backend/**/*.{java,gradle}": [
-      "./gradlew spotlessApply"
+      "npx lint-staged --config backend/package.json"
     ]
   }
 }
