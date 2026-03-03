@@ -1,0 +1,16 @@
+# IDEs and Tools
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Logs
+*.log
+
+# Build artifacts (at root or across modules)
+build/
+out/
+node_modules/
+.next/
+dist/

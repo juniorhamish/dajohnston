@@ -11,7 +11,7 @@ follows a phased approach to build a solid foundation before adding individual s
 |:--------|:-----------------------------------------|:-----------------------------------------------------------------------------------------------|
 | **1.1** | Initialize Monorepo (Git, README)        | Folder structure defined for `backend/`, `frontend/`, `infra/`, and `docs/`. [✓]               |
 | **1.2** | Configure Backend Baseline (Spring Boot) | Java 25, Gradle, Spring Boot 4.0.3, Spotless + google-java-format, group uk.co.dajohnston. [✓] |
-| **1.3** | Configure Frontend Baseline (Next.js)    | Next.js 16+, Biome, Tailwind CSS, shadcn/ui.                                                   |
+| **1.3** | Configure Frontend Baseline (Next.js)    | Next.js 16+, Biome, Tailwind CSS, shadcn/ui. [✓]                                               |
 | **1.4** | Setup GitHub Actions (CI)                | Pipeline runs on PRs: build, lint, and unit tests for both stacks.                             |
 | **1.5** | Setup Husky & lint-staged                | Biome runs automatically on git commit.                                                        |
 
