@@ -21,7 +21,7 @@ follows a phased approach to build a solid foundation before adding individual s
 
 | Task ID | Task Description                                | Success Criteria                                                                       |
 |:--------|:------------------------------------------------|:---------------------------------------------------------------------------------------|
-| **2.1** | Docker Compose for Local Dev                    | `docker-compose.yml` with Postgres and Keycloak.                                       |
+| **2.1** | Docker Compose for Local Dev                    | `docker-compose.yml` with Postgres and Keycloak. [✓]                                   |
 | **2.2** | Keycloak Initial Configuration                  | Create `portal-realm`, `portal-frontend` client, and `portal-backend` resource server. |
 | **2.3** | Database Schema & Migrations (Flyway/Liquibase) | Baseline schema for `users`, `households`, and `apps`.                                 |
 | **2.4** | Setup K3s on VPS                                | Cluster running, `kubectl` access from local machine.                                  |
