@@ -25,6 +25,7 @@ follows a phased approach to build a solid foundation before adding individual s
 | **2.2**  | Keycloak Initial Configuration                  | Create `portal-realm`, `portal-frontend` client, and `portal-backend` resource server. [✓]                            |
 | **2.2a** | Documentation: Social Login Setup               | Guide for configuring Google, GitHub, and other third-party IDPs. [✓]                                                 |
 | **2.2b** | Configure Social Logins                         | Keycloak configured for Google, Facebook, and GitHub login.                                                           |
+| **2.2c** | Setup Email Service (Local & Prod)              | Mailpit integrated for local testing; guide for production SaaS options included. [✓]                                 |
 | **2.3**  | Database Schema & Migrations (Flyway/Liquibase) | Baseline schema for `users`, `households`, and `apps`.                                                                |
 | **2.4**  | Setup K3s on VPS                                | Cluster running, `kubectl` access from local machine.                                                                 |
 | **2.5**  | Install Monitoring & Logging (Loki, Prometheus) | `kube-prometheus-stack` and Loki installed and accessible in K3s.                                                     |

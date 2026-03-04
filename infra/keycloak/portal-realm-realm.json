@@ -6,7 +6,7 @@
   "registrationEmailAsUsername": true,
   "resetPasswordAllowed": true,
   "rememberMe": true,
-  "verifyEmail": false,
+  "verifyEmail": true,
   "clients": [
     {
       "clientId": "portal-frontend",
