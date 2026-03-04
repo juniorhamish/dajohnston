@@ -2,6 +2,11 @@
   "id": "portal-realm",
   "realm": "portal-realm",
   "enabled": true,
+  "registrationAllowed": true,
+  "registrationEmailAsUsername": true,
+  "resetPasswordAllowed": true,
+  "rememberMe": true,
+  "verifyEmail": false,
   "clients": [
     {
       "clientId": "portal-frontend",

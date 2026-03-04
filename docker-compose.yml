@@ -9,7 +9,8 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/18/docker
+      - ./infra/postgres:/docker-entrypoint-initdb.d:ro
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U portal_user -d portal_db" ]
       interval: 10s
@@ -27,6 +28,7 @@ services:
       KC_DB_URL: jdbc:postgresql://postgres:5432/portal_db
       KC_DB_USERNAME: portal_user
       KC_DB_PASSWORD: portal_password
+      KC_DB_SCHEMA: keycloak
       KC_HOSTNAME_STRICT: "false"
       KC_HTTP_ENABLED: "true"
     ports:
