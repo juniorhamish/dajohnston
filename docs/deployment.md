@@ -34,7 +34,21 @@ Actions**:
     * **Infrastructure:** GitHub Actions will update the K3s cluster with the new image tags using
       `kubectl` or a GitOps tool like Flux/ArgoCD (if we want to go even more "advanced").
 
-#### 4. Scalability
+#### 4. Configuration & Secrets Management
+
+The application is configured using Spring Boot's externalized configuration. In production,
+sensitive
+information and environment-specific settings are provided via environment variables.
+
+* **Environment Variables:** The `application.yml` uses placeholders (e.g., `${DATABASE_URL}`) that
+  are injected at runtime.
+* **Kubernetes Secrets:** In the K3s cluster, sensitive data like database passwords and Auth0
+  secrets are stored as **Kubernetes Secrets** and mounted as environment variables into the pods.
+* **Vercel Environment Variables:** For the frontend, all configuration (API URLs, Auth0
+  credentials)
+  is managed through the Vercel Dashboard's environment variable settings.
+
+#### 5. Scalability
 
 * **K3s Scaling:** We can easily add more nodes to the K3s cluster if resource usage increases.
 * **Horizontal Pod Autoscaling (HPA):** Kubernetes can automatically scale the number of pods for a

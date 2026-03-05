@@ -56,13 +56,12 @@ for more details.
 #### 5. Running the Backend (Spring Boot)
 
 1. Navigate to the backend module.
-2. Configure `application-local.yml` to point to the local Postgres and your Auth0 domain:
+2. Configure `application-local.yml` (optional if using default Docker settings) or set environment
+   variables to point to your local Postgres and Auth0 domain. The `application.yml` already
+   includes sensible defaults for the local Docker Compose setup.
+
    ```yaml
    spring:
-     datasource:
-       url: jdbc:postgresql://localhost:5432/portal_db
-       username: portal_user
-       password: portal_password
      security:
        oauth2:
          resourceserver:
