@@ -19,28 +19,30 @@ follows a phased approach to build a solid foundation before adding individual s
 
 **Goal:** Provide the necessary services for authentication and data storage.
 
-| Task ID  | Task Description                                | Success Criteria                                                                         |
-|:---------|:------------------------------------------------|:-----------------------------------------------------------------------------------------|
-| **2.1**  | Docker Compose for Local Dev                    | `docker-compose.yml` with Postgres. [✓]                                                  |
-| **2.2**  | Auth0 Initial Configuration                     | Create Auth0 Tenant, API (Resource Server), and Application (SPA).                       |
-| **2.2a** | Documentation: Social Login Setup (Auth0)       | Guide for configuring Google, GitHub, and other third-party Social Connections in Auth0. |
-| **2.2b** | Configure Social Connections                    | Auth0 configured for Google, Facebook, and GitHub login.                                 |
-| **2.2c** | Documentation: Production Email Setup           | Guide for production SaaS options included. [✓]                                          |
-| **2.3**  | Database Schema & Migrations (Flyway/Liquibase) | Baseline schema for `users`, `households`, and `apps`.                                   |
-| **2.4**  | Setup K3s on VPS                                | Cluster running, `kubectl` access from local machine.                                    |
-| **2.5**  | Install Monitoring & Logging (Loki, Prometheus) | `kube-prometheus-stack` and Loki installed and accessible in K3s.                        |
-| **2.6**  | Configure Vercel Deployment                     | Frontend automatically deploys on push to `main`.                                        |
+| Task ID  | Task Description                                | Success Criteria                                                                             |
+|:---------|:------------------------------------------------|:---------------------------------------------------------------------------------------------|
+| **2.1**  | Docker Compose for Local Dev                    | `docker-compose.yml` with Postgres. [✓]                                                      |
+| **2.2**  | Auth0 Initial Configuration                     | Create Auth0 Tenant, API (Resource Server), and Application (SPA). [✓]                       |
+| **2.2a** | Documentation: Social Login Setup (Auth0)       | Guide for configuring Google, GitHub, and other third-party Social Connections in Auth0. [✓] |
+| **2.2b** | Configure Social Connections                    | Auth0 configured for Google, Facebook, and GitHub login. [✓]                                 |
+| **2.2c** | Documentation: Production Email Setup           | Guide for production SaaS options included. [✓]                                              |
+| **2.3**  | Database Schema & Migrations (Flyway/Liquibase) | Baseline schema for `users`, `households`, and `apps`.                                       |
+| **2.4**  | Setup K3s on VPS                                | Cluster running, `kubectl` access from local machine.                                        |
+| **2.5**  | Install Monitoring & Logging (Loki, Prometheus) | `kube-prometheus-stack` and Loki installed and accessible in K3s.                            |
+| **2.6**  | Configure Vercel Deployment                     | Frontend automatically deploys on push to `main`.                                            |
+| **2.7**  | Baseline Backend Auth Configuration             | Spring Security + Auth0 (JWT validation) implemented in the Portal backend.                  |
+| **2.8**  | Baseline Frontend Auth Configuration            | Auth0 Next.js SDK integrated into the Portal and login/logout flow verified.                 |
 
 #### Phase 3: Shared Identity & Security
 
 **Goal:** Implement the "Zero Effort" security layer for all future apps.
 
-| Task ID | Task Description                   | Success Criteria                                                         |
-|:--------|:-----------------------------------|:-------------------------------------------------------------------------|
-| **3.1** | Backend Security Integration       | Spring Security + Auth0 (JWT validation) implemented in a shared module. |
-| **3.2** | Frontend Auth Integration          | Auth0 Next.js SDK integrated into the Portal.                            |
-| **3.3** | User/Household Management API      | Endpoints to create/join a household and manage profile.                 |
-| **3.4** | Multi-Tenancy (RLS) Implementation | PostgreSQL Row-Level Security policies active for `household_id`.        |
+| Task ID | Task Description                    | Success Criteria                                                              |
+|:--------|:------------------------------------|:------------------------------------------------------------------------------|
+| **3.1** | Shared Security Library (Backend)   | Extract authentication/authorization logic into a reusable shared module.     |
+| **3.2** | User Profile Integration (Frontend) | Integrate Auth0 user profile into the UI and handle household/tenant mapping. |
+| **3.3** | User/Household Management API       | Endpoints to create/join a household and manage profile.                      |
+| **3.4** | Multi-Tenancy (RLS) Implementation  | PostgreSQL Row-Level Security policies active for `household_id`.             |
 
 #### Phase 4: The Portal (The Hub)
 
