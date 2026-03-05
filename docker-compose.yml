@@ -10,36 +10,18 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/18/docker
-      - ./infra/postgres:/docker-entrypoint-initdb.d:ro
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U portal_user -d portal_db" ]
       interval: 10s
       timeout: 5s
       retries: 5
 
-  keycloak:
-    image: quay.io/keycloak/keycloak:26.5.4
-    container_name: portal-keycloak
-    command: start-dev --import-realm
-    environment:
-      KC_BOOTSTRAP_ADMIN_USERNAME: admin
-      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
-      KC_DB: postgres
-      KC_DB_URL: jdbc:postgresql://postgres:5432/portal_db
-      KC_DB_USERNAME: portal_user
-      KC_DB_PASSWORD: portal_password
-      KC_DB_SCHEMA: keycloak
-      KC_HOSTNAME_STRICT: "false"
-      KC_HTTP_ENABLED: "true"
+  mailpit:
+    image: axllent/mailpit:v1.23.1
+    container_name: portal-mailpit
     ports:
-      - "8080:8080"
-    depends_on:
-      postgres:
-        condition: service_healthy
-    volumes:
-      - keycloak_data:/opt/keycloak/data
-      - ./infra/keycloak:/opt/keycloak/data/import:ro
+      - "8025:8025"
+      - "1025:1025"
 
 volumes:
   postgres_data:
-  keycloak_data:

@@ -1,81 +1,73 @@
 ### Authentication & Identity Provider Configuration
 
-This document explains how to configure Keycloak as the Identity Provider (IdP) for the Multi-App
+This document explains how to configure Auth0 as the Identity Provider (IdP) for the Multi-App
 Portal, including how to set up third-party (social) authentication.
 
-#### 1. Keycloak Identity Providers (IDPs)
+#### 1. Auth0 Configuration
 
-Keycloak allows users to authenticate using external Identity Providers. This is commonly used for "
-Social Login" (Google, Facebook, GitHub, etc.) or for connecting to other OIDC/SAML-compliant
-identity services.
+Auth0 is a managed identity service. To use it, you must first create an Auth0 tenant.
 
-To add a third-party authentication service:
+##### A. Create an API (Resource Server)
 
-1. **Access the Keycloak Admin Console:**
-    * Navigate to `http://localhost:8080` (or your production URL).
-    * Log in with the admin credentials (default: `admin`/`admin` for local development).
-2. **Select the Realm:**
-    * Ensure you are in the `portal-realm`.
-3. **Navigate to Identity Providers:**
-    * In the left-hand sidebar, click on **Identity Providers**.
-4. **Add a Provider:**
-    * Click on **Add provider** and select the desired social media account (e.g., Google, Facebook,
-      GitHub, X (Twitter), etc.).
-5. **Configure the Provider:**
-    * You will need a **Client ID** and a **Client Secret** from the third-party service's developer
-      portal (e.g., Google Cloud Console, Facebook for Developers, GitHub Developer Settings).
-    * **Redirect URI:** Keycloak will provide a "Redirect URI" (usually something like
-      `http://localhost:8080/realms/portal-realm/broker/google/endpoint`). You must register this
-      URI in the third-party service's configuration.
-6. **First Broker Login:**
-    * By default, Keycloak will show a "First Broker Login" flow where users might need to confirm
-      their email or set a password for their local account linked to the social provider. This can
-      be customized under the **Authentication** tab in the sidebar.
+1. Navigate to **Applications** -> **APIs** in the Auth0 Dashboard.
+2. Click **Create API**.
+3. **Name:** `Portal API`
+4. **Identifier:** `https://api.dajohnston.co.uk` (or your chosen identifier).
+5. **Signing Algorithm:** `RS256`.
 
-#### 2. Common Social Provider Setup
+This API identifier will be used as the `audience` in your JWT validation.
 
-##### Google
+##### B. Create an Application (Client)
 
-1. Go to the [Google Cloud Console](https://console.cloud.google.com/).
-2. Create a new project or select an existing one.
-3. Configure the **OAuth consent screen**.
-4. Go to **Credentials** -> **Create Credentials** -> **OAuth client ID**.
-5. Select **Web application**.
-6. Add the Keycloak redirect URI to **Authorized redirect URIs**.
-7. Copy the **Client ID** and **Client Secret** into the Keycloak Google IDP configuration.
+1. Navigate to **Applications** -> **Applications**.
+2. Click **Create Application**.
+3. **Name:** `Portal Frontend`.
+4. **Type:** `Regular Web Application` (for Next.js App Router).
+5. In **Settings**, configure:
+    * **Allowed Callback URLs:** `http://localhost:3000/api/auth/callback`
+    * **Allowed Logout URLs:** `http://localhost:3000/`
+    * **Allowed Web Origins:** `http://localhost:3000`
 
-##### GitHub
+#### 2. Social Connections (IDPs)
 
-1. Go to your GitHub **Settings** -> **Developer settings** -> **OAuth Apps**.
-2. Click **New OAuth App**.
-3. Register the application with your portal's URL.
-4. Add the Keycloak redirect URI to **Authorization callback URL**.
-5. Generate a **Client Secret**.
-6. Copy the **Client ID** and **Client Secret** into the Keycloak GitHub IDP configuration.
+Auth0 simplifies social login by providing pre-built connectors.
 
-##### Facebook
+1. Navigate to **Authentication** -> **Social**.
+2. Click **Create Connection**.
+3. Choose a provider (e.g., Google, GitHub, Facebook).
+4. Follow the Auth0 prompts to provide the Client ID and Client Secret from the provider's developer
+   portal.
+5. Once created, go to the **Applications** tab of the connection and enable it for your
+   `Portal Frontend` application.
 
-1. Go to the [Meta for Developers](https://developers.facebook.com/) portal.
-2. Create a new app.
-3. Add **Facebook Login** to your app.
-4. Configure **Settings** -> **Basic** to get your **App ID** and **App Secret**.
-5. In **Facebook Login** -> **Settings**, add the Keycloak redirect URI to **Valid OAuth Redirect
-   URIs**.
-6. Copy the **App ID** and **App Secret** into Keycloak.
+#### 3. Environment Variables
 
-#### 3. Automatic Account Linking
+Store your Auth0 credentials securely in environment variables.
 
-To allow users who already have an account (e.g., via email/password) to link their social media
-account:
+##### Backend (`application.yml`)
 
-1. Go to **Identity Providers** -> **[Your Provider]**.
-2. Ensure the **Trust Email** setting is enabled if the provider verifies emails (like Google).
-3. Under the **Authentication** flow for "First Broker Login", Keycloak can be configured to
-   automatically link accounts with the same email address.
+```yaml
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://YOUR_DOMAIN.auth0.com/
+          audience: https://api.dajohnston.co.uk
+```
 
-#### 4. Environment Variables for Production
+##### Frontend (`.env.local`)
 
-In a production environment, it is recommended to manage sensitive information like Client Secrets
-using environment variables or secrets management tools. While Keycloak's UI is used for initial
-configuration, you can also automate this via the Keycloak REST API or by providing a pre-configured
-realm JSON file with placeholders (though secrets should still be handled carefully).
+```env
+AUTH0_SECRET='LONG_RANDOM_VALUE'
+AUTH0_BASE_URL='http://localhost:3000'
+AUTH0_ISSUER_BASE_URL='https://YOUR_DOMAIN.auth0.com'
+AUTH0_CLIENT_ID='YOUR_CLIENT_ID'
+AUTH0_CLIENT_SECRET='YOUR_CLIENT_SECRET'
+```
+
+#### 4. Multi-Tenant Considerations
+
+While Auth0 handles the identity, our application logic handles "Households" (Tenants). The Auth0
+`sub` (Subject) claim will be mapped to our internal `users` table, which in turn links to
+`households`.

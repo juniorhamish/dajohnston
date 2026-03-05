@@ -20,7 +20,7 @@ independent and easily added with minimal effort.
 
 ### Key Features
 
-- **Centralized Identity:** Single Sign-On (SSO) using Keycloak.
+- **Centralized Identity:** Single Sign-On (SSO) using Auth0.
 - **Household-Based Tenantization:** Share data within a household or keep it private using
   PostgreSQL Row-Level Security (RLS).
 - **Cross-Platform:** Usable as a Web application or PWA on iOS/Android.
@@ -38,7 +38,7 @@ Detailed documentation for various aspects of the system can be found in the `do
 - **[Technology Choices](docs/technology_choices.md):** Detailed breakdown of the selected
   frameworks and tools.
 - **[Authentication & Identity Provider](docs/authentication_configuration.md):** Detailed guide on
-  setting up Keycloak and social (third-party) logins.
+  setting up Auth0 and social (third-party) logins.
 - **[Deployment Model](docs/deployment.md):** Infrastructure strategy, containerization, and cost
   analysis.
 
