@@ -7,7 +7,7 @@ testing.
 
 To run all components locally, ensure you have the following installed:
 
-* **Docker & Docker Compose:** For running infrastructure (Postgres, Mailpit).
+* **Docker & Docker Compose:** For running infrastructure (Postgres).
 * **Java (JDK):** Java 25 (Latest) for the Spring Boot backend.
 * **Node.js (v20+):** For the Next.js frontend.
 * **Auth0 Tenant:** A free Auth0 account for identity management.
@@ -26,7 +26,6 @@ This will start:
 
 * **PostgreSQL:** Accessible at `localhost:5432` (User: `portal_user`, Password: `portal_password`,
   DB: `portal_db`).
-* **Mailpit:** Accessible at `http://localhost:8025` for local email testing.
 
 #### 3. Managing Infrastructure & Persistence
 
