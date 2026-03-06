@@ -27,7 +27,7 @@ follows a phased approach to build a solid foundation before adding individual s
 | **2.2b** | Configure Social Connections                    | Auth0 configured for Google, Facebook, and GitHub login. [✓]                                 |
 | **2.2c** | Documentation: Production Email Setup           | Guide for production SaaS options included. [✓]                                              |
 | **2.3**  | Database Schema & Migrations (Flyway/Liquibase) | Baseline schema for `users`, `households`, and `apps`. [✓]                                   |
-| **2.4**  | Setup K3s on VPS                                | Cluster running, `kubectl` access from local machine.                                        |
+| **2.4**  | Setup K3s on VPS                                | Cluster running, `kubectl` access from local machine. [✓]                                    |
 | **2.5**  | Install Monitoring & Logging (Loki, Prometheus) | `kube-prometheus-stack` and Loki installed and accessible in K3s.                            |
 | **2.6**  | Configure Vercel Deployment                     | Frontend automatically deploys on push to `main`.                                            |
 | **2.7**  | Baseline Backend Auth Configuration             | Spring Security + Auth0 (JWT validation) implemented in the Portal backend.                  |

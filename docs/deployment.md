@@ -86,3 +86,29 @@ optimize resource allocation to fit within a single low-cost VPS node.
 
 For instructions on running the entire stack locally for development and testing purposes, please
 refer to the **[Local Development Guide](local_development.md)**.
+
+#### 8. K3s Cluster Setup (VPS)
+
+To set up the K3s cluster on a fresh VPS, follow these steps:
+
+1. **Provision a VPS:** Select a provider (e.g., Hetzner, Oracle Cloud) with at least 2 vCPU and 2GB
+   RAM.
+2. **Run the Bootstrap Script:**
+   Copy `infra/k3s/bootstrap.sh` to your VPS or run it directly:
+   ```bash
+   # On the VPS (as root)
+   curl -O https://raw.githubusercontent.com/YOUR_USERNAME/YOUR_REPO/main/infra/k3s/bootstrap.sh
+   chmod +x bootstrap.sh
+   ./bootstrap.sh <VPS_PUBLIC_IP>
+   ```
+3. **Configure Local Access:**
+   After the script completes, it will provide instructions for copying the `kubeconfig` file to
+   your local machine and updating the server IP.
+4. **Verify Setup:**
+   ```bash
+   # On your local machine
+   kubectl get nodes
+   kubectl get pods -A
+   ```
+
+For more details on managing the cluster, refer to the [K3s Documentation](https://docs.k3s.io).
