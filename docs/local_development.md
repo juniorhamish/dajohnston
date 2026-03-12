@@ -16,7 +16,9 @@ To run all components locally, ensure you have the following installed:
 #### 2. Running Infrastructure with Docker Compose
 
 To simplify local setup, we use a `docker-compose.yml` file located in the project root to spin up
-the necessary services.
+the necessary services. This is the recommended way to develop locally as it avoids the complexity
+of
+managing a local Kubernetes cluster.
 
 ```bash
 docker compose up -d

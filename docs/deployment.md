@@ -89,10 +89,13 @@ refer to the **[Local Development Guide](local_development.md)**.
 
 #### 8. K3s Cluster Setup (VPS)
 
-To set up the K3s cluster on a fresh VPS, follow these steps:
+To set up the K3s cluster on a fresh **Linux VPS**, follow these steps:
+
+> **Important:** K3s requires a Linux environment with a process supervisor like `systemd` or
+`openrc`. It cannot be installed directly on macOS or Windows (without a VM/WSL2).
 
 1. **Provision a VPS:** Select a provider (e.g., Hetzner, Oracle Cloud) with at least 2 vCPU and 2GB
-   RAM.
+   RAM. Ensure it is running a standard Linux distribution (e.g., Ubuntu, Debian).
 2. **Run the Bootstrap Script:**
    Copy `infra/k3s/bootstrap.sh` to your VPS or run it directly:
    ```bash
@@ -112,3 +115,101 @@ To set up the K3s cluster on a fresh VPS, follow these steps:
    ```
 
 For more details on managing the cluster, refer to the [K3s Documentation](https://docs.k3s.io).
+
+#### 9. Alternative: Local Machine with Port Forwarding & DDNS
+
+If you are hosting K3s on a local machine (e.g., a home server, Raspberry Pi, or VM) instead of a
+public VPS, you can use **Port Forwarding** and **Dynamic DNS (DDNS)** to make it accessible from
+the internet.
+
+**Port Forwarding:**
+Configure your router to forward the following ports to the local IP address of your K3s node:
+
+| Port     | Protocol | Service        | Description                           |
+|:---------|:---------|:---------------|:--------------------------------------|
+| **6443** | TCP      | Kubernetes API | Required for `kubectl` remote access. |
+| **80**   | TCP      | HTTP Ingress   | For web traffic (Traefik).            |
+| **443**  | TCP      | HTTPS Ingress  | For secure web traffic (Traefik).     |
+
+**Dynamic DNS (DDNS):**
+Since most home internet connections have dynamic public IP addresses, you need a DDNS service (
+e.g., DuckDNS, No-IP, or your domain provider's DDNS) to map a stable hostname (e.g.,
+`home.yourdomain.com`) to your current public IP.
+
+**K3s Bootstrap with DDNS Hostname:**
+When running the `bootstrap.sh` script, use your **DDNS hostname** as the argument. This ensures the
+K3s API server certificate includes the hostname in its SAN (Subject Alternative Name).
+
+```bash
+./bootstrap.sh home.yourdomain.com
+```
+
+**Kubeconfig Configuration:**
+
+1. Copy `/etc/rancher/k3s/k3s.yaml` to your local machine (e.g., `~/.kube/config-portal`).
+2. Open the file and replace `127.0.0.1` with your DDNS hostname:
+   `server: https://home.yourdomain.com:6443`
+3. The `certificate-authority-data` provided by K3s will work correctly because the connection is
+   direct and not intercepted by a proxy like Cloudflare.
+
+**Note on NAT Loopback:** Some routers do not support "NAT Loopback" (or "Hairpinning"). If your
+router doesn't, you may not be able to use the DDNS hostname while connected to your home Wi-Fi. In
+that case, you would need to use the node's local IP when at home.
+
+**Verifying Port Forwarding & Connectivity:**
+
+To test if your router's port forwarding (80/443) and DDNS are working correctly, you can deploy a
+simple "whoami" service:
+
+1. **Apply the Test Service:**
+   Modify `infra/k3s/test-service.yaml` and replace `REPLACEME_DDNS_HOSTNAME` with your actual DDNS
+   hostname (e.g., `home.yourdomain.com`). Then run:
+   ```bash
+   export KUBECONFIG=~/.kube/config-portal
+   kubectl apply -f infra/k3s/test-service.yaml
+   ```
+2. **Check Deployment:**
+   ```bash
+   kubectl get pods,ingress whoami-test
+   ```
+3. **Test External Access:**
+   Open a web browser or use `curl` from **outside your home network** (e.g., using your phone's
+   mobile data):
+    * **HTTP (Port 80):** `curl http://home.yourdomain.com`
+    * **HTTPS (Port 443):** `curl -k https://home.yourdomain.com`
+      (Note: `-k` is needed as we haven't set up valid SSL certificates yet).
+
+   If successful, you should see a response showing request headers and pod information.
+
+   **Why Hostname is Required:**
+   The Ingress resource in `test-service.yaml` uses a `host` rule (the DDNS hostname) to route
+   traffic. When you access the service via a web browser or `curl http://home.yourdomain.com`, the
+   HTTP `Host` header is set to your hostname. Traefik (the K3s Ingress controller) matches this
+   header against its rules.
+
+   If you try to connect via the IP address (e.g., `curl http://1.2.3.4`), the `Host` header is set
+   to the IP, which doesn't match the rule, resulting in a 404 error.
+
+   **Testing with IP Address (Optional):**
+   If you want to test access via the IP address while keeping the hostname rule, you can force the
+   `Host` header using `curl`:
+   ```bash
+   curl -H "Host: home.yourdomain.com" http://<YOUR_PUBLIC_IP>
+   ```
+
+   Alternatively, if you want to allow access via any hostname or IP address for testing, you can
+   remove the `host:` line from `infra/k3s/test-service.yaml` so it looks like this:
+   ```yaml
+   spec:
+     rules:
+     - http:
+         paths:
+         - path: /
+           ...
+   ```
+
+4. **Cleanup:**
+   Once verified, you can remove the test service:
+   ```bash
+   kubectl delete -f infra/k3s/test-service.yaml
+   ```
