@@ -78,6 +78,7 @@ follows a phased approach to build a solid foundation before adding individual s
 | **6.1** | GraalVM Native Image (Optional) | Compile Spring Boot to Native Image for faster cold-starts. |
 | **6.2** | Cloud Run Autoscaling & Costs   | Monitor scale-to-zero and verify monthly billing limits.    |
 | **6.3** | Lighthouse CI Integration       | Automated performance reports for the Frontend.             |
+| **6.4** | SonarCloud Integration          | Unified dashboard for static analysis, security, and bugs.  |
 
 ---
 

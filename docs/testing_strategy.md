@@ -86,8 +86,8 @@ performance regressions.
 All tests and code quality checks are automated within the **GitHub Actions** pipeline.
 
 - Every Pull Request must pass Unit and Integration tests.
-- **Code Quality Gates:** Linting (Biome, Checkstyle) and Code Coverage (JaCoCo, Vitest) are
-  enforced. A minimum of **80% line coverage** is required for new code.
+- **Code Quality Gates:** Linting (Biome, Spotless) and Code Coverage (JaCoCo, Vitest) are
+  enforced via **SonarCloud**. A minimum of **80% line coverage** is required for new code.
 - E2E tests are run before deployment to the production environment.
 - For more details on quality standards, refer to the **[Code Quality Standards](code_quality.md)**.
 

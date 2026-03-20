@@ -50,5 +50,7 @@ requirements for low cost, scalability, and ease of use.
 * **Google Cloud Logging:** Structured, searchable logging for all backend services.
 * **Google Cloud Monitoring:** Automated metrics capture (CPU, RAM, Latency) with built-in alerting.
 * **Vercel Analytics:** Performance and reliability monitoring for the frontend.
+* **SonarCloud:** Unified quality monitoring for the monorepo, providing insights into code smells,
+  vulnerabilities, and coverage.
 * **Structured JSON Logging:** Ensures logs are easily searchable and analyzable across multiple
   apps.
