@@ -27,11 +27,14 @@ follows a phased approach to build a solid foundation before adding individual s
 | **2.2b** | Configure Social Connections                    | Auth0 configured for Google, Facebook, and GitHub login. [✓]                                 |
 | **2.2c** | Documentation: Production Email Setup           | Guide for production SaaS options included. [✓]                                              |
 | **2.3**  | Database Schema & Migrations (Flyway/Liquibase) | Baseline schema for `users`, `households`, and `apps`. [✓]                                   |
-| **2.4**  | Setup K3s on VPS                                | Cluster running, `kubectl` access from local machine. [✓]                                    |
-| **2.5**  | Install Monitoring & Logging (Loki, Prometheus) | `kube-prometheus-stack` and Loki installed and accessible in K3s.                            |
+| **2.4**  | Setup Google Cloud Project & Artifact Registry  | Project created, Artifact Registry for Docker images active.                                 |
+| **2.5**  | Configure Neon Database                         | Serverless Postgres instance created and accessible.                                         |
 | **2.6**  | Configure Vercel Deployment                     | Frontend automatically deploys on push to `main`.                                            |
 | **2.7**  | Baseline Backend Auth Configuration             | Spring Security + Auth0 (JWT validation) implemented in the Portal backend.                  |
 | **2.8**  | Baseline Frontend Auth Configuration            | Auth0 Next.js SDK integrated into the Portal and login/logout flow verified.                 |
+| **2.9**  | Configure Google Cloud Run for Backend          | Cloud Run service defined and integrated with Artifact Registry.                             |
+| **2.10** | CI/CD: Automated Backend Deployment             | GitHub Action to build and deploy Docker image to Cloud Run.                                 |
+| **2.11** | Configure Cloud Monitoring & Logging            | Uptime checks and log sinks active in the Google Cloud Console.                              |
 
 #### Phase 3: Shared Identity & Security
 
@@ -70,11 +73,11 @@ follows a phased approach to build a solid foundation before adding individual s
 
 **Goal:** Optimize for scalability and the "Advanced Tech" requirements.
 
-| Task ID | Task Description                | Success Criteria                                                |
-|:--------|:--------------------------------|:----------------------------------------------------------------|
-| **6.1** | GraalVM Native Image (Optional) | Compile Spring Boot to Native Image for lower RAM on VPS.       |
-| **6.2** | Kubernetes HPA & Monitoring     | Pods auto-scale; Prometheus/Grafana or basic health dashboards. |
-| **6.3** | Lighthouse CI Integration       | Automated performance reports for the Frontend.                 |
+| Task ID | Task Description                | Success Criteria                                            |
+|:--------|:--------------------------------|:------------------------------------------------------------|
+| **6.1** | GraalVM Native Image (Optional) | Compile Spring Boot to Native Image for faster cold-starts. |
+| **6.2** | Cloud Run Autoscaling & Costs   | Monitor scale-to-zero and verify monthly billing limits.    |
+| **6.3** | Lighthouse CI Integration       | Automated performance reports for the Frontend.             |
 
 ---
 

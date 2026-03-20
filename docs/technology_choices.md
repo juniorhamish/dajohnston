@@ -40,16 +40,15 @@ requirements for low cost, scalability, and ease of use.
 
 #### 6. Advanced Tech & Learning
 
-* **Docker:** All components (Frontend, Backend, DB) will be containerized.
-* **K3s (Kubernetes):** A lightweight distribution of Kubernetes, perfect for self-hosting on a
-  single, low-cost VPS.
+* **Docker:** All components (Frontend, Backend, DB) are containerized.
+* **Google Cloud Run:** A fully managed serverless platform for running containers, ensuring
+  scalability without server management.
 * **GitHub Actions:** For automated building of Docker images and deployment.
 
 #### 7. Monitoring & Logging
 
-* **Grafana Loki & Promtail:** Efficient, metadata-indexed log aggregation that fits within small
-  resource limits.
-* **Prometheus & Grafana:** Industry-standard metrics collection and visualization for K3s and
-  Spring Boot.
+* **Google Cloud Logging:** Structured, searchable logging for all backend services.
+* **Google Cloud Monitoring:** Automated metrics capture (CPU, RAM, Latency) with built-in alerting.
+* **Vercel Analytics:** Performance and reliability monitoring for the frontend.
 * **Structured JSON Logging:** Ensures logs are easily searchable and analyzable across multiple
   apps.

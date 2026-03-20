@@ -9,7 +9,7 @@ This project is organized as a monorepo:
 
 - **`backend/`**: Java (Spring Boot) modular monolith.
 - **`frontend/`**: Next.js (React) portal and sub-apps.
-- **`infra/`**: Infrastructure as Code (K3s manifests, Docker Compose, etc.).
+- **`infra/`**: Infrastructure configuration (Docker Compose, etc.).
 - **`docs/`**: System documentation and architectural decision records.
 
 ## Project Overview
@@ -24,8 +24,8 @@ independent and easily added with minimal effort.
 - **Household-Based Tenantization:** Share data within a household or keep it private using
   PostgreSQL Row-Level Security (RLS).
 - **Cross-Platform:** Usable as a Web application or PWA on iOS/Android.
-- **Advanced Tech Stack:** Powered by Java (Spring Boot), Next.js, Docker, and K3s.
-- **Low Cost:** Designed to run on a $0 - $5/month VPS.
+- **Advanced Tech Stack:** Powered by Java (Spring Boot), Next.js, Docker, and Google Cloud Run.
+- **Low Cost:** Designed to run for $0/month using cloud free tiers.
 
 ## Documentation Index
 
@@ -48,8 +48,8 @@ Detailed documentation for various aspects of the system can be found in the `do
   the system on your machine.
 - **[Implementation Plan](docs/implementation_plan.md):** Phased roadmap from foundation to
   production.
-- **[Monitoring & Logging](docs/monitoring_logging.md):** Strategy for observability using Grafana,
-  Loki, and Prometheus.
+- **[Monitoring & Logging](docs/monitoring_logging.md):** Strategy for observability using Google
+  Cloud Monitoring and Logging.
 
 ### Quality & Testing
 
