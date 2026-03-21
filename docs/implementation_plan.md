@@ -31,7 +31,7 @@ follows a phased approach to build a solid foundation before adding individual s
 | **2.4a** | Define Infrastructure as Code (Terraform)       | `infra/terraform/` contains Cloud Run, AR, Auth0, and Neon configuration. [✓]                |
 | **2.4b** | Automate Infrastructure Setup                   | `terraform apply` successfully creates the cloud, Auth0, and Neon environment. [✓]           |
 | **2.5**  | Configure Neon Database (via Terraform)         | Serverless Postgres instance created and accessible. [✓]                                     |
-| **2.6**  | Configure Vercel Deployment                     | Frontend automatically deploys on push to `main`.                                            |
+| **2.6**  | Configure Vercel Deployment                     | Frontend automatically deploys on push to `main`. [✓]                                        |
 | **2.7**  | Baseline Backend Auth Configuration             | Spring Security + Auth0 (JWT validation) implemented in the Portal backend.                  |
 | **2.8**  | Baseline Frontend Auth Configuration            | Auth0 Next.js SDK integrated into the Portal and login/logout flow verified.                 |
 | **2.9**  | Configure Google Cloud Run for Backend          | Cloud Run service defined and integrated with Artifact Registry.                             |

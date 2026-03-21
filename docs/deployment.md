@@ -45,6 +45,8 @@ file:
 | `auth0_client_id`     | **Auth0**        | Management Client ID     | Create a **Machine to Machine** app in Auth0 (see [Auth0 Guide](authentication_configuration.md#1-auth0-configuration-terraform)). |
 | `auth0_client_secret` | **Auth0**        | Management Client Secret | Found in the **Settings** tab of your Machine to Machine app in Auth0.                                                             |
 | `neon_api_key`        | **Neon**         | Your Neon API Key        | In [Neon Console](https://console.neon.tech/), go to **Settings** -> **API Keys**.                                                 |
+| `vercel_api_token`    | **Vercel**       | Your Vercel API Token    | In [Vercel Dashboard](https://vercel.com/dashboard), click profile picture -> **Settings** -> **Tokens** -> **Create**.            |
+| `github_repository`   | **GitHub**       | Repository to link       | The full name of your repository on GitHub (e.g., `username/repository-name`).                                                     |
 
 Example `terraform.tfvars`:
 
@@ -54,6 +56,8 @@ auth0_domain        = "my-tenant.auth0.com"
 auth0_client_id     = "abc123managementid"
 auth0_client_secret = "very-secret-auth0-key"
 neon_api_key        = "neon-api-key-here"
+vercel_api_token    = "your-vercel-token"
+github_repository   = "username/repository-name"
 ```
 
 #### 3. Containerization (Docker & Cloud Run)

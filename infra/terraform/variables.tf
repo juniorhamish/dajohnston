@@ -60,3 +60,20 @@ variable "database_user" {
   type        = string
   default     = "portal_admin"
 }
+
+variable "vercel_api_token" {
+  description = "The Vercel API Token"
+  type        = string
+  sensitive   = true
+}
+
+variable "vercel_team_id" {
+  description = "The Vercel Team ID (optional)"
+  type        = string
+  default     = null
+}
+
+variable "github_repository" {
+  description = "The GitHub repository to connect to Vercel (format: 'username/repo')"
+  type        = string
+}
