@@ -77,3 +77,14 @@ variable "github_repository" {
   description = "The GitHub repository to connect to Vercel (format: 'username/repo')"
   type        = string
 }
+
+variable "billing_account" {
+  description = "The ID of the billing account to associate with the budget"
+  type        = string
+}
+
+variable "monthly_budget_amount" {
+  description = "The monthly budget amount in USD"
+  type        = number
+  default     = 10
+}

@@ -10,6 +10,10 @@
         <module name="portal-backend.main" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="portal-backend.aot" target="26" />
+      <module name="portal-backend.aotTest" target="26" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">

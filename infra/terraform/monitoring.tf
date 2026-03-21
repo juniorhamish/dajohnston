@@ -61,3 +61,42 @@ resource "google_storage_bucket_iam_member" "log_sink_writer" {
   role   = "roles/storage.objectCreator"
   member = google_logging_project_sink.log_sink.writer_identity
 }
+
+resource "google_billing_budget" "budget" {
+  billing_account = var.billing_account
+  display_name    = "Monthly Budget Alert"
+
+  budget_filter {
+    projects = ["projects/${data.google_project.project.number}"]
+  }
+
+  amount {
+    specified_amount {
+      currency_code = "GBP"
+      units         = tostring(floor(var.monthly_budget_amount))
+      nanos         = floor((var.monthly_budget_amount % 1) * 1e9)
+    }
+  }
+
+  threshold_rules {
+    threshold_percent = 0.5
+    spend_basis       = "CURRENT_SPEND"
+  }
+
+  threshold_rules {
+    threshold_percent = 0.9
+    spend_basis       = "CURRENT_SPEND"
+  }
+
+  threshold_rules {
+    threshold_percent = 1.0
+    spend_basis       = "CURRENT_SPEND"
+  }
+
+  threshold_rules {
+    threshold_percent = 1.0
+    spend_basis       = "FORECASTED_SPEND"
+  }
+
+  depends_on = [google_project_service.billing_budgets]
+}

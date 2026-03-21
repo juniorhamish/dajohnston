@@ -56,7 +56,23 @@ monitoring.
 * **Notification Channels:** Alerts are sent via **Email**, **Slack/Discord**, or the **Google Cloud
   Mobile App**.
 
-#### 5. Local Development Logging
+#### 5. Cost Monitoring
+
+To prevent unexpected cloud spend, we implement automated cost monitoring and alerting.
+
+* **Monthly Budget Alert:** A Google Cloud Budget is configured to monitor the total spend for the
+  project.
+* **Alerting Thresholds:** Notifications are sent to billing admins when actual or forecasted spend
+  reaches:
+    * **50% of the monthly budget:** Early warning.
+    * **90% of the monthly budget:** Critical warning.
+    * **100% of the monthly budget:** Budget reached.
+    * **100% of forecasted spend:** Warning that current usage patterns will exceed the budget by
+      the end of the month.
+* **Autoscaling:** Cloud Run is configured to scale to zero (min instances = 0) to minimize idle
+  costs, though uptime checks may keep a single instance active for health monitoring.
+
+#### 6. Local Development Logging
 
 During local development (Docker Compose), logs are accessible via standard terminal commands:
 
