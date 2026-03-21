@@ -14,9 +14,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import uk.co.dajohnston.portal.config.SecurityConfig;
 import uk.co.dajohnston.portal.controller.HealthController;
 import uk.co.dajohnston.portal.controller.ProtectedController;
-import uk.co.dajohnston.portal.controller.TestController;
 
-@WebMvcTest({HealthController.class, ProtectedController.class, TestController.class})
+@WebMvcTest({HealthController.class, ProtectedController.class})
 @Import(SecurityConfig.class)
 class SecurityConfigTest {
 
@@ -27,11 +26,6 @@ class SecurityConfigTest {
   @Test
   void health_isPublic() throws Exception {
     mockMvc.perform(get("/api/health")).andExpect(status().isOk());
-  }
-
-  @Test
-  void test_isPublic() throws Exception {
-    mockMvc.perform(get("/api/test")).andExpect(status().isOk());
   }
 
   @Test
