@@ -144,6 +144,16 @@ resource "google_cloud_run_v2_service" "backend" {
         name  = "AUTH0_AUDIENCE"
         value = auth0_resource_server.portal_api.identifier
       }
+      liveness_probe {
+        http_get {
+          path = "/actuator/health/liveness"
+        }
+      }
+      startup_probe {
+        http_get {
+          path = "/actuator/health/readiness"
+        }
+      }
     }
 
     scaling {

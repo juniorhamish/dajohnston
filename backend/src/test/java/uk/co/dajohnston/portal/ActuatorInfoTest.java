@@ -32,4 +32,20 @@ class ActuatorInfoTest {
         .andExpect(jsonPath("$.build.version").value("0.0.1-SNAPSHOT"))
         .andExpect(jsonPath("$.build.artifact").value("portal-backend"));
   }
+
+  @Test
+  void livenessProbe_returnsUp() throws Exception {
+    mockMvc
+        .perform(get("/actuator/health/liveness"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.status").value("UP"));
+  }
+
+  @Test
+  void readinessProbe_returnsUp() throws Exception {
+    mockMvc
+        .perform(get("/actuator/health/readiness"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.status").value("UP"));
+  }
 }

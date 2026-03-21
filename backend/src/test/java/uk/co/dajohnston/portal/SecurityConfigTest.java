@@ -12,21 +12,15 @@ import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import uk.co.dajohnston.portal.config.SecurityConfig;
-import uk.co.dajohnston.portal.controller.HealthController;
 import uk.co.dajohnston.portal.controller.ProtectedController;
 
-@WebMvcTest({HealthController.class, ProtectedController.class})
+@WebMvcTest({ProtectedController.class})
 @Import(SecurityConfig.class)
 class SecurityConfigTest {
 
   @Autowired private MockMvc mockMvc;
 
   @MockitoBean private JwtDecoder jwtDecoder;
-
-  @Test
-  void health_isPublic() throws Exception {
-    mockMvc.perform(get("/api/health")).andExpect(status().isOk());
-  }
 
   @Test
   void protected_requiresAuthentication() throws Exception {
