@@ -11,11 +11,15 @@ COPY build.gradle .
 COPY settings.gradle .
 COPY gradle.properties .
 
+# Build only dependencies to cache them in a separate layer
+# This helps when only source code changes
+RUN ./gradlew dependencies --no-daemon
+
 # Copy source code
 COPY src src
 
 # Build the application
-RUN ./gradlew build -x test
+RUN ./gradlew build -x test --no-daemon
 
 # Run stage
 FROM amazoncorretto:26
