@@ -1,5 +1,5 @@
 # Build stage
-FROM eclipse-temurin:25-jdk AS build
+FROM amazoncorretto:26 AS build
 WORKDIR /app
 
 # Copy gradle files
@@ -17,7 +17,7 @@ COPY src src
 RUN ./gradlew build -x test
 
 # Run stage
-FROM eclipse-temurin:25-jre
+FROM amazoncorretto:26
 WORKDIR /app
 COPY --from=build /app/build/libs/portal-backend-0.0.1-SNAPSHOT.jar app.jar
 EXPOSE 8080
