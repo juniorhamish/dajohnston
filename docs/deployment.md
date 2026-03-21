@@ -131,6 +131,19 @@ observability of our cloud providers.
 | **Monitoring & Logging** | Google Cloud     | $0             | Included in Free Tiers                     |
 | **Total**                |                  | **$0/month**   |                                            |
 
+#### 8. Versioning Strategy
+
+The backend follows an automated versioning strategy in CI to ensure every deployment is uniquely
+identifiable:
+
+* **Version Format:** `0.1.${GITHUB_RUN_NUMBER}` (e.g., `0.1.42`).
+* **Implementation:** The version is passed as a build argument (`VERSION`) to the Docker build and
+  injected into the Spring Boot application via the Gradle `version` property.
+* **Visibility:** The current version is exposed via the `/actuator/info` endpoint for monitoring
+  and verification.
+* **Artifacts:** Docker images in the Artifact Registry are tagged with both the full Git SHA and
+  the application version.
+
 #### 9. GitHub Actions Secrets
 
 To enable automated backend deployment using **Workload Identity Federation** (recommended by

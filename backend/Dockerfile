@@ -19,11 +19,12 @@ RUN ./gradlew dependencies --no-daemon
 COPY src src
 
 # Build the application
-RUN ./gradlew build -x test --no-daemon
+ARG VERSION=0.0.1-SNAPSHOT
+RUN ./gradlew build -x test -Pversion=${VERSION} --no-daemon
 
 # Run stage
 FROM amazoncorretto:26
 WORKDIR /app
-COPY --from=build /app/build/libs/portal-backend-0.0.1-SNAPSHOT.jar app.jar
+COPY --from=build /app/build/libs/app.jar app.jar
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]

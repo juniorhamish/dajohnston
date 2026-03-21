@@ -7,8 +7,14 @@ plugins {
 }
 
 group = 'uk.co.dajohnston'
-version = '0.0.1-SNAPSHOT'
+version = (project.findProperty('version') == 'unspecified' || project.findProperty('version') == null) ? '0.0.1-SNAPSHOT' : project.findProperty('version')
 description = 'Multi-App Portal Backend'
+
+springBoot {
+  buildInfo {
+    excludes = ['time']
+  }
+}
 
 java {
   toolchain {
@@ -69,4 +75,8 @@ tasks.named("dependencyUpdates").configure {
 
 tasks.named('test') {
   useJUnitPlatform()
+}
+
+tasks.named('bootJar') {
+  archiveFileName = 'app.jar'
 }
