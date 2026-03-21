@@ -1,5 +1,6 @@
 resource "neon_project" "portal_project" {
-  name = var.neon_project_name
+  name                      = var.neon_project_name
+  history_retention_seconds = 21600
 }
 
 resource "neon_role" "db_admin" {

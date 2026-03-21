@@ -1,3 +1,12 @@
+# Data source for the project number
+data "google_project" "project" {}
+
+resource "google_secret_manager_secret_iam_member" "secret_access" {
+  secret_id = "portal-db-password"
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${data.google_project.project.number}-compute@developer.gserviceaccount.com"
+}
+
 # Enable APIs
 resource "google_project_service" "cloud_run" {
   service            = "run.googleapis.com"
@@ -11,6 +20,16 @@ resource "google_project_service" "artifact_registry" {
 
 resource "google_project_service" "secret_manager" {
   service            = "secretmanager.googleapis.com"
+  disable_on_destroy = false
+}
+
+resource "google_project_service" "logging" {
+  service            = "logging.googleapis.com"
+  disable_on_destroy = false
+}
+
+resource "google_project_service" "monitoring" {
+  service            = "monitoring.googleapis.com"
   disable_on_destroy = false
 }
 
@@ -62,15 +81,15 @@ resource "google_cloud_run_v2_service" "backend" {
       }
 
       env {
-        name  = "SPRING_DATASOURCE_URL"
+        name  = "DATABASE_URL"
         value = "jdbc:postgresql://${neon_project.portal_project.database_host}/${neon_database.portal_db.name}?sslmode=require"
       }
       env {
-        name  = "SPRING_DATASOURCE_USERNAME"
+        name  = "DATABASE_USERNAME"
         value = neon_role.db_admin.name
       }
       env {
-        name = "SPRING_DATASOURCE_PASSWORD"
+        name = "DATABASE_PASSWORD"
         value_source {
           secret_key_ref {
             secret  = google_secret_manager_secret.db_password.secret_id
@@ -91,7 +110,17 @@ resource "google_cloud_run_v2_service" "backend" {
     percent = 100
   }
 
-  depends_on = [google_project_service.cloud_run]
+  depends_on = [
+    google_project_service.cloud_run,
+    google_secret_manager_secret_iam_member.db_password_access
+  ]
+}
+
+# Allow the Cloud Run service account to access the database password secret
+resource "google_secret_manager_secret_iam_member" "db_password_access" {
+  secret_id = google_secret_manager_secret.db_password.id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${data.google_project.project.number}-compute@developer.gserviceaccount.com"
 }
 
 # Allow public (unauthenticated) access to the service (it's secured via Auth0 in the code)
