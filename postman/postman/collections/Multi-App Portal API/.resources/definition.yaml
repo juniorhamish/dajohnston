@@ -2,7 +2,6 @@ $kind: collection
 name: Multi-App Portal API
 description: API collection for the Multi-App Portal system.
 variables:
-  base_url: http://localhost:8080
   auth0_domain: dajohnston.eu.auth0.com
   client_id: ""
   client_secret: ""
