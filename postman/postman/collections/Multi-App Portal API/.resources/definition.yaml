@@ -20,6 +20,6 @@ auth:
     clientId: "{{client_id}}"
     accessTokenUrl: https://{{auth0_domain}}/oauth/token
     authUrl: https://{{auth0_domain}}/authorize
-    redirect_uri: http://localhost:3000/api/auth/callback
+    redirect_uri: http://localhost:3000/auth/callback
     tokenName: DevToken
     addTokenTo: header

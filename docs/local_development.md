@@ -54,7 +54,10 @@ to point to your Auth0 tenant.
 
 1. Create a free account at [Auth0](https://auth0.com/).
 2. Create a **Regular Web Application** (for the frontend) and an **API** (for the backend).
-3. Configure the Allowed Callback URLs, Logout URLs, and Web Origins for `http://localhost:3000`.
+3. Configure the Allowed Callback URLs, Logout URLs, and Web Origins for `http://localhost:3000`:
+    - **Allowed Callback URLs:** `http://localhost:3000/auth/callback`
+    - **Allowed Logout URLs:** `http://localhost:3000/`
+    - **Allowed Web Origins:** `http://localhost:3000`
 
 ##### B. Social Connections
 
@@ -85,10 +88,9 @@ for more details.
 1. Navigate to the frontend directory.
 2. Create a `.env.local` file:
    ```env
-   NEXT_PUBLIC_API_URL=http://localhost:8081
+   NEXT_PUBLIC_API_URL=http://localhost:8080
    AUTH0_SECRET='use [openssl rand -hex 32] to generate'
-   AUTH0_BASE_URL='http://localhost:3000'
-   AUTH0_ISSUER_BASE_URL='https://YOUR_AUTH0_DOMAIN'
+   AUTH0_DOMAIN='YOUR_AUTH0_DOMAIN'
    AUTH0_CLIENT_ID='YOUR_CLIENT_ID'
    AUTH0_CLIENT_SECRET='YOUR_CLIENT_SECRET'
    ```
@@ -157,7 +159,7 @@ all protected requests to inherit the same authentication token.
 4. Scroll down to the **Configure New Token** section. The fields are pre-populated with variables:
     - **Token Name:** `DevToken`
     - **Grant Type:** `Authorization Code`
-    - **Callback URL:** `http://localhost:3000/api/auth/callback`
+    - **Callback URL:** `http://localhost:3000/auth/callback`
     - **Auth URL:** `https://{{auth0_domain}}/authorize`
     - **Access Token URL:** `https://{{auth0_domain}}/oauth/token`
     - **Client ID:** `{{client_id}}`

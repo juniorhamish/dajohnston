@@ -18,8 +18,8 @@ resource "auth0_client" "portal_frontend" {
   logo_uri    = "https://www.dajohnston.co.uk/assets/logo-round-B3HmkIwu.png"
 
   callbacks = [
-    "http://localhost:3000/api/auth/callback",
-    "https://portal.dajohnston.co.uk/api/auth/callback"
+    "http://localhost:3000/auth/callback",
+    "https://portal.dajohnston.co.uk/auth/callback"
   ]
 
   allowed_logout_urls = [

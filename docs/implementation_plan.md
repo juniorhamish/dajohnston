@@ -33,7 +33,7 @@ follows a phased approach to build a solid foundation before adding individual s
 | **2.5**  | Configure Neon Database (via Terraform)          | Serverless Postgres instance created and accessible. [✓]                                     |
 | **2.6**  | Configure Vercel Deployment                      | Frontend automatically deploys on push to `main`. [✓]                                        |
 | **2.7**  | Baseline Backend Auth Configuration              | Spring Security + Auth0 (JWT validation) implemented in the Portal backend. [✓]              |
-| **2.8**  | Baseline Frontend Auth Configuration             | Auth0 Next.js SDK integrated into the Portal and login/logout flow verified.                 |
+| **2.8**  | Baseline Frontend Auth Configuration             | Auth0 Next.js SDK integrated into the Portal and login/logout flow verified. [✓]             |
 | **2.9**  | Configure Google Cloud Run for Backend           | Cloud Run service defined and integrated with Artifact Registry.                             |
 | **2.10** | CI/CD: Automated Backend Deployment              | GitHub Action to build and deploy Docker image to Cloud Run.                                 |
 | **2.11** | Configure Cloud Monitoring & Logging             | Uptime checks and log sinks active in the Google Cloud Console.                              |
