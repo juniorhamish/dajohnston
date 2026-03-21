@@ -1,5 +1,6 @@
 # Build stage
 FROM amazoncorretto:26 AS build
+RUN yum install -y findutils
 WORKDIR /app
 
 # Copy gradle files
