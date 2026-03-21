@@ -1,10 +1,18 @@
 # Data source for the project number
 data "google_project" "project" {}
 
-resource "google_secret_manager_secret_iam_member" "secret_access" {
-  secret_id = "portal-db-password"
+resource "google_secret_manager_secret_iam_member" "db_password_access" {
+  secret_id = google_secret_manager_secret.db_password.id
   role      = "roles/secretmanager.secretAccessor"
   member    = "serviceAccount:${data.google_project.project.number}-compute@developer.gserviceaccount.com"
+}
+
+# Allow the Cloud Run service account to read from the Artifact Registry
+resource "google_artifact_registry_repository_iam_member" "ar_reader" {
+  location   = google_artifact_registry_repository.portal_repo.location
+  repository = google_artifact_registry_repository.portal_repo.name
+  role       = "roles/artifactregistry.reader"
+  member     = "serviceAccount:${data.google_project.project.number}-compute@developer.gserviceaccount.com"
 }
 
 # Enable APIs
@@ -97,6 +105,14 @@ resource "google_cloud_run_v2_service" "backend" {
           }
         }
       }
+      env {
+        name  = "AUTH0_ISSUER_URI"
+        value = "https://${var.auth0_domain}/"
+      }
+      env {
+        name  = "AUTH0_AUDIENCE"
+        value = auth0_resource_server.portal_api.identifier
+      }
     }
 
     scaling {
@@ -110,17 +126,17 @@ resource "google_cloud_run_v2_service" "backend" {
     percent = 100
   }
 
+  lifecycle {
+    ignore_changes = [
+      template[0].containers[0].image,
+    ]
+  }
+
   depends_on = [
     google_project_service.cloud_run,
-    google_secret_manager_secret_iam_member.db_password_access
+    google_secret_manager_secret_iam_member.db_password_access,
+    google_artifact_registry_repository_iam_member.ar_reader
   ]
-}
-
-# Allow the Cloud Run service account to access the database password secret
-resource "google_secret_manager_secret_iam_member" "db_password_access" {
-  secret_id = google_secret_manager_secret.db_password.id
-  role      = "roles/secretmanager.secretAccessor"
-  member    = "serviceAccount:${data.google_project.project.number}-compute@developer.gserviceaccount.com"
 }
 
 # Allow public (unauthenticated) access to the service (it's secured via Auth0 in the code)
