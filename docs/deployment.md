@@ -131,7 +131,26 @@ observability of our cloud providers.
 | **Monitoring & Logging** | Google Cloud     | $0             | Included in Free Tiers                     |
 | **Total**                |                  | **$0/month**   |                                            |
 
-#### 8. Local Development
+#### 9. GitHub Actions Secrets
+
+To enable automated backend deployment, you must configure the following **Repository Secrets** in
+your GitHub repository:
+
+| Secret Name      | Description                                                                          |
+|:-----------------|:-------------------------------------------------------------------------------------|
+| `GCP_PROJECT_ID` | Your Google Cloud Project ID.                                                        |
+| `GCP_SA_KEY`     | The JSON key for the `github-actions-deployer` service account created by Terraform. |
+
+To obtain the `GCP_SA_KEY`:
+
+1. Run `terraform apply` to create the service account.
+2. In the [GCP Console](https://console.cloud.google.com/), go to **IAM & Admin** -> **Service
+   Accounts**.
+3. Find `github-actions-deployer@YOUR_PROJECT_ID.iam.gserviceaccount.com`.
+4. Click **Manage Keys** -> **Add Key** -> **Create new key** (JSON).
+5. Copy the contents of the downloaded file into the `GCP_SA_KEY` secret in GitHub.
+
+#### 10. Local Development
 
 For instructions on running the entire stack locally (using Docker Compose), please refer to the *
 *[Local Development Guide](local_development.md)**.

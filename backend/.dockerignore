@@ -1,0 +1,11 @@
+build/
+.gradle/
+.idea/
+.vscode/
+bin/
+out/
+node_modules/
+package-lock.json
+package.json
+Dockerfile
+.dockerignore
