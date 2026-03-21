@@ -77,6 +77,22 @@ resource "google_artifact_registry_repository" "portal_repo" {
   description   = "Docker repository for Portal backend"
   format        = "DOCKER"
 
+  cleanup_policies {
+    id     = "keep-latest-3"
+    action = "KEEP"
+    most_recent_versions {
+      keep_count = 3
+    }
+  }
+
+  cleanup_policies {
+    id     = "delete-old-versions"
+    action = "DELETE"
+    condition {
+      tag_state = "ANY"
+    }
+  }
+
   depends_on = [google_project_service.artifact_registry]
 }
 
