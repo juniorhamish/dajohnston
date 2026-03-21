@@ -1,6 +1,10 @@
 # Use this workspace to collaborate
 workspace:
   id: 62afe5a4-e3b6-4a71-9d44-5017be4903d7
+
 localResources:
   collections:
     - ../portal_api.postman_collection.json
+cloudResources:
+  collections:
+    ../postman/collections/Multi-App Portal API: 905ab59a-1786-4fe5-a45a-6612b19b41eb

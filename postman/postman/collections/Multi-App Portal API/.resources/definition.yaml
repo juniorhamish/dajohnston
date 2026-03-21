@@ -1,0 +1,5 @@
+$kind: collection
+description: API collection for the Multi-App Portal system.
+variables:
+  base_url: http://localhost:8080
+  access_token: ""
