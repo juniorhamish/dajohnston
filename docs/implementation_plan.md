@@ -36,7 +36,7 @@ follows a phased approach to build a solid foundation before adding individual s
 | **2.8**  | Baseline Frontend Auth Configuration             | Auth0 Next.js SDK integrated into the Portal and login/logout flow verified. [✓]             |
 | **2.9**  | Configure Google Cloud Run for Backend           | Cloud Run service defined and integrated with Artifact Registry. [✓]                         |
 | **2.10** | CI/CD: Automated Backend Deployment              | GitHub Action to build and deploy Docker image to Cloud Run. [✓]                             |
-| **2.11** | Configure Cloud Monitoring & Logging             | Uptime checks and log sinks active in the Google Cloud Console.                              |
+| **2.11** | Configure Cloud Monitoring & Logging             | Uptime checks and log sinks active in the Google Cloud Console. [✓]                          |
 | **2.12** | Configure Postman Collection & API Documentation | `postman/` directory contains YAML files for direct GitHub sync with Postman. [✓]            |
 | **2.13** | Add Backend Versioning                           | Configure Spring Boot Actuator's `/info` endpoint with build information. [✓]                |
 | **2.14** | Automate Backend Versioning in CI                | Backend version is automatically updated in CI based on build numbers. [✓]                   |

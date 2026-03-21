@@ -56,6 +56,11 @@ resource "google_project_service" "sts" {
   disable_on_destroy = false
 }
 
+resource "google_project_service" "storage" {
+  service            = "storage.googleapis.com"
+  disable_on_destroy = false
+}
+
 # Secret Manager for Database Password
 resource "google_secret_manager_secret" "db_password" {
   secret_id = "portal-db-password"
