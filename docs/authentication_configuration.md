@@ -3,11 +3,42 @@
 This document explains how to configure Auth0 as the Identity Provider (IdP) for the Multi-App
 Portal, including how to set up third-party (social) authentication.
 
-#### 1. Auth0 Configuration
+#### 1. Auth0 Configuration (Terraform)
 
-Auth0 is a managed identity service. To use it, you must first create an Auth0 tenant.
+To automate the setup of Auth0, we use the **Auth0 Terraform Provider**. This ensures that our
+API and Application configurations are versioned and reproducible.
 
-##### A. Create an API (Resource Server)
+To use the Auth0 Terraform provider, you must provide a **Client ID** and **Client Secret** of a
+"Machine to Machine" application in Auth0 that has the necessary scopes for the Management API.
+
+##### How to Get Auth0 Terraform Variables
+
+1. **Create a Management Application:**
+    - Go to [Auth0 Dashboard](https://manage.auth0.com/) -> **Applications** -> **Applications**.
+    - Click **Create Application**.
+    - **Name:** `Terraform-Management-App` (or similar).
+    - **Type:** **Machine to Machine Applications**.
+    - Select the **Auth0 Management API**.
+2. **Assign Scopes:**
+    - In the popup, you must select the scopes required to manage your tenant's resources.
+    - **Required Scopes:**
+        - `read:clients`, `update:clients`, `create:clients`, `delete:clients`
+        - `read:resource_servers`, `update:resource_servers`, `create:resource_servers`,
+          `delete:resource_servers`
+        - `read:client_keys`, `update:client_keys`, `create:client_keys`, `delete:client_keys`
+    - Click **Authorize**.
+3. **Retrieve Credentials:**
+    - Navigate to the **Settings** tab of your newly created application.
+    - Copy the **Domain**, **Client ID**, and **Client Secret**.
+    - Add these to your `infra/terraform/terraform.tfvars` file.
+
+For more details on the resources being managed, refer to `infra/terraform/auth0.tf`.
+
+##### A. Manual Configuration (Optional/Historical)
+
+If you prefer to configure Auth0 manually via the dashboard:
+
+###### 1. Create an API (Resource Server)
 
 1. Navigate to **Applications** -> **APIs** in the Auth0 Dashboard.
 2. Click **Create API**.

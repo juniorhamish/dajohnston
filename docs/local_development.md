@@ -37,7 +37,15 @@ even when containers are stopped or removed.
 * **Persistence:** As long as you don't run `docker compose down -v`, your data will be preserved
   in the `postgres_data` volume.
 
-#### 4. Testing Signup & Login Flows (Auth0)
+#### 4. Cloud Infrastructure Setup (Terraform)
+
+For the production-like cloud environment on Google Cloud, we use **Terraform** to automate resource
+creation.
+
+1. Navigate to `infra/terraform/`.
+2. Follow the instructions in the **[Deployment Guide](deployment.md)** to run `terraform apply`.
+
+#### 5. Testing Signup & Login Flows (Auth0)
 
 Since we are using Auth0 as our identity provider, you will need to configure your local environment
 to point to your Auth0 tenant.

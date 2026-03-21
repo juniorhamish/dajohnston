@@ -43,6 +43,8 @@ requirements for low cost, scalability, and ease of use.
 * **Docker:** All components (Frontend, Backend, DB) are containerized.
 * **Google Cloud Run:** A fully managed serverless platform for running containers, ensuring
   scalability without server management.
+* **Terraform:** Infrastructure as Code (IaC) to automate the provisioning and management of cloud
+  resources, ensuring consistency across environments.
 * **GitHub Actions:** For automated building of Docker images and deployment.
 
 #### 7. Monitoring & Logging

@@ -15,7 +15,48 @@ K8s/VPS) while providing an enterprise-grade developer experience.
 * **Database (PostgreSQL):** A managed serverless instance provided by **Neon**.
 * **Identity (Auth0):** A SaaS identity provider for secure user authentication and management.
 
-#### 2. Containerization (Docker & Cloud Run)
+#### 2. Infrastructure as Code (Terraform)
+
+To ensure a consistent and repeatable deployment, all Google Cloud, Auth0, and Neon resources are
+managed using **Terraform**. This allows us to define the desired state of our infrastructure and
+automate its creation and management.
+
+* **Location:** `infra/terraform/`
+* **Resources Managed:** Cloud Run service, Artifact Registry repository, Secret Manager, Auth0
+  API (Resource Server), Auth0 Application (Client), Neon Project, Neon Database, Neon Role, and
+  required APIs.
+* **Deployment Workflow:**
+    1. Install the Terraform CLI.
+    2. Navigate to `infra/terraform/`.
+    3. Create a `terraform.tfvars` file (see [Required Variables](#required-terraform-variables)
+       below).
+    4. Run `terraform init`.
+    5. Run `terraform apply`.
+
+##### Required Terraform Variables
+
+To run Terraform, you need to provide several platform-specific variables in a `terraform.tfvars`
+file:
+
+| Variable              | Platform         | Description              | How to Get It                                                                                                                      |
+|:----------------------|:-----------------|:-------------------------|:-----------------------------------------------------------------------------------------------------------------------------------|
+| `project_id`          | **Google Cloud** | Your GCP Project ID      | Go to [GCP Console](https://console.cloud.google.com/), the ID is in the **Project info** card on the Dashboard.                   |
+| `auth0_domain`        | **Auth0**        | Your Auth0 Tenant Domain | In [Auth0 Dashboard](https://manage.auth0.com/), click your tenant name (top right). Format: `YOUR_TENANT.auth0.com`.              |
+| `auth0_client_id`     | **Auth0**        | Management Client ID     | Create a **Machine to Machine** app in Auth0 (see [Auth0 Guide](authentication_configuration.md#1-auth0-configuration-terraform)). |
+| `auth0_client_secret` | **Auth0**        | Management Client Secret | Found in the **Settings** tab of your Machine to Machine app in Auth0.                                                             |
+| `neon_api_key`        | **Neon**         | Your Neon API Key        | In [Neon Console](https://console.neon.tech/), go to **Settings** -> **API Keys**.                                                 |
+
+Example `terraform.tfvars`:
+
+```hcl
+project_id          = "my-gcp-project-123"
+auth0_domain        = "my-tenant.auth0.com"
+auth0_client_id     = "abc123managementid"
+auth0_client_secret = "very-secret-auth0-key"
+neon_api_key        = "neon-api-key-here"
+```
+
+#### 3. Containerization (Docker & Cloud Run)
 
 To ensure consistency between development and production, the backend is packaged as a standard *
 *Docker image**.

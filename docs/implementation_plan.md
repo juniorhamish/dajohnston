@@ -22,13 +22,15 @@ follows a phased approach to build a solid foundation before adding individual s
 | Task ID  | Task Description                                | Success Criteria                                                                             |
 |:---------|:------------------------------------------------|:---------------------------------------------------------------------------------------------|
 | **2.1**  | Docker Compose for Local Dev                    | `docker-compose.yml` with Postgres. [✓]                                                      |
-| **2.2**  | Auth0 Initial Configuration                     | Create Auth0 Tenant, API (Resource Server), and Application (SPA). [✓]                       |
+| **2.2**  | Auth0 Configuration (Terraform)                 | Create Auth0 API and Application using Terraform. [✓]                                        |
 | **2.2a** | Documentation: Social Login Setup (Auth0)       | Guide for configuring Google, GitHub, and other third-party Social Connections in Auth0. [✓] |
 | **2.2b** | Configure Social Connections                    | Auth0 configured for Google, Facebook, and GitHub login. [✓]                                 |
 | **2.2c** | Documentation: Production Email Setup           | Guide for production SaaS options included. [✓]                                              |
 | **2.3**  | Database Schema & Migrations (Flyway/Liquibase) | Baseline schema for `users`, `households`, and `apps`. [✓]                                   |
-| **2.4**  | Setup Google Cloud Project & Artifact Registry  | Project created, Artifact Registry for Docker images active.                                 |
-| **2.5**  | Configure Neon Database                         | Serverless Postgres instance created and accessible.                                         |
+| **2.4**  | Setup Google Cloud Project & Artifact Registry  | Project created, Artifact Registry for Docker images active. [✓]                             |
+| **2.4a** | Define Infrastructure as Code (Terraform)       | `infra/terraform/` contains Cloud Run, AR, Auth0, and Neon configuration. [✓]                |
+| **2.4b** | Automate Infrastructure Setup                   | `terraform apply` successfully creates the cloud, Auth0, and Neon environment. [✓]           |
+| **2.5**  | Configure Neon Database (via Terraform)         | Serverless Postgres instance created and accessible. [✓]                                     |
 | **2.6**  | Configure Vercel Deployment                     | Frontend automatically deploys on push to `main`.                                            |
 | **2.7**  | Baseline Backend Auth Configuration             | Spring Security + Auth0 (JWT validation) implemented in the Portal backend.                  |
 | **2.8**  | Baseline Frontend Auth Configuration            | Auth0 Next.js SDK integrated into the Portal and login/logout flow verified.                 |
