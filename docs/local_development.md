@@ -113,9 +113,32 @@ To ensure your code meets the project standards before pushing:
 
 For a full list of quality standards, see the **[Code Quality Standards](code_quality.md)**.
 
-#### 9. Mocking (Optional)
+#### 10. Postman & API Documentation
 
-For faster UI development without running the full backend/auth, you can use:
+A Postman collection is provided in the `postman/` directory to help you test the API endpoints.
 
-* **MSW (Mock Service Worker):** To intercept API calls in the frontend.
-* **Spring Security Mocking:** Using `@WithMockUser` for controller tests.
+##### A. Importing the Collection
+
+1. Open the Postman application.
+2. Click **Import** and select `postman/portal_api.postman_collection.json`.
+3. The collection includes two variables:
+    * `base_url`: Defaults to `http://localhost:8080`.
+    * `access_token`: You will need to provide a valid JWT for protected endpoints.
+
+##### B. Automatic Sync (Recommended)
+
+To keep your local Postman app updated with new endpoints:
+
+1. Use Postman's **Git Sync** feature (if using a Workspace).
+2. Alternatively, import the API from the GitHub repository:
+    * **Import** -> **GitHub**.
+    * Select your repository and point to the `postman/portal_api.postman_collection.json` file.
+3. As we add new endpoints, we will update the Postman collection file in the repository.
+
+##### C. Swagger UI
+
+When the backend is running, you can access the interactive API documentation (Swagger UI) at:
+
+* [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+* The OpenAPI spec is available
+  at [http://localhost:8080/v3/api-docs](http://localhost:8080/v3/api-docs).
