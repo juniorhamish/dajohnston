@@ -12,7 +12,11 @@ import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-@SpringBootTest
+@SpringBootTest(
+    properties = {
+      "spring.flyway.enabled=false",
+      "spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect"
+    })
 @AutoConfigureMockMvc
 class ActuatorInfoTest {
 
