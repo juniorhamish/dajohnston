@@ -78,6 +78,12 @@ variable "github_repository" {
   type        = string
 }
 
+variable "repo_main_branch" {
+  description = "The main branch of the repository"
+  type        = string
+  default     = "main"
+}
+
 variable "billing_account" {
   description = "The ID of the billing account to associate with the budget"
   type        = string

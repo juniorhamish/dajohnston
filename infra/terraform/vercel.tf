@@ -6,7 +6,7 @@ resource "vercel_project" "portal_frontend" {
   git_repository = {
     type              = "github"
     repo              = var.github_repository
-    production_branch = "main"
+    production_branch = var.repo_main_branch
   }
 }
 
