@@ -148,11 +148,18 @@ resource "google_cloud_run_v2_service" "backend" {
         http_get {
           path = "/actuator/health/liveness"
         }
+        timeout_seconds   = 5
+        period_seconds    = 10
+        failure_threshold = 3
       }
       startup_probe {
         http_get {
           path = "/actuator/health/readiness"
         }
+        initial_delay_seconds = 10
+        timeout_seconds       = 5
+        period_seconds        = 10
+        failure_threshold     = 30
       }
     }
 
