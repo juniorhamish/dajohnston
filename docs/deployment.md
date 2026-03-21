@@ -133,22 +133,22 @@ observability of our cloud providers.
 
 #### 9. GitHub Actions Secrets
 
-To enable automated backend deployment, you must configure the following **Repository Secrets** in
-your GitHub repository:
+To enable automated backend deployment using **Workload Identity Federation** (recommended by
+Google),
+you must configure the following **Repository Secrets** in your GitHub repository:
 
-| Secret Name      | Description                                                                          |
-|:-----------------|:-------------------------------------------------------------------------------------|
-| `GCP_PROJECT_ID` | Your Google Cloud Project ID.                                                        |
-| `GCP_SA_KEY`     | The JSON key for the `github-actions-deployer` service account created by Terraform. |
+| Secret Name               | Description                                                                                                      |
+|:--------------------------|:-----------------------------------------------------------------------------------------------------------------|
+| `GCP_PROJECT_ID`          | Your Google Cloud Project ID.                                                                                    |
+| `GCP_WIF_PROVIDER`        | The full name of the Workload Identity Provider (output by Terraform as `workload_identity_provider`).           |
+| `GCP_WIF_SERVICE_ACCOUNT` | The email of the GitHub Actions service account (output by Terraform as `github_actions_service_account_email`). |
 
-To obtain the `GCP_SA_KEY`:
+To obtain these values:
 
-1. Run `terraform apply` to create the service account.
-2. In the [GCP Console](https://console.cloud.google.com/), go to **IAM & Admin** -> **Service
-   Accounts**.
-3. Find `github-actions-deployer@YOUR_PROJECT_ID.iam.gserviceaccount.com`.
-4. Click **Manage Keys** -> **Add Key** -> **Create new key** (JSON).
-5. Copy the contents of the downloaded file into the `GCP_SA_KEY` secret in GitHub.
+1. Run `terraform apply` to create the Workload Identity Federation resources and service account.
+2. The values will be displayed in the Terraform outputs.
+3. Copy `workload_identity_provider` into the `GCP_WIF_PROVIDER` secret in GitHub.
+4. Copy `github_actions_service_account_email` into the `GCP_WIF_SERVICE_ACCOUNT` secret in GitHub.
 
 #### 10. Local Development
 

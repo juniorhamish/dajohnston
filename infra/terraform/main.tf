@@ -41,6 +41,21 @@ resource "google_project_service" "monitoring" {
   disable_on_destroy = false
 }
 
+resource "google_project_service" "iam" {
+  service            = "iam.googleapis.com"
+  disable_on_destroy = false
+}
+
+resource "google_project_service" "iam_credentials" {
+  service            = "iamcredentials.googleapis.com"
+  disable_on_destroy = false
+}
+
+resource "google_project_service" "sts" {
+  service            = "sts.googleapis.com"
+  disable_on_destroy = false
+}
+
 # Secret Manager for Database Password
 resource "google_secret_manager_secret" "db_password" {
   secret_id = "portal-db-password"
