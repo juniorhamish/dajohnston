@@ -102,3 +102,26 @@ AUTH0_CLIENT_SECRET='YOUR_CLIENT_SECRET'
 While Auth0 handles the identity, our application logic handles "Households" (Tenants). The Auth0
 `sub` (Subject) claim will be mapped to our internal `users` table, which in turn links to
 `households`.
+
+#### 5. User Management & Registration
+
+##### A. Creating Users Manually (Auth0 Dashboard)
+
+If you need to create a test user without using the frontend signup flow:
+
+1. In the [Auth0 Dashboard](https://manage.auth0.com/), go to **User Management** -> **Users**.
+2. Click **Create User**.
+3. Provide an email and password.
+4. Ensure the user is assigned to the `Username-Password-Authentication` connection (default).
+
+##### B. Registration via Universal Login
+
+The system uses Auth0's **New Universal Login**. When an application initiates an authentication
+request (e.g., via Postman or the Frontend), the user will be presented with a login page that also
+contains a **Sign Up** tab by default.
+
+To manage whether users can self-register:
+
+1. Go to **Authentication** -> **Database**.
+2. Click on your database connection (e.g., `Username-Password-Authentication`).
+3. Toggle the **Disable Sign Ups** setting as needed.

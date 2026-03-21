@@ -15,6 +15,7 @@ resource "auth0_client" "portal_frontend" {
   name        = "Portal Frontend"
   description = "Frontend application for the Multi-App Portal"
   app_type    = "regular_web"
+  logo_uri    = "https://www.dajohnston.co.uk/assets/logo-round-B3HmkIwu.png"
 
   callbacks = [
     "http://localhost:3000/api/auth/callback",

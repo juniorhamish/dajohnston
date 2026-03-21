@@ -1,8 +1,4 @@
 $kind: http-request
 url: "{{base_url}}/api/protected"
 method: GET
-auth:
-  type: bearer
-  credentials:
-    token: "{{access_token}}"
 order: 1000
