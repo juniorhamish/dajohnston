@@ -19,25 +19,26 @@ follows a phased approach to build a solid foundation before adding individual s
 
 **Goal:** Provide the necessary services for authentication and data storage.
 
-| Task ID  | Task Description                                 | Success Criteria                                                                             |
-|:---------|:-------------------------------------------------|:---------------------------------------------------------------------------------------------|
-| **2.1**  | Docker Compose for Local Dev                     | `docker-compose.yml` with Postgres. [✓]                                                      |
-| **2.2**  | Auth0 Configuration (Terraform)                  | Create Auth0 API and Application using Terraform. [✓]                                        |
-| **2.2a** | Documentation: Social Login Setup (Auth0)        | Guide for configuring Google, GitHub, and other third-party Social Connections in Auth0. [✓] |
-| **2.2b** | Configure Social Connections                     | Auth0 configured for Google, Facebook, and GitHub login. [✓]                                 |
-| **2.2c** | Documentation: Production Email Setup            | Guide for production SaaS options included. [✓]                                              |
-| **2.3**  | Database Schema & Migrations (Flyway/Liquibase)  | Baseline schema for `users`, `households`, and `apps`. [✓]                                   |
-| **2.4**  | Setup Google Cloud Project & Artifact Registry   | Project created, Artifact Registry for Docker images active. [✓]                             |
-| **2.4a** | Define Infrastructure as Code (Terraform)        | `infra/terraform/` contains Cloud Run, AR, Auth0, and Neon configuration. [✓]                |
-| **2.4b** | Automate Infrastructure Setup                    | `terraform apply` successfully creates the cloud, Auth0, and Neon environment. [✓]           |
-| **2.5**  | Configure Neon Database (via Terraform)          | Serverless Postgres instance created and accessible. [✓]                                     |
-| **2.6**  | Configure Vercel Deployment                      | Frontend automatically deploys on push to `main`. [✓]                                        |
-| **2.7**  | Baseline Backend Auth Configuration              | Spring Security + Auth0 (JWT validation) implemented in the Portal backend. [✓]              |
-| **2.8**  | Baseline Frontend Auth Configuration             | Auth0 Next.js SDK integrated into the Portal and login/logout flow verified. [✓]             |
-| **2.9**  | Configure Google Cloud Run for Backend           | Cloud Run service defined and integrated with Artifact Registry. [✓]                         |
-| **2.10** | CI/CD: Automated Backend Deployment              | GitHub Action to build and deploy Docker image to Cloud Run. [✓]                             |
-| **2.11** | Configure Cloud Monitoring & Logging             | Uptime checks and log sinks active in the Google Cloud Console.                              |
-| **2.12** | Configure Postman Collection & API Documentation | `postman/` directory contains YAML files for direct GitHub sync with Postman. [✓]            |
+| Task ID  | Task Description                                  | Success Criteria                                                                             |
+|:---------|:--------------------------------------------------|:---------------------------------------------------------------------------------------------|
+| **2.1**  | Docker Compose for Local Dev                      | `docker-compose.yml` with Postgres. [✓]                                                      |
+| **2.2**  | Auth0 Configuration (Terraform)                   | Create Auth0 API and Application using Terraform. [✓]                                        |
+| **2.2a** | Documentation: Social Login Setup (Auth0)         | Guide for configuring Google, GitHub, and other third-party Social Connections in Auth0. [✓] |
+| **2.2b** | Configure Social Connections                      | Auth0 configured for Google, Facebook, and GitHub login. [✓]                                 |
+| **2.2c** | Documentation: Production Email Setup             | Guide for production SaaS options included. [✓]                                              |
+| **2.3**  | Database Schema & Migrations (Flyway/Liquibase)   | Baseline schema for `users`, `households`, and `apps`. [✓]                                   |
+| **2.4**  | Setup Google Cloud Project & Artifact Registry    | Project created, Artifact Registry for Docker images active. [✓]                             |
+| **2.4a** | Define Infrastructure as Code (Terraform)         | `infra/terraform/` contains Cloud Run, AR, Auth0, and Neon configuration. [✓]                |
+| **2.4b** | Automate Infrastructure Setup                     | `terraform apply` successfully creates the cloud, Auth0, and Neon environment. [✓]           |
+| **2.5**  | Configure Neon Database (via Terraform)           | Serverless Postgres instance created and accessible. [✓]                                     |
+| **2.6**  | Configure Vercel Deployment                       | Frontend automatically deploys on push to `main`. [✓]                                        |
+| **2.7**  | Baseline Backend Auth Configuration               | Spring Security + Auth0 (JWT validation) implemented in the Portal backend. [✓]              |
+| **2.8**  | Baseline Frontend Auth Configuration              | Auth0 Next.js SDK integrated into the Portal and login/logout flow verified. [✓]             |
+| **2.9**  | Configure Google Cloud Run for Backend            | Cloud Run service defined and integrated with Artifact Registry. [✓]                         |
+| **2.10** | CI/CD: Automated Backend Deployment               | GitHub Action to build and deploy Docker image to Cloud Run. [✓]                             |
+| **2.11** | Configure Cloud Monitoring & Logging              | Uptime checks and log sinks active in the Google Cloud Console.                              |
+| **2.12** | Configure Postman Collection & API Documentation  | `postman/` directory contains YAML files for direct GitHub sync with Postman. [✓]            |
+| **2.13** | Add Test Endpoint for E2E Deployment Verification | Created `/api/test` public endpoint and updated Postman/tests. [✓]                           |
 
 #### Phase 3: Shared Identity & Security
 
