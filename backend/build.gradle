@@ -97,10 +97,8 @@ sonar {
     property "sonar.projectKey", "juniorhamish_dajohnston_backend"
     property "sonar.organization", "juniorhamish"
     property "sonar.host.url", "https://sonarcloud.io"
-    property "sonar.sources", "src/main/java,../frontend/src"
+    property "sonar.sources", "src/main/java"
     property "sonar.tests", "src/test/java"
     property "sonar.java.binaries", "build/classes/java/main"
-    property "sonar.javascript.lcov.reportPaths", "../frontend/coverage/lcov.info"
-    property "sonar.typescript.tsconfigPath", "../frontend/tsconfig.json"
   }
 }
