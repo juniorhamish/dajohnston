@@ -49,14 +49,14 @@ For a high-level overview of technical debt, code smells, and security vulnerabi
 with **SonarCloud** (free for public projects on GitHub).
 
 * **Quality Gate:** SonarCloud will provide a "Pass/Fail" status on PRs based on its analysis. A
-  custom Quality Gate is defined via Terraform in `infra/terraform/sonarcloud.tf`, enforcing:
+  custom Quality Gate is configured manually in the SonarCloud UI, enforcing:
     * **Code Coverage:** ≥ 80% (monorepo average).
     * **New Bugs:** 0.
     * **New Vulnerabilities:** 0.
 * **Reliability/Security/Maintainability:** We aim for "A" ratings in all categories.
-* **Main Branch Configuration:** The main branch for SonarCloud analysis is centralized in Terraform
-  using the `repo_main_branch` variable in `infra/terraform/terraform.tfvars`. If you rename your
-  main branch, you must update it there and in the GitHub Actions workflows.
+* **Main Branch Configuration:** The main branch for SonarCloud analysis is configured manually in
+  the SonarCloud project settings. If you rename your main branch, you must update it there and in
+  the GitHub Actions workflows.
 
 #### 5. Local Enforcement (Pre-commit)
 

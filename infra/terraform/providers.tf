@@ -18,10 +18,6 @@ terraform {
       source  = "vercel/vercel"
       version = "~> 4.6.1"
     }
-    sonarcloud = {
-      source  = "rewe-digital/sonarcloud"
-      version = "0.5.2"
-    }
   }
 }
 
@@ -45,9 +41,4 @@ provider "neon" {
 provider "vercel" {
   api_token = var.vercel_api_token
   team      = var.vercel_team_id
-}
-
-provider "sonarcloud" {
-  organization = var.sonarcloud_organization
-  token        = var.sonarcloud_api_token
 }

@@ -94,7 +94,7 @@ tasks.named('bootJar') {
 
 sonar {
   properties {
-    property "sonar.projectKey", "dajohnston"
+    property "sonar.projectKey", "juniorhamish_dajohnston_backend"
     property "sonar.organization", "juniorhamish"
     property "sonar.host.url", "https://sonarcloud.io"
     property "sonar.sources", "src/main/java,../frontend/src"

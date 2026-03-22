@@ -94,20 +94,3 @@ variable "monthly_budget_amount" {
   type        = number
   default     = 10
 }
-
-variable "sonarcloud_api_token" {
-  description = "The SonarCloud API Token"
-  type        = string
-  sensitive   = true
-}
-
-variable "sonarcloud_organization" {
-  description = "The SonarCloud Organization name"
-  type        = string
-}
-
-variable "sonarcloud_project_key" {
-  description = "The SonarCloud Project Key"
-  type        = string
-  default     = "dajohnston"
-}

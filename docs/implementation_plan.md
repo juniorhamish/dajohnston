@@ -45,11 +45,11 @@ follows a phased approach to build a solid foundation before adding individual s
 
 **Goal:** Optimize for scalability and the "Advanced Tech" requirements.
 
-| Task ID | Task Description              | Success Criteria                                                                             |
-|:--------|:------------------------------|:---------------------------------------------------------------------------------------------|
-| **3.1** | Cloud Run Autoscaling & Costs | Monitor scale-to-zero and verify monthly billing limits. [✓]                                 |
-| **3.2** | Lighthouse CI Integration     | Automated performance reports for the Frontend.                                              |
-| **3.3** | SonarCloud Integration        | Unified dashboard for static analysis, security, and bugs with Quality Gate enforcement. [✓] |
+| Task ID | Task Description                | Success Criteria                                                                                    |
+|:--------|:--------------------------------|:----------------------------------------------------------------------------------------------------|
+| **3.1** | Cloud Run Autoscaling & Costs   | Monitor scale-to-zero and verify monthly billing limits. [✓]                                        |
+| **3.2** | Lighthouse CI Integration       | Automated performance reports for the Frontend.                                                     |
+| **3.3** | SonarCloud Integration (Manual) | Unified dashboard for static analysis, security, and bugs with manual Quality Gate enforcement. [✓] |
 
 #### Phase 4: Shared Identity & Security
 
