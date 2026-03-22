@@ -101,5 +101,6 @@ sonar {
     property "sonar.tests", "src/test/java"
     property "sonar.java.binaries", "build/classes/java/main"
     property "sonar.javascript.lcov.reportPaths", "../frontend/coverage/lcov.info"
+    property "sonar.typescript.tsconfigPath", "../frontend/tsconfig.json"
   }
 }
