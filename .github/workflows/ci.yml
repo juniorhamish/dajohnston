@@ -12,19 +12,31 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
       - name: Set up JDK 26
         uses: actions/setup-java@v5
         with:
           java-version: '26'
           distribution: 'corretto'
           cache: gradle
-
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v5
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
       - name: Grant execute permission for gradlew
         run: chmod +x backend/gradlew
-
       - name: Build and Test Backend
+        env:
+          TEST_AUTH0_CLIENT_ID: ${{ secrets.TEST_AUTH0_CLIENT_ID }}
+          TEST_AUTH0_CLIENT_SECRET: ${{ secrets.TEST_AUTH0_CLIENT_SECRET }}
+          TEST_AUTH0_AUDIENCE: ${{ secrets.TEST_AUTH0_AUDIENCE }}
+          TEST_AUTH0_TOKEN_URL: ${{ secrets.TEST_AUTH0_TOKEN_URL }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         working-directory: backend
-        run: ./gradlew build spotlessCheck
+        run: ./gradlew build spotlessCheck sonar --info
 
   frontend:
     runs-on: ubuntu-latest
@@ -50,31 +62,3 @@ jobs:
       - name: Build Frontend
         working-directory: frontend
         run: npm run build
-
-  sonarcloud-backend:
-    name: SonarCloud Backend
-    runs-on: ubuntu-latest
-    needs: [ backend ]
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          fetch-depth: 0 # Shallow clones should be disabled for a better relevancy of analysis
-      - name: Set up JDK 26
-        uses: actions/setup-java@v5
-        with:
-          java-version: '26'
-          distribution: 'corretto'
-          cache: gradle
-      - name: Cache SonarCloud packages
-        uses: actions/cache@v5
-        with:
-          path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
-      - name: Grant execute permission for gradlew
-        run: |
-          cd backend && chmod +x ./gradlew
-      - name: Build and analyze
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: cd backend && ./gradlew build sonar --info
