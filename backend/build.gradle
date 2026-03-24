@@ -149,10 +149,7 @@ sonar {
   properties {
     property "sonar.projectKey", "juniorhamish_dajohnston_backend"
     property "sonar.organization", "juniorhamish"
-    property "sonar.coverage.jacoco.xmlReportPaths", fileTree(dir: projectDir, includes: [
-      "**/build/reports/jacoco/test/jacocoTestReport.xml",
-      "**/build/reports/jacoco/integrationTest/jacocoIntegrationTestReport.xml"
-    ])
-    property "sonar.coverage.exclusions", "src/main/java/uk.co.dajohnston.portal.PortalBackendApplication.java"
+    property "sonar.coverage.jacoco.xmlReportPaths", "**/build/reports/jacoco/test/jacocoTestReport.xml,**/build/reports/jacoco/integrationTest/jacocoIntegrationTestReport.xml"
+    property "sonar.coverage.exclusions", "src/main/java/uk/co/dajohnston/portal/PortalBackendApplication.java"
   }
 }
