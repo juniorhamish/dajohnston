@@ -51,7 +51,18 @@ dependencies {
   testImplementation 'org.springframework.boot:spring-boot-webmvc-test'
   testImplementation 'org.springframework.security:spring-security-test'
   testImplementation 'io.rest-assured:rest-assured:6.0.0'
+  testRuntimeOnly 'com.h2database:h2'
   testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+processTestResources {
+  duplicatesStrategy = DuplicatesStrategy.INCLUDE
+  from('src/main/resources/db/migration') {
+    into 'db/migration-h2'
+  }
+  from('src/test/resources/db/migration-h2-overrides') {
+    into 'db/migration-h2'
+  }
 }
 
 spotless {
