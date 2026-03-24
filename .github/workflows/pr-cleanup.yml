@@ -1,0 +1,29 @@
+name: PR Cleanup
+on:
+  pull_request:
+    types: [ closed ]
+env:
+  GCP_REGION: europe-west1
+jobs:
+  cleanup:
+    name: Delete Ephemeral Resources
+    runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Google Auth
+        id: auth
+        uses: 'google-github-actions/auth@v3'
+        with:
+          workload_identity_provider: '${{ secrets.GCP_WIF_PROVIDER }}'
+          service_account: '${{ secrets.GCP_WIF_SERVICE_ACCOUNT }}'
+
+      - name: Delete Cloud Run Service
+        run: |
+          gcloud run services delete portal-backend-pr-${{ github.event.number }} \
+            --region ${{ env.GCP_REGION }} \
+            --quiet || echo "Service not found or already deleted"

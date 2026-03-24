@@ -1,7 +1,7 @@
 # Auth0 API (Resource Server)
 resource "auth0_resource_server" "portal_api" {
   name        = "Portal API"
-  identifier  = "https://api.dajohnston.co.uk"
+  identifier  = var.auth0_api_identifier
   signing_alg = "RS256"
 
   allow_offline_access                            = true
@@ -40,4 +40,20 @@ resource "auth0_client" "portal_frontend" {
   jwt_configuration {
     alg = "RS256"
   }
+}
+
+resource "auth0_client" "m2m_app" {
+  name        = "Portal M2M"
+  description = "A machine-to-machine app used to get tokens for integration tests"
+  app_type    = "non_interactive"
+
+  grant_types = [
+    "client_credentials"
+  ]
+}
+
+resource "auth0_client_grant" "m2m_app_grant" {
+  client_id = auth0_client.m2m_app.client_id
+  audience  = var.auth0_api_identifier
+  scopes    = []
 }

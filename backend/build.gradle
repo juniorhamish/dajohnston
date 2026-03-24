@@ -50,6 +50,7 @@ dependencies {
   testImplementation 'org.springframework.boot:spring-boot-starter-test'
   testImplementation 'org.springframework.boot:spring-boot-webmvc-test'
   testImplementation 'org.springframework.security:spring-security-test'
+  testImplementation 'io.rest-assured:rest-assured:6.0.0'
   testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
@@ -78,7 +79,29 @@ tasks.named("dependencyUpdates").configure {
 
 tasks.named('test') {
   useJUnitPlatform()
+  filter {
+    excludeTestsMatching("*IT")
+  }
   finalizedBy jacocoTestReport
+}
+
+tasks.register('integrationTest', Test) {
+  description = 'Runs integration tests.'
+  group = 'verification'
+  testClassesDirs = sourceSets.test.output.classesDirs
+  classpath = sourceSets.test.runtimeClasspath
+  shouldRunAfter test
+
+  useJUnitPlatform()
+  filter {
+    includeTestsMatching("*IT")
+  }
+  finalizedBy 'jacocoIntegrationTestReport'
+
+  environment "TEST_AUTH0_CLIENT_ID", System.getenv("TEST_AUTH0_CLIENT_ID")
+  environment "TEST_AUTH0_CLIENT_SECRET", System.getenv("TEST_AUTH0_CLIENT_SECRET")
+  environment "TEST_AUTH0_AUDIENCE", System.getenv("TEST_AUTH0_AUDIENCE")
+  environment "TEST_AUTH0_TOKEN_URL", System.getenv("TEST_AUTH0_TOKEN_URL")
 }
 
 jacocoTestReport {
@@ -86,6 +109,25 @@ jacocoTestReport {
   reports {
     xml.required = true
   }
+}
+
+tasks.register('jacocoIntegrationTestReport', JacocoReport) {
+  dependsOn tasks.named('integrationTest')
+  executionData tasks.named('integrationTest').get()
+
+  sourceDirectories.from = sourceSets.main.allSource.srcDirs
+  classDirectories.from = sourceSets.main.output
+
+  reports {
+    html.required = true
+    html.outputLocation = project.layout.buildDirectory.dir("reports/jacoco/integrationTest/html")
+    xml.required = true
+    xml.outputLocation = project.layout.buildDirectory.file("reports/jacoco/integrationTest/jacocoIntegrationTestReport.xml")
+  }
+}
+
+check {
+  dependsOn test, integrationTest
 }
 
 tasks.named('bootJar') {
@@ -96,5 +138,10 @@ sonar {
   properties {
     property "sonar.projectKey", "juniorhamish_dajohnston_backend"
     property "sonar.organization", "juniorhamish"
+    property "sonar.coverage.jacoco.xmlReportPaths", fileTree(dir: projectDir, includes: [
+      "**/build/reports/jacoco/test/jacocoTestReport.xml",
+      "**/build/reports/jacoco/integrationTest/jacocoIntegrationTestReport.xml"
+    ])
+    property "sonar.coverage.exclusions", "src/main/java/uk.co.dajohnston.portal.PortalBackendApplication.java"
   }
 }

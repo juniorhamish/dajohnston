@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "biome check .",
     "format": "biome format . --write",
-    "test": "vitest run --coverage"
+    "test": "vitest run --coverage",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@auth0/nextjs-auth0": "^4.16.0",
@@ -22,6 +23,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.4.8",
+    "@playwright/test": "^1.58.2",
     "@tailwindcss/postcss": "^4.2.2",
     "@types/node": "^25.5.0",
     "@types/react": "^19.2.14",

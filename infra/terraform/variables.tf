@@ -37,6 +37,12 @@ variable "auth0_client_secret" {
   sensitive   = true
 }
 
+variable "auth0_api_identifier" {
+  description = "The API identifier for the JWT audience"
+  type        = string
+  default     = "https://api.dajohnston.co.uk"
+}
+
 variable "neon_api_key" {
   description = "The API key for Neon"
   type        = string
