@@ -15,7 +15,8 @@ import org.springframework.test.web.servlet.MockMvc;
 @SpringBootTest(
     properties = {
       "spring.flyway.enabled=false",
-      "spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect"
+      "spring.datasource.url=jdbc:h2:mem:testdb",
+      "spring.jpa.hibernate.ddl-auto=none"
     })
 @AutoConfigureMockMvc
 class ActuatorInfoTest {
