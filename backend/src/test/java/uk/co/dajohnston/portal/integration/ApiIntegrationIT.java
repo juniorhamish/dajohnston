@@ -4,6 +4,8 @@ import static io.restassured.RestAssured.given;
 import static io.restassured.http.ContentType.JSON;
 import static org.hamcrest.Matchers.equalTo;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
+import static uk.co.dajohnston.portal.integration.IntegrationTestHelper.authenticated;
+import static uk.co.dajohnston.portal.integration.IntegrationTestHelper.requestToken;
 
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,7 +16,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("integration")
-class ApiIntegrationIT extends IntegrationTestBase {
+class ApiIntegrationIT {
 
   @LocalServerPort private int port;
 

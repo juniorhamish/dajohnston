@@ -4,8 +4,10 @@ import static io.restassured.RestAssured.given;
 
 import io.restassured.specification.RequestSpecification;
 import java.util.Map;
+import lombok.experimental.UtilityClass;
 
-public abstract class IntegrationTestBase {
+@UtilityClass
+public class IntegrationTestHelper {
 
   private static String getAccessToken() {
     return requestToken(
@@ -14,7 +16,7 @@ public abstract class IntegrationTestBase {
         System.getenv("TEST_AUTH0_AUDIENCE"));
   }
 
-  protected static String requestToken(String clientId, String clientSecret, String audience) {
+  public static String requestToken(String clientId, String clientSecret, String audience) {
     Map<String, String> body =
         Map.of(
             "client_id",
@@ -33,7 +35,7 @@ public abstract class IntegrationTestBase {
         .path("access_token");
   }
 
-  protected RequestSpecification authenticated() {
+  public static RequestSpecification authenticated() {
     return given().header("Authorization", "Bearer %s".formatted(getAccessToken()));
   }
 }
