@@ -20,7 +20,7 @@ COPY src src
 
 # Build the application
 ARG VERSION=0.0.1-SNAPSHOT
-RUN ./gradlew build -x test -Pversion=${VERSION} --no-daemon
+RUN ./gradlew build -x check -Pversion=${VERSION} --no-daemon
 
 # Run stage
 FROM amazoncorretto:26
