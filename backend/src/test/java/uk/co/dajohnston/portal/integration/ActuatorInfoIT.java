@@ -9,10 +9,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
-@AutoConfigureMockMvc
+@ActiveProfiles("integration")
 class ActuatorInfoIT {
 
   @LocalServerPort private int port;
