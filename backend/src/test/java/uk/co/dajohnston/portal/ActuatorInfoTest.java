@@ -14,8 +14,8 @@ import org.springframework.test.web.servlet.MockMvc;
 
 @SpringBootTest(
     properties = {
-      "spring.flyway.enabled=false",
-      "spring.datasource.url=jdbc:h2:mem:testdb",
+      "spring.flyway.locations=classpath:db/migration/h2",
+      "spring.datasource.url=jdbc:h2:mem:testdb;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH",
       "spring.jpa.hibernate.ddl-auto=none"
     })
 @AutoConfigureMockMvc

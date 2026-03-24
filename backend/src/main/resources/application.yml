@@ -18,7 +18,7 @@ spring:
         show_sql: false
   flyway:
     enabled: true
-    locations: classpath:db/migration
+    locations: classpath:db/migration/postgresql
   security:
     oauth2:
       resourceserver:
