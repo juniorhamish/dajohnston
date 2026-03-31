@@ -61,6 +61,13 @@ jobs:
       - name: Build Frontend
         working-directory: frontend
         run: npm run build
+      - name: Lighthouse CI
+        working-directory: frontend
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+        run: |
+          npm install -g @lhci/cli@0.15.1
+          lhci autorun
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v6
         with:
