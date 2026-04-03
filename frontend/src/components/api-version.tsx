@@ -1,8 +1,8 @@
+import { apiFetch } from "@/lib/api";
+
 export async function ApiVersion() {
-  const rawApiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
-  const apiUrl = rawApiUrl.replace(/\/$/, "");
   try {
-    const res = await fetch(`${apiUrl}/actuator/info`, {
+    const res = await apiFetch("/actuator/info", {
       next: { revalidate: 60 },
     });
     if (!res.ok) {
