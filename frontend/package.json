@@ -10,6 +10,11 @@
     "format": "biome format . --write",
     "test": "vitest run --coverage"
   },
+  "browserslist": [
+    "last 2 versions",
+    "not dead",
+    "not ie 11"
+  ],
   "dependencies": {
     "@auth0/nextjs-auth0": "^4.16.0",
     "clsx": "^2.1.1",
