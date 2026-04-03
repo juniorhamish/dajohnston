@@ -37,7 +37,7 @@ class UserControllerTest {
 
   @Test
   void getCurrentUser_userExists_returnsUser() throws Exception {
-    UUID userId = UUID.randomUUID();
+    UUID userId = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
     User user =
         User.builder()
             .id(userId)
@@ -60,7 +60,7 @@ class UserControllerTest {
 
   @Test
   void getCurrentUser_userDoesNotExist_createsAndReturnsUser() throws Exception {
-    UUID userId = UUID.randomUUID();
+    UUID userId = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
     User user =
         User.builder()
             .id(userId)
@@ -93,8 +93,8 @@ class UserControllerTest {
 
   @Test
   void getCurrentUser_withHouseholds_returnsHouseholds() throws Exception {
-    UUID userId = UUID.randomUUID();
-    UUID householdId = UUID.randomUUID();
+    UUID userId = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
+    UUID householdId = UUID.fromString("456e4567-e89b-12d3-a456-426614174000");
     User user = User.builder().id(userId).auth0Id("auth0|123").build();
     Household household = Household.builder().id(householdId).name("Test Household").build();
     HouseholdMember membership =
