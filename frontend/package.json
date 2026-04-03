@@ -11,9 +11,7 @@
     "test": "vitest run --coverage"
   },
   "browserslist": [
-    "last 2 versions",
-    "not dead",
-    "not ie 11"
+    "baseline 2026"
   ],
   "dependencies": {
     "@auth0/nextjs-auth0": "^4.16.0",
