@@ -1,5 +1,8 @@
+export const dynamic = "force-dynamic";
+
 import { ApiVersion } from "@/components/api-version";
 import { AuthButtons } from "@/components/auth-buttons";
+import { UserProfile } from "@/components/user-profile";
 
 export default async function Home() {
   return (
@@ -7,11 +10,12 @@ export default async function Home() {
       <header className="row-start-1 w-full flex justify-end p-4">
         <AuthButtons />
       </header>
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
+      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start w-full max-w-2xl">
         <h1 className="text-4xl font-bold">Multi-App Portal</h1>
         <p className="text-lg text-center sm:text-left">
           Welcome to your centralized hub for sub-applications.
         </p>
+        <UserProfile />
       </main>
       <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
         <p>&copy; {new Date().getFullYear()} uk.co.dajohnston</p>

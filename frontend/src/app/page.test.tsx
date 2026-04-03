@@ -14,6 +14,12 @@ vi.mock("@/components/auth-buttons", () => ({
   )),
 }));
 
+vi.mock("@/components/user-profile", () => ({
+  UserProfile: vi.fn(() => (
+    <div data-testid="user-profile">Mocked User Profile</div>
+  )),
+}));
+
 describe("Home Page", () => {
   it("should render the home page with mocked subcomponents", async () => {
     const component = await Home();
@@ -25,5 +31,6 @@ describe("Home Page", () => {
     ).toBeInTheDocument();
     expect(screen.getByTestId("api-version")).toBeInTheDocument();
     expect(screen.getByTestId("auth-buttons")).toBeInTheDocument();
+    expect(screen.getByTestId("user-profile")).toBeInTheDocument();
   });
 });

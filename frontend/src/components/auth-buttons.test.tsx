@@ -1,7 +1,7 @@
-import type { SessionData } from "@auth0/nextjs-auth0/types";
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { auth0 } from "@/lib/auth0";
+import { mockSession } from "@/lib/test-utils";
 import { AuthButtons } from "./auth-buttons";
 
 vi.mock("@/lib/auth0", () => ({
@@ -23,9 +23,11 @@ describe("AuthButtons", () => {
   });
 
   it("should render Welcome message and Logout button when user is logged in", async () => {
-    vi.mocked(auth0.getSession).mockResolvedValue({
-      user: { name: "John Doe" },
-    } as SessionData);
+    vi.mocked(auth0.getSession).mockResolvedValue(
+      mockSession({
+        user: { name: "John Doe" },
+      }),
+    );
 
     const component = await AuthButtons();
     render(component);

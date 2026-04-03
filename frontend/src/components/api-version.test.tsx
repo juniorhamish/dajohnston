@@ -2,10 +2,17 @@ import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ApiVersion } from "./api-version";
 
+vi.mock("@/lib/auth0", () => ({
+  auth0: {
+    getSession: vi.fn().mockResolvedValue(null),
+  },
+}));
+
 describe("ApiVersion", () => {
   beforeEach(() => {
     vi.stubGlobal("fetch", vi.fn());
     vi.stubGlobal("console", { ...console, error: vi.fn() });
+    vi.clearAllMocks();
   });
 
   it("should render the API version when the fetch is successful", async () => {
