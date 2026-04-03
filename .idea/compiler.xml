@@ -23,9 +23,6 @@
       <module name="portal-backend.portal" options="-parameters" />
       <module name="portal-backend.portal.main" options="-parameters" />
       <module name="portal-backend.portal.test" options="-parameters" />
-      <module name="portal-backend.shared-security" options="-parameters" />
-      <module name="portal-backend.shared-security.main" options="-parameters" />
-      <module name="portal-backend.shared-security.test" options="-parameters" />
     </option>
   </component>
 </project>

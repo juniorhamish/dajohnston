@@ -88,6 +88,8 @@ tasks.register('integrationTest', Test) {
 
 jacocoTestReport {
   dependsOn test
+  sourceDirectories.from = files(sourceSets.main.allSource.srcDirs, project(':shared-security').sourceSets.main.allSource.srcDirs)
+  classDirectories.from = files(sourceSets.main.output, project(':shared-security').sourceSets.main.output)
   reports {
     xml.required = true
   }
@@ -97,8 +99,8 @@ tasks.register('jacocoIntegrationTestReport', JacocoReport) {
   dependsOn tasks.named('integrationTest')
   executionData tasks.named('integrationTest').get()
 
-  sourceDirectories.from = sourceSets.main.allSource.srcDirs
-  classDirectories.from = sourceSets.main.output
+  sourceDirectories.from = files(sourceSets.main.allSource.srcDirs, project(':shared-security').sourceSets.main.allSource.srcDirs)
+  classDirectories.from = files(sourceSets.main.output, project(':shared-security').sourceSets.main.output)
 
   reports {
     html.required = true
