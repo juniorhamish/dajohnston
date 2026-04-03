@@ -10,6 +10,8 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$/backend" />
+            <option value="$PROJECT_DIR$/backend/portal" />
+            <option value="$PROJECT_DIR$/backend/shared-security" />
           </set>
         </option>
       </GradleProjectSettings>

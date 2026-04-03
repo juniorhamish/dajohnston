@@ -30,7 +30,7 @@ class ActuatorInfoIT {
         .then()
         .statusCode(200)
         .body("build.version", equalTo("0.0.1-SNAPSHOT"))
-        .body("build.artifact", equalTo("portal-backend"));
+        .body("build.artifact", equalTo("portal"));
   }
 
   @Test

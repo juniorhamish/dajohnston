@@ -1,4 +1,4 @@
-package uk.co.dajohnston.portal.config;
+package uk.co.dajohnston.security.config;
 
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;

@@ -11,8 +11,8 @@ import org.springframework.context.annotation.Import;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import uk.co.dajohnston.portal.config.SecurityConfig;
 import uk.co.dajohnston.portal.controller.ProtectedController;
+import uk.co.dajohnston.security.config.SecurityConfig;
 
 @WebMvcTest({ProtectedController.class})
 @Import(SecurityConfig.class)

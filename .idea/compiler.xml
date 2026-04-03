@@ -2,13 +2,15 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
       <profile name="Gradle Imported" enabled="true">
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="false">
           <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.44/503fd0b002dbb237fa4656cf4b8021666a8aebac/lombok-1.18.44.jar" />
         </processorPath>
-        <module name="portal-backend.test" />
-        <module name="portal-backend.main" />
+        <module name="portal-backend.portal.test" />
+        <module name="portal-backend.portal.main" />
+        <module name="portal-backend.shared-security.main" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -18,9 +20,12 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="portal-backend" options="-parameters" />
-      <module name="portal-backend.main" options="-parameters" />
-      <module name="portal-backend.test" options="-parameters" />
+      <module name="portal-backend.portal" options="-parameters" />
+      <module name="portal-backend.portal.main" options="-parameters" />
+      <module name="portal-backend.portal.test" options="-parameters" />
+      <module name="portal-backend.shared-security" options="-parameters" />
+      <module name="portal-backend.shared-security.main" options="-parameters" />
+      <module name="portal-backend.shared-security.test" options="-parameters" />
     </option>
   </component>
 </project>
