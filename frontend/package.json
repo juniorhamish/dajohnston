@@ -10,6 +10,9 @@
     "format": "biome format . --write",
     "test": "vitest run --coverage"
   },
+  "browserslist": [
+    "baseline 2026"
+  ],
   "dependencies": {
     "@auth0/nextjs-auth0": "^4.16.0",
     "clsx": "^2.1.1",
