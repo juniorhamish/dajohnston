@@ -11,13 +11,13 @@ vi.mock("@/lib/auth0", () => ({
 }));
 
 // Mock global fetch
-global.fetch = vi.fn();
+globalThis.fetch = vi.fn();
 const originalApiUrl = process.env.NEXT_PUBLIC_API_URL;
 
 describe("UserProfile", () => {
   beforeEach(() => {
     vi.clearAllMocks(); // Clear mocks before each test
-    process.env.NEXT_PUBLIC_API_URL = "http://test-backend.local";
+    process.env.NEXT_PUBLIC_API_URL = "https://test-backend.local";
   });
   afterEach(() => {
     cleanup();
@@ -130,7 +130,7 @@ describe("UserProfile", () => {
   });
 
   it("should use the environment variable NEXT_PUBLIC_API_URL when set", async () => {
-    const customUrl = "http://custom-backend.local";
+    const customUrl = "https://custom-backend.local";
     process.env.NEXT_PUBLIC_API_URL = customUrl;
 
     vi.mocked(auth0.getSession).mockResolvedValue(
