@@ -1,1 +1,3 @@
 rootProject.name = 'portal-backend'
+include 'portal'
+include 'shared-security'

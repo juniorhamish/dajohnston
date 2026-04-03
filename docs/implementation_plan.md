@@ -57,7 +57,7 @@ follows a phased approach to build a solid foundation before adding individual s
 
 | Task ID | Task Description                    | Success Criteria                                                              |
 |:--------|:------------------------------------|:------------------------------------------------------------------------------|
-| **4.1** | Shared Security Library (Backend)   | Extract authentication/authorization logic into a reusable shared module.     |
+| **4.1** | Shared Security Library (Backend)   | Extract authentication/authorization logic into a reusable shared module. [✓] |
 | **4.2** | User Profile Integration (Frontend) | Integrate Auth0 user profile into the UI and handle household/tenant mapping. |
 | **4.3** | User/Household Management API       | Endpoints to create/join a household and manage profile.                      |
 | **4.4** | Multi-Tenancy (RLS) Implementation  | PostgreSQL Row-Level Security policies active for `household_id`.             |

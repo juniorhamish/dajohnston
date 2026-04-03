@@ -10,21 +10,24 @@ COPY gradle gradle
 COPY build.gradle .
 COPY settings.gradle .
 COPY gradle.properties .
+COPY portal/build.gradle portal/
+COPY shared-security/build.gradle shared-security/
 
 # Build only dependencies to cache them in a separate layer
 # This helps when only source code changes
-RUN ./gradlew dependencies --no-daemon
+RUN ./gradlew :portal:dependencies --no-daemon
 
 # Copy source code
-COPY src src
+COPY portal/src portal/src
+COPY shared-security/src shared-security/src
 
 # Build the application
 ARG VERSION=0.0.1-SNAPSHOT
-RUN ./gradlew build -x check -Pversion=${VERSION} --no-daemon
+RUN ./gradlew :portal:build -x check -Pversion=${VERSION} --no-daemon
 
 # Run stage
 FROM amazoncorretto:26
 WORKDIR /app
-COPY --from=build /app/build/libs/app.jar app.jar
+COPY --from=build /app/portal/build/libs/app.jar app.jar
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]

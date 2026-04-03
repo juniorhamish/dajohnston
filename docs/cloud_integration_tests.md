@@ -37,14 +37,14 @@ The backend integration tests use **RestAssured** for API validation and **JSON 
 for structural integrity.
 
 - **Test Suite:** `ApiIntegrationIT.java`
-- **Location:** `backend/src/test/java/uk/co/dajohnston/portal/integration/`
+- **Location:** `backend/portal/src/test/java/uk/co/dajohnston/portal/integration/`
 - **Execution:**
   ```bash
   cd backend
   ./gradlew integrationTest -Dit.base-url=https://your-ephemeral-url.a.run.app -Dit.auth-token=your-test-token
   ```
 - **Validation:** Structural validation is performed using schemas in
-  `backend/src/test/resources/schemas/`.
+  `backend/portal/src/test/resources/schemas/`.
 
 ##### Frontend (Playwright)
 

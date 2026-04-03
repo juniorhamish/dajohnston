@@ -67,7 +67,7 @@ class ApiIntegrationIT {
         .get("/actuator/info")
         .then()
         .statusCode(200)
-        .body("build.artifact", equalTo("portal-backend"));
+        .body("build.artifact", equalTo("portal"));
   }
 
   @Test

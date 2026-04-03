@@ -1,4 +1,4 @@
-package uk.co.dajohnston.portal.config;
+package uk.co.dajohnston.security.config;
 
 import org.springframework.security.oauth2.core.OAuth2Error;
 import org.springframework.security.oauth2.core.OAuth2TokenValidator;
