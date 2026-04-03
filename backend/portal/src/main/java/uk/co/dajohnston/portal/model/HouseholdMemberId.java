@@ -14,7 +14,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class HouseholdMemberId implements Serializable {
-  @Serial private static final long serialVersionUID = 1L;
+
+  @Serial private static final long serialVersionUID = -8942978569078153440L;
 
   @Column(name = "household_id")
   private UUID householdId;
