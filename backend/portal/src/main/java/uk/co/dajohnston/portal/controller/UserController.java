@@ -3,7 +3,7 @@ package uk.co.dajohnston.portal.controller;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.oauth2.jwt.Jwt;
+import org.springframework.security.oauth2.jwt.JwtClaimAccessor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,7 +21,7 @@ public class UserController {
   private final HouseholdMemberRepository householdMemberRepository;
 
   @GetMapping("/me")
-  public UserProfileResponse getCurrentUser(@AuthenticationPrincipal Jwt jwt) {
+  public UserProfileResponse getCurrentUser(@AuthenticationPrincipal JwtClaimAccessor jwt) {
     String auth0Id = jwt.getSubject();
 
     // Auto-create user if not found
