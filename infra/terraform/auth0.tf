@@ -20,7 +20,8 @@ resource "auth0_client" "portal_frontend" {
   callbacks = [
     "http://localhost:3000/auth/callback",
     "https://portal.dajohnston.co.uk/auth/callback",
-    "https://dajohnston-portal.vercel.app/auth/callback"
+    "https://dajohnston-portal.vercel.app/auth/callback",
+    "https://oauth.pstmn.io/v1/callback"
   ]
 
   allowed_logout_urls = [
@@ -40,6 +41,14 @@ resource "auth0_client" "portal_frontend" {
   jwt_configuration {
     alg = "RS256"
   }
+
+  grant_types = [
+    "authorization_code",
+    "implicit",
+    "refresh_token",
+    "client_credentials",
+    "password"
+  ]
 }
 
 resource "auth0_client" "m2m_app" {

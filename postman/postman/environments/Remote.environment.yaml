@@ -1,5 +1,0 @@
-name: Remote
-values:
-  - key: base_url
-    value: 'https://portal-backend-983811762786.europe-west1.run.app'
-    enabled: true

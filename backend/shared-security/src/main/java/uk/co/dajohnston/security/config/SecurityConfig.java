@@ -1,7 +1,5 @@
 package uk.co.dajohnston.security.config;
 
-import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
-import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,11 +16,6 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
-@SecurityScheme(
-    name = "bearerAuth",
-    type = SecuritySchemeType.HTTP,
-    bearerFormat = "JWT",
-    scheme = "bearer")
 public class SecurityConfig {
 
   @Value("${spring.security.oauth2.resourceserver.jwt.audience}")
@@ -35,10 +28,9 @@ public class SecurityConfig {
   public SecurityFilterChain filterChain(HttpSecurity http) {
     http.authorizeHttpRequests(
             auth ->
-                auth.requestMatchers(
-                        "/actuator/**", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html")
+                auth.requestMatchers("/actuator/**")
                     .permitAll()
-                    .requestMatchers("/api/protected")
+                    .requestMatchers("/api/users/me")
                     .authenticated()
                     .anyRequest()
                     .authenticated())

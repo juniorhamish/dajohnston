@@ -26,7 +26,13 @@ public class IntegrationTestHelper {
             "audience",
             audience,
             "grant_type",
-            "client_credentials");
+            "password",
+            "username",
+            System.getenv("TEST_AUTH0_USERNAME"),
+            "password",
+            System.getenv("TEST_AUTH0_PASSWORD"),
+            "scope",
+            "openid profile email");
     return given()
         .port(443)
         .contentType("application/json")
