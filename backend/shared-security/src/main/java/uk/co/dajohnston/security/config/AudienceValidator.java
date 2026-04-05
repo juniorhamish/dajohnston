@@ -6,6 +6,10 @@ import org.springframework.security.oauth2.core.OAuth2TokenValidatorResult;
 import org.springframework.security.oauth2.jwt.Jwt;
 
 class AudienceValidator implements OAuth2TokenValidator<Jwt> {
+
+  private static final java.util.logging.Logger log =
+      java.util.logging.Logger.getLogger(AudienceValidator.class.getName());
+
   private final String audience;
 
   AudienceValidator(String audience) {
@@ -13,6 +17,7 @@ class AudienceValidator implements OAuth2TokenValidator<Jwt> {
   }
 
   public OAuth2TokenValidatorResult validate(Jwt jwt) {
+    log.info("Validating audience %s".formatted(jwt.getTokenValue()));
     if (jwt.getAudience().contains(audience)) {
       return OAuth2TokenValidatorResult.success();
     }
