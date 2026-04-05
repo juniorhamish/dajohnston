@@ -5,8 +5,10 @@ import static io.restassured.RestAssured.given;
 import io.restassured.specification.RequestSpecification;
 import java.util.Map;
 import lombok.experimental.UtilityClass;
+import lombok.extern.java.Log;
 
 @UtilityClass
+@Log
 public class IntegrationTestHelper {
 
   private static String getAccessToken() {
@@ -43,7 +45,7 @@ public class IntegrationTestHelper {
 
   public static RequestSpecification authenticated() {
     String accessToken = getAccessToken();
-    System.out.println(accessToken);
+    log.info(accessToken);
     return given().header("Authorization", "Bearer %s".formatted(accessToken));
   }
 }
