@@ -9,16 +9,17 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.boot.testcontainers.service.connection.ServiceConnection;
 import org.springframework.test.context.ActiveProfiles;
 import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 @ActiveProfiles("integration")
-@Testcontainers
 abstract class AbstractIntegrationTest {
 
-  @Container @ServiceConnection
-  static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:17-alpine");
+  @ServiceConnection static PostgreSQLContainer<?> postgres;
+
+  static {
+    postgres = new PostgreSQLContainer<>("postgres:17-alpine");
+    postgres.start();
+  }
 
   @LocalServerPort private int port;
 
