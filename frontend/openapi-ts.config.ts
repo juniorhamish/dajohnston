@@ -1,7 +1,9 @@
-import {defineConfig} from '@hey-api/openapi-ts';
+import { defineConfig } from "@hey-api/openapi-ts";
 
 export default defineConfig({
-  input: '../api/v1/portal.yaml',
-  output: './src/generated',
-  client: 'fetch',
+  input: "../api/v1/portal.yaml",
+  output: {
+    path: "src/generated",
+    postProcess: ["biome:format"],
+  },
 });

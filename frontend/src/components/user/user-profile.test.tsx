@@ -1,8 +1,8 @@
-import {cleanup, render, screen} from "@testing-library/react";
-import {afterEach, beforeEach, describe, expect, it, vi} from "vitest";
-import {auth0} from "@/lib/auth0";
-import {mockSession} from "@/lib/test-utils";
-import {UserProfile} from "./userEntity-profile";
+import { cleanup, render, screen } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { auth0 } from "@/lib/auth0";
+import { mockSession } from "@/lib/test-utils";
+import { UserProfile } from "./user-profile";
 
 vi.mock("@/lib/auth0", () => ({
   auth0: {
@@ -31,21 +31,21 @@ describe("UserProfile", () => {
     expect(component).toBeNull();
   });
 
-  it("should render userEntity info and householdEntity info when session exists", async () => {
+  it("should render user info and householdEntity info when session exists", async () => {
     vi.mocked(auth0.getSession).mockResolvedValue(
-        mockSession({
-          userEntity: {
-            name: "John Doe",
-            email: "john@example.com",
-          },
-        }),
+      mockSession({
+        user: {
+          name: "John Doe",
+          email: "john@example.com",
+        },
+      }),
     );
 
     vi.mocked(fetch).mockResolvedValueOnce({
       ok: true,
       json: async () => ({
-        id: "userEntity-uuid",
-        households: [{id: "h1", name: "My House", role: "Owner"}],
+        id: "user-uuid",
+        households: [{ id: "h1", name: "My House", role: "Owner" }],
       }),
     } as Response);
 
@@ -57,10 +57,10 @@ describe("UserProfile", () => {
     expect(screen.getByText("john@example.com")).toBeInTheDocument();
     expect(screen.getByText("My House")).toBeInTheDocument();
     expect(screen.getByText(/Owner/i)).toBeInTheDocument();
-    expect(screen.getByText(/ID: userEntity-uuid/)).toBeInTheDocument();
+    expect(screen.getByText(/ID: user-uuid/)).toBeInTheDocument();
   });
 
-  it("should show 'No householdEntity assigned' when userEntity has no households", async () => {
+  it("should show 'No household assigned' when user has no households", async () => {
     vi.mocked(auth0.getSession).mockResolvedValue(mockSession());
 
     vi.mocked(fetch).mockResolvedValue({
@@ -75,30 +75,31 @@ describe("UserProfile", () => {
     render(component);
 
     expect.assertions(1); // Ensures the assertion is reached
-    expect(screen.getByText(/No householdEntity assigned/i)).toBeInTheDocument();
+    expect(
+      screen.getByText(/No householdEntity assigned/i),
+    ).toBeInTheDocument();
   });
 
   it("should log an error and handle fetch failure", async () => {
     vi.mocked(auth0.getSession).mockResolvedValue(
-        mockSession({
-          userEntity: {
-            name: "Error User",
-          },
-        }),
+      mockSession({
+        user: {
+          name: "Error User",
+        },
+      }),
     );
 
     const error = new Error("Network error");
     vi.mocked(fetch).mockRejectedValue(error);
-    const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {
-    });
+    const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
     expect.assertions(3);
 
     const component = await UserProfile();
     render(component);
 
     expect(consoleSpy).toHaveBeenCalledWith(
-        "Failed to fetch userEntity mapping:",
-        error,
+      "Failed to fetch user mapping:",
+      error,
     );
     expect(screen.getByText("Error User")).toBeInTheDocument();
     expect(screen.queryByText(/ID:/)).not.toBeInTheDocument();
@@ -106,13 +107,13 @@ describe("UserProfile", () => {
     consoleSpy.mockRestore();
   });
 
-  it("should show default alt text for image when userEntity.name is undefined", async () => {
+  it("should show default alt text for image when user.name is undefined", async () => {
     vi.mocked(auth0.getSession).mockResolvedValue(
-        mockSession({
-          userEntity: {
-            name: undefined,
-          },
-        }),
+      mockSession({
+        user: {
+          name: undefined,
+        },
+      }),
     );
 
     vi.mocked(fetch).mockResolvedValue({
@@ -135,23 +136,23 @@ describe("UserProfile", () => {
     process.env.NEXT_PUBLIC_API_URL = customUrl;
 
     vi.mocked(auth0.getSession).mockResolvedValue(
-        mockSession({
-          tokenSet: {accessToken: "test-token"},
-        }),
+      mockSession({
+        tokenSet: { accessToken: "test-token" },
+      }),
     );
 
     vi.mocked(fetch).mockResolvedValue({
       ok: true,
-      json: async () => ({id: "id", households: []}),
+      json: async () => ({ id: "id", households: [] }),
     } as Response);
 
     await UserProfile();
 
     expect(fetch).toHaveBeenCalledWith(
-        `${customUrl}/api/users/me`,
-        expect.objectContaining({
-          headers: expect.any(Headers),
-        }),
+      `${customUrl}/api/users/me`,
+      expect.objectContaining({
+        headers: expect.any(Headers),
+      }),
     );
 
     const callHeaders = vi.mocked(fetch).mock.calls[0][1]?.headers as Headers;
@@ -162,23 +163,23 @@ describe("UserProfile", () => {
     delete process.env.NEXT_PUBLIC_API_URL;
 
     vi.mocked(auth0.getSession).mockResolvedValue(
-        mockSession({
-          tokenSet: {accessToken: "test-token"},
-        }),
+      mockSession({
+        tokenSet: { accessToken: "test-token" },
+      }),
     );
 
     vi.mocked(fetch).mockResolvedValue({
       ok: true,
-      json: async () => ({id: "id", households: []}),
+      json: async () => ({ id: "id", households: [] }),
     } as Response);
 
     await UserProfile();
 
     expect(fetch).toHaveBeenCalledWith(
-        "http://localhost:8080/api/users/me",
-        expect.objectContaining({
-          headers: expect.any(Headers),
-        }),
+      "http://localhost:8080/api/users/me",
+      expect.objectContaining({
+        headers: expect.any(Headers),
+      }),
     );
 
     const callHeaders = vi.mocked(fetch).mock.calls[0][1]?.headers as Headers;
