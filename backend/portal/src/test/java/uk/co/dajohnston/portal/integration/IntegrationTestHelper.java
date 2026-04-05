@@ -42,6 +42,8 @@ public class IntegrationTestHelper {
   }
 
   public static RequestSpecification authenticated() {
-    return given().header("Authorization", "Bearer %s".formatted(getAccessToken()));
+    String accessToken = getAccessToken();
+    System.out.println(accessToken);
+    return given().header("Authorization", "Bearer %s".formatted(accessToken));
   }
 }
