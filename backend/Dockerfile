@@ -3,23 +3,28 @@ FROM amazoncorretto:26 AS build
 RUN yum install -y findutils
 WORKDIR /app
 
+# Copy api directory
+COPY api api
+
 # Copy gradle files
-COPY gradlew .
+WORKDIR /app/backend
+COPY backend/gradlew .
 RUN chmod +x gradlew
-COPY gradle gradle
-COPY build.gradle .
-COPY settings.gradle .
-COPY gradle.properties .
-COPY portal/build.gradle portal/
-COPY shared-security/build.gradle shared-security/
+COPY backend/gradle gradle
+COPY backend/build.gradle .
+COPY backend/settings.gradle .
+COPY backend/gradle.properties .
+COPY backend/portal/build.gradle portal/
+COPY backend/shared-security/build.gradle shared-security/
 
 # Build only dependencies to cache them in a separate layer
 # This helps when only source code changes
 RUN ./gradlew :portal:dependencies --no-daemon
 
 # Copy source code
-COPY portal/src portal/src
-COPY shared-security/src shared-security/src
+COPY backend/portal/src portal/src
+COPY backend/portal/openapi-mapping.yaml portal
+COPY backend/shared-security/src shared-security/src
 
 # Build the application
 ARG VERSION=0.0.1-SNAPSHOT
@@ -28,6 +33,6 @@ RUN ./gradlew :portal:build -x check -Pversion=${VERSION} --no-daemon
 # Run stage
 FROM amazoncorretto:26
 WORKDIR /app
-COPY --from=build /app/portal/build/libs/app.jar app.jar
+COPY --from=build /app/backend/portal/build/libs/app.jar app.jar
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]
