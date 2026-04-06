@@ -29,11 +29,12 @@ Follow the Java naming conventions.
 
 ## 2. Code Layout
 
-- Use 4 spaces for indentation. Do not use tabs.
+- Use 2 spaces for indentation. Do not use tabs.
+- We use **google-java-format** to enforce a consistent coding style.
 - Consistent indentation is crucial for readability. Using spaces instead of tabs ensures that the
   code looks the same on all systems.
 - Keep lines of code under 120 characters.
-- When wrapping lines, break after a comma or an operator. Indent the new line with 8 spaces.
+- When wrapping lines, break after a comma or an operator. Indent the new line with 4 spaces.
 
 ## 3. Best Practices for Classes, Interfaces, and Enums
 
@@ -49,10 +50,10 @@ Follow the Java naming conventions.
   
   // Bad
   public class CustomerDTO {
-      private String name;
-      private String email;
+    private String name;
+    private String email;
 
-      // Getters and setters
+    // Getters and setters
   }
   ```
 
@@ -65,23 +66,23 @@ Follow the Java naming conventions.
   ```java
   // Good
   public final class Customer {
-      private final String name;
-      private final String email;
+    private final String name;
+    private final String email;
 
-      public Customer(String name, String email) {
-          this.name = name;
-          this.email = email;
-      }
+    public Customer(String name, String email) {
+      this.name = name;
+      this.email = email;
+    }
 
-      // Getters only
+    // Getters only
   }
 
   // Bad
   public class Customer {
-      private String name;
-      private String email;
+    private String name;
+    private String email;
 
-      // Getters and setters
+    // Getters and setters
   }
   ```
 
@@ -125,6 +126,29 @@ Follow the Java naming conventions.
   ```
 
 - **Explanation:** Enums are type-safe and provide more readable and maintainable code.
+
+### 3.5. Use Lombok for Boilerplate Reduction
+
+- **Guideline:** Use Lombok to reduce boilerplate code, especially for data holders, DTOs, and
+  constructor injection.
+
+- **Example:**
+
+  ```java
+  // Good
+  @Getter
+  @Setter
+  @Builder
+  @RequiredArgsConstructor
+  public class UserProfile {
+    private final UUID id;
+    private final String email;
+    private String displayName;
+  }
+  ```
+
+- **Explanation:** Lombok reduces noise in the codebase by generating common boilerplate like
+  getters, setters, builders, and constructors at compile time.
 
 ## 4. Exception Handling
 
@@ -713,6 +737,34 @@ log();
 
 * **Better tooling and analysis:** Structured logs and controlled log levels make it easier to
   filter noise, automate alerts, and visualize application behavior in real time.
+
+## 15. Security & Identity with Auth0
+
+* Use Auth0 for centralized identity management.
+* On the backend, integrate with Spring Security OAuth2 Resource Server for JWT validation.
+* On the frontend, use `@auth0/nextjs-auth0` for session management and authentication.
+
+**Explanation:**
+
+* Centralizing identity through Auth0 simplifies authentication across multiple sub-applications.
+* Spring Security provides robust, standardized support for securing REST APIs with OAuth2/JWT.
+
+## 16. Infrastructure & Code Quality Tooling
+
+* **Husky & lint-staged:** Automatically runs code quality checks (like Biome or Spotless) on
+  changed files before every `git commit`.
+* **Spotless:** Enforces Java formatting and import organization using `google-java-format`.
+
+**Explanation:**
+
+* Automating these checks locally prevents common formatting and linting issues from reaching the
+  repository, keeping the codebase clean and reducing CI/CD failures.
+
+## 17. Baseline Versions
+
+* **Java:** 26
+* **Spring Boot:** 4.0.5
+* **Next.js:** 16
 
 # Next.js 16 Project Guidelines
 
