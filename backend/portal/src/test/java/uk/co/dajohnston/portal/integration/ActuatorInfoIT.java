@@ -2,26 +2,10 @@ package uk.co.dajohnston.portal.integration;
 
 import static io.restassured.RestAssured.when;
 import static org.hamcrest.CoreMatchers.equalTo;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
-import io.restassured.RestAssured;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.test.context.ActiveProfiles;
 
-@SpringBootTest(webEnvironment = RANDOM_PORT)
-@ActiveProfiles("integration")
-class ActuatorInfoIT {
-
-  @LocalServerPort private int port;
-
-  @BeforeEach
-  void setup() {
-    RestAssured.baseURI = "http://localhost";
-    RestAssured.port = port;
-  }
+class ActuatorInfoIT extends AbstractIntegrationTest {
 
   @Test
   void actuatorInfo_returnsBuildInfo() {

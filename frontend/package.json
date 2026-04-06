@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "biome check .",
     "format": "biome format . --write",
+    "generate-api": "openapi-ts",
     "test": "vitest run --coverage"
   },
   "browserslist": [
@@ -25,6 +26,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.4.10",
+    "@hey-api/openapi-ts": "^0.95.0",
     "@tailwindcss/postcss": "^4.2.2",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",

@@ -1,0 +1,113 @@
+openapi: 3.1.1
+info:
+  title: Multi-App Portal API
+  version: 1.0.0
+  description: API for the Multi-App Portal hub.
+
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+
+paths:
+  /actuator/info:
+    get:
+      tags:
+        - Application
+      summary: Retrieve application information
+      operationId: getApplicationInfo
+      responses:
+        200:
+          description: Application information
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ActuatorInfo'
+  /api/users/me:
+    get:
+      tags:
+        - Users
+      summary: Get current user profile
+      description: Returns the profile of the currently authenticated user, auto-creating it if it doesn't exist.
+      operationId: getCurrentUser
+      responses:
+        '200':
+          description: Successfully retrieved user profile
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+        '401':
+          description: Unauthorized
+components:
+  securitySchemes:
+    oauth:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://dajohnston.eu.auth0.com/authorize
+          tokenUrl: https://dajohnston.eu.auth0.com/oauth/token
+          scopes:
+            openid: Grant audience to retrieve user profile
+            email: Include email address
+            offline_access: Grant access to refresh tokens
+  schemas:
+    ActuatorInfo:
+      type: object
+      properties:
+        build:
+          type: object
+          properties:
+            version:
+              type: string
+            artifact:
+              type: string
+            name:
+              type: string
+            group:
+              type: string
+          required:
+            - version
+            - artifact
+            - name
+            - group
+      required:
+        - build
+    UserProfile:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        auth0Id:
+          type: string
+        email:
+          type: string
+          format: email
+        displayName:
+          type: string
+        households:
+          type: array
+          items:
+            $ref: '#/components/schemas/Household'
+      required:
+        - id
+        - auth0Id
+        - email
+        - displayName
+        - households
+    Household:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        role:
+          type: string
+      required:
+        - id
+        - name
+        - role
+security:
+  - oauth: [ openid, email, offline_access ]

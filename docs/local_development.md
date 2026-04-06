@@ -140,14 +140,6 @@ stays in sync with the codebase.
 As we add new endpoints, the YAML files in the repository will be updated. If you are using the
 GitHub integration, you can pull the latest changes directly within Postman.
 
-##### C. Swagger UI
-
-When the backend is running, you can access the interactive API documentation (Swagger UI) at:
-
-* [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
-* The OpenAPI spec is available
-  at [http://localhost:8080/v3/api-docs](http://localhost:8080/v3/api-docs).
-
 #### 11. Manually Obtaining a JWT for API Testing
 
 The Postman collection is pre-configured to use **OAuth 2.0** at the collection level. This allows

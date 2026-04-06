@@ -2,6 +2,7 @@ plugins {
   id 'org.springframework.boot'
   id 'io.spring.dependency-management'
   id 'com.github.ben-manes.versions' version '0.53.0'
+  id 'io.openapiprocessor.openapi-processor' version '2026.1'
 }
 
 description = 'Multi-App Portal Backend'
@@ -23,19 +24,28 @@ dependencies {
   implementation 'org.springframework.boot:spring-boot-starter-web'
   implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
   implementation 'org.springframework.boot:spring-boot-starter-flyway'
+  implementation 'org.springframework.boot:spring-boot-starter-validation'
+  implementation 'org.zalando:logbook-spring-boot-starter:4.0.3'
+  implementation 'org.zalando:logbook-logstash:4.0.3'
+  implementation 'net.logstash.logback:logstash-logback-encoder:9.0'
   implementation project(':shared-security')
   runtimeOnly 'org.flywaydb:flyway-database-postgresql'
   runtimeOnly 'org.postgresql:postgresql'
   compileOnly 'org.projectlombok:lombok'
   annotationProcessor 'org.projectlombok:lombok'
+  implementation 'org.mapstruct:mapstruct:1.6.3'
+  annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.3'
+  annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
   testCompileOnly 'org.projectlombok:lombok'
   testAnnotationProcessor 'org.projectlombok:lombok'
   developmentOnly 'org.springframework.boot:spring-boot-devtools'
   testImplementation 'org.springframework.boot:spring-boot-starter-test'
+  testImplementation 'org.springframework.boot:spring-boot-testcontainers'
+  testImplementation 'org.testcontainers:postgresql:1.21.4'
+  testImplementation 'org.testcontainers:junit-jupiter:1.21.4'
   testImplementation 'org.springframework.boot:spring-boot-webmvc-test'
   testImplementation 'org.springframework.security:spring-security-test'
   testImplementation 'io.rest-assured:rest-assured:6.0.0'
-  testRuntimeOnly 'com.h2database:h2'
   testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
@@ -84,6 +94,8 @@ tasks.register('integrationTest', Test) {
   environment "TEST_AUTH0_CLIENT_SECRET", System.getenv("TEST_AUTH0_CLIENT_SECRET")
   environment "TEST_AUTH0_AUDIENCE", System.getenv("TEST_AUTH0_AUDIENCE")
   environment "TEST_AUTH0_TOKEN_URL", System.getenv("TEST_AUTH0_TOKEN_URL")
+  environment "TEST_AUTH0_USERNAME", System.getenv("TEST_AUTH0_USERNAME")
+  environment "TEST_AUTH0_PASSWORD", System.getenv("TEST_AUTH0_PASSWORD")
 }
 
 jacocoTestReport {
@@ -116,4 +128,29 @@ check {
 
 tasks.named('bootJar') {
   archiveFileName = 'app.jar'
+}
+
+openapiProcessor {
+  apiPath = layout.projectDirectory.file("../../api/v1/portal.yaml")
+  spring {
+    processor 'io.openapiprocessor:openapi-processor-spring:2026.2'
+    targetDir layout.buildDirectory.dir("openapi")
+    mapping layout.projectDirectory.file("./openapi-mapping.yaml")
+  }
+}
+compileJava {
+  options.compilerArgs += [
+    '-Amapstruct.suppressGeneratorTimestamp=true',
+    '-Amapstruct.suppressGeneratorVersionInfoComment=true',
+    '-Amapstruct.defaultComponentModel=spring'
+  ]
+}
+compileJava.dependsOn('processSpring')
+
+sourceSets {
+  main {
+    java {
+      srcDir layout.buildDirectory.dir("openapi")
+    }
+  }
 }

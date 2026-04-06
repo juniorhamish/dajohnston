@@ -3,28 +3,12 @@ package uk.co.dajohnston.portal.integration;
 import static io.restassured.RestAssured.given;
 import static io.restassured.http.ContentType.JSON;
 import static org.hamcrest.Matchers.equalTo;
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 import static uk.co.dajohnston.portal.integration.IntegrationTestHelper.authenticated;
 import static uk.co.dajohnston.portal.integration.IntegrationTestHelper.requestToken;
 
-import io.restassured.RestAssured;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.test.context.ActiveProfiles;
 
-@SpringBootTest(webEnvironment = RANDOM_PORT)
-@ActiveProfiles("integration")
-class ApiIntegrationIT {
-
-  @LocalServerPort private int port;
-
-  @BeforeEach
-  void setup() {
-    RestAssured.baseURI = "http://localhost";
-    RestAssured.port = port;
-  }
+class ApiIntegrationIT extends AbstractIntegrationTest {
 
   @Test
   void healthCheck_returnsUp() {
@@ -72,21 +56,16 @@ class ApiIntegrationIT {
 
   @Test
   void protectedEndpoint_withoutAuth_returnsUnauthorized() {
-    given().contentType(JSON).when().get("/api/protected").then().statusCode(401);
+    given().contentType(JSON).when().get("/api/users/me").then().statusCode(401);
   }
 
   @Test
   void protectedEndpoint_withAuth_returnsSuccess() {
-    authenticated()
-        .when()
-        .get("/api/protected")
-        .then()
-        .statusCode(200)
-        .body("message", equalTo("This is a protected endpoint"));
+    authenticated().when().get("/api/users/me").then().statusCode(200);
   }
 
   @Test
-  void missingAudience_returnsUnauthorized() {
+  void wrongAudience_returnsUnauthorized() {
     given()
         .header(
             "Authorization",
@@ -97,7 +76,7 @@ class ApiIntegrationIT {
                         System.getenv("TEST_AUTH0_CLIENT_SECRET"),
                         "https://spice-tracker-service.dajohnston.co.uk")))
         .when()
-        .get("/api/protected")
+        .get("/api/users/me")
         .then()
         .statusCode(401);
   }

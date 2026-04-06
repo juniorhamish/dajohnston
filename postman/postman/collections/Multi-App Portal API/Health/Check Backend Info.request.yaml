@@ -1,7 +1,0 @@
-$kind: http-request
-name: Check Backend Info
-url: "{{base_url}}/actuator/info"
-method: GET
-auth:
-  type: noauth
-order: 1001

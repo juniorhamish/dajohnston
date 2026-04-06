@@ -888,5 +888,7 @@ best practices.
 - Define APIs using OpenAPI 3.1.1 [specification](https://spec.openapis.org/oas/v3.1.1).
 - Share the same spec file between frontend and backend.
 - Autogenerate code from the spec file.
+    - Using [OpenAPI Processor](openapiprocessor.io) for Java and gradle,
+    - Using [Hey API](https://heyapi.dev/openapi-ts/clients/next-js) for Next.js.
 - Maintain separate files for each distinct API.
 - Include auth details in the spec file.
