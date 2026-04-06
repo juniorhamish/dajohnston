@@ -1,8 +1,6 @@
-export const dynamic = "force-dynamic";
-
 import { AuthButtons } from "@/components/auth/auth-buttons";
 import { ApiVersion } from "@/components/user/api-version";
-import { UserProfile } from "@/components/user/user-profile";
+import { UserProfileCard } from "@/components/user/user-profile";
 
 export default async function Home() {
   return (
@@ -15,7 +13,7 @@ export default async function Home() {
         <p className="text-lg text-center sm:text-left">
           Welcome to your centralized hub for sub-applications.
         </p>
-        <UserProfile />
+        <UserProfileCard />
       </main>
       <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
         <p>&copy; {new Date().getFullYear()} uk.co.dajohnston</p>

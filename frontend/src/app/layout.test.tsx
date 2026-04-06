@@ -1,4 +1,5 @@
 import { render, screen } from "@testing-library/react";
+import type { ReactNode } from "react";
 import { describe, expect, it, vi } from "vitest";
 import RootLayout from "./layout";
 
@@ -8,7 +9,7 @@ vi.mock("next/font/google", () => ({
 }));
 
 vi.mock("@auth0/nextjs-auth0/client", () => ({
-  Auth0Provider: ({ children }: { children: React.ReactNode }) => (
+  Auth0Provider: ({ children }: { children: ReactNode }) => (
     <div data-testid="auth0-provider">{children}</div>
   ),
 }));

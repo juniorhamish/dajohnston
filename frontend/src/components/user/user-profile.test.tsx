@@ -1,188 +1,107 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { getCurrentUser } from "@/generated";
 import { auth0 } from "@/lib/auth0";
-import { mockSession } from "@/lib/test-utils";
-import { UserProfile } from "./user-profile";
+import { mockPartial } from "@/lib/test-utils";
+import { UserProfileCard } from "./user-profile";
 
 vi.mock("@/lib/auth0", () => ({
   auth0: {
     getSession: vi.fn(),
   },
 }));
+vi.mock("@/generated/sdk.gen", () => ({
+  getCurrentUser: vi.fn(),
+}));
 
-// Mock global fetch
-globalThis.fetch = vi.fn();
-const originalApiUrl = process.env.NEXT_PUBLIC_API_URL;
-
-describe("UserProfile", () => {
+describe("UserProfileCard", () => {
   beforeEach(() => {
-    vi.clearAllMocks(); // Clear mocks before each test
-    process.env.NEXT_PUBLIC_API_URL = "https://test-backend.local";
+    vi.clearAllMocks();
+    vi.stubGlobal("console", { ...console, error: vi.fn() });
   });
   afterEach(() => {
     cleanup();
-    process.env.NEXT_PUBLIC_API_URL = originalApiUrl;
   });
   it("should return null when no session exists", async () => {
     vi.mocked(auth0.getSession).mockResolvedValue(null);
 
-    expect.assertions(1); // Ensures all assertions execute
-    const component = await UserProfile();
-    expect(component).toBeNull();
+    expect.assertions(1);
+    expect(await UserProfileCard()).toBeNull();
   });
+  it("should return null when session contains no user", async () => {
+    mockPartial(auth0.getSession).mockResolvedValue({});
 
+    expect.assertions(1);
+    expect(await UserProfileCard()).toBeNull();
+  });
   it("should render user info and householdEntity info when session exists", async () => {
-    vi.mocked(auth0.getSession).mockResolvedValue(
-      mockSession({
-        user: {
-          name: "John Doe",
-          email: "john@example.com",
-        },
-      }),
-    );
-
-    vi.mocked(fetch).mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({
+    mockPartial(auth0.getSession).mockResolvedValue({
+      user: {
+        name: "John Doe",
+        email: "john@example.com",
+      },
+    });
+    mockPartial(getCurrentUser).mockResolvedValue({
+      data: {
         id: "user-uuid",
+        auth0Id: "auth0-uuid",
         households: [{ id: "h1", name: "My House", role: "Owner" }],
-      }),
-    } as Response);
+      },
+    });
+
+    render(await UserProfileCard());
 
     expect.assertions(5); // Ensures all assertions execute
-    const component = await UserProfile();
-    render(component);
-
     expect(screen.getByText("John Doe")).toBeInTheDocument();
     expect(screen.getByText("john@example.com")).toBeInTheDocument();
     expect(screen.getByText("My House")).toBeInTheDocument();
     expect(screen.getByText(/Owner/i)).toBeInTheDocument();
     expect(screen.getByText(/ID: user-uuid/)).toBeInTheDocument();
   });
-
   it("should show 'No household assigned' when user has no households", async () => {
-    vi.mocked(auth0.getSession).mockResolvedValue(mockSession());
-
-    vi.mocked(fetch).mockResolvedValue({
-      ok: true,
-      json: async () => ({
-        id: "jane-uuid",
+    mockPartial(auth0.getSession).mockResolvedValue({ user: {} });
+    mockPartial(getCurrentUser).mockResolvedValue({
+      data: {
         households: [],
-      }),
-    } as Response);
+      },
+    });
 
-    const component = await UserProfile();
-    render(component);
+    render(await UserProfileCard());
 
-    expect.assertions(1); // Ensures the assertion is reached
-    expect(
-      screen.getByText(/No householdEntity assigned/i),
-    ).toBeInTheDocument();
+    expect.assertions(1);
+    expect(screen.getByText(/No household assigned/i)).toBeInTheDocument();
   });
-
   it("should log an error and handle fetch failure", async () => {
-    vi.mocked(auth0.getSession).mockResolvedValue(
-      mockSession({
-        user: {
-          name: "Error User",
-        },
-      }),
-    );
+    mockPartial(auth0.getSession).mockResolvedValue({
+      user: {
+        name: "Error User",
+      },
+    });
+    vi.mocked(getCurrentUser).mockRejectedValue(new Error("Network error"));
 
-    const error = new Error("Network error");
-    vi.mocked(fetch).mockRejectedValue(error);
-    const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    render(await UserProfileCard());
+
     expect.assertions(3);
-
-    const component = await UserProfile();
-    render(component);
-
-    expect(consoleSpy).toHaveBeenCalledWith(
+    expect(console.error).toHaveBeenCalledWith(
       "Failed to fetch user mapping:",
-      error,
+      new Error("Network error"),
     );
     expect(screen.getByText("Error User")).toBeInTheDocument();
     expect(screen.queryByText(/ID:/)).not.toBeInTheDocument();
-
-    consoleSpy.mockRestore();
   });
-
   it("should show default alt text for image when user.name is undefined", async () => {
-    vi.mocked(auth0.getSession).mockResolvedValue(
-      mockSession({
-        user: {
-          name: undefined,
-        },
-      }),
+    mockPartial(auth0.getSession).mockResolvedValue({
+      user: {
+        name: undefined,
+        picture: "https://example.com/avatar.jpg",
+      },
+    });
+
+    render(await UserProfileCard());
+
+    expect(screen.getByRole("img")).toHaveAttribute(
+      "alt",
+      "User Profile Picture",
     );
-
-    vi.mocked(fetch).mockResolvedValue({
-      ok: true,
-      json: async () => ({
-        id: "id",
-        households: [],
-      }),
-    } as Response);
-
-    const component = await UserProfile();
-    render(component);
-
-    const img = screen.getByRole("img");
-    expect(img).toHaveAttribute("alt", "User Profile Picture");
-  });
-
-  it("should use the environment variable NEXT_PUBLIC_API_URL when set", async () => {
-    const customUrl = "https://custom-backend.local";
-    process.env.NEXT_PUBLIC_API_URL = customUrl;
-
-    vi.mocked(auth0.getSession).mockResolvedValue(
-      mockSession({
-        tokenSet: { accessToken: "test-token" },
-      }),
-    );
-
-    vi.mocked(fetch).mockResolvedValue({
-      ok: true,
-      json: async () => ({ id: "id", households: [] }),
-    } as Response);
-
-    await UserProfile();
-
-    expect(fetch).toHaveBeenCalledWith(
-      `${customUrl}/api/users/me`,
-      expect.objectContaining({
-        headers: expect.any(Headers),
-      }),
-    );
-
-    const callHeaders = vi.mocked(fetch).mock.calls[0][1]?.headers as Headers;
-    expect(callHeaders.get("Authorization")).toBe("Bearer test-token");
-  });
-
-  it("should use the default backend URL when NEXT_PUBLIC_API_URL is not set", async () => {
-    delete process.env.NEXT_PUBLIC_API_URL;
-
-    vi.mocked(auth0.getSession).mockResolvedValue(
-      mockSession({
-        tokenSet: { accessToken: "test-token" },
-      }),
-    );
-
-    vi.mocked(fetch).mockResolvedValue({
-      ok: true,
-      json: async () => ({ id: "id", households: [] }),
-    } as Response);
-
-    await UserProfile();
-
-    expect(fetch).toHaveBeenCalledWith(
-      "http://localhost:8080/api/users/me",
-      expect.objectContaining({
-        headers: expect.any(Headers),
-      }),
-    );
-
-    const callHeaders = vi.mocked(fetch).mock.calls[0][1]?.headers as Headers;
-    expect(callHeaders.get("Authorization")).toBe("Bearer test-token");
   });
 });

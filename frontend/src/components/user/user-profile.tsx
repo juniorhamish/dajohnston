@@ -1,34 +1,18 @@
 import Image from "next/image";
-import { apiFetch } from "@/lib/api";
+import { getCurrentUser } from "@/generated";
 import { auth0 } from "@/lib/auth0";
 
-interface Household {
-  id: string;
-  name: string;
-  role: string;
-}
-
-interface UserMapping {
-  id: string;
-  households: Household[];
-}
-
-export async function UserProfile() {
+export async function UserProfileCard() {
   const session = await auth0.getSession();
   const user = session?.user;
 
   if (!user) {
     return null;
   }
-
-  let mapping: UserMapping | null = null;
-
-  try {
-    const response = await apiFetch("/api/users/me");
-    mapping = await response.json();
-  } catch (e) {
+  const { data: userProfile } = await getCurrentUser().catch((e) => {
     console.error("Failed to fetch user mapping:", e);
-  }
+    return { data: undefined };
+  });
 
   return (
     <div className="flex flex-col gap-6 p-8 bg-white rounded-xl shadow-lg border border-gray-100 w-full">
@@ -47,9 +31,9 @@ export async function UserProfile() {
             {user.name}
           </h2>
           <p className="text-gray-500 font-medium">{user.email}</p>
-          {mapping?.id && (
+          {userProfile?.id && (
             <p className="text-xs text-gray-400 mt-1 font-mono uppercase tracking-wider">
-              ID: {mapping?.id}
+              ID: {userProfile?.id}
             </p>
           )}
         </div>
@@ -60,9 +44,9 @@ export async function UserProfile() {
           Household & Tenant Mapping
         </h3>
 
-        {mapping?.households && mapping?.households.length > 0 ? (
+        {userProfile?.households && userProfile?.households.length > 0 ? (
           <div className="grid gap-3">
-            {mapping?.households.map((h) => (
+            {userProfile?.households.map((h) => (
               <div
                 key={h.id}
                 className="flex items-center justify-between bg-blue-50/50 px-4 py-3 rounded-lg border border-blue-100/50"

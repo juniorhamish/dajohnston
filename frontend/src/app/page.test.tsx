@@ -1,36 +1,44 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import Home from "./page";
 
-vi.mock("@/components/api-version", () => ({
+vi.mock("@/components/user/api-version", () => ({
   ApiVersion: vi.fn(() => (
     <div data-testid="api-version">Mocked API Version</div>
   )),
 }));
-
-vi.mock("@/components/auth-buttons", () => ({
+vi.mock("@/components/auth/auth-buttons", () => ({
   AuthButtons: vi.fn(() => (
     <div data-testid="auth-buttons">Mocked Auth Buttons</div>
   )),
 }));
-
-vi.mock("@/components/user-profile", () => ({
-  UserProfile: vi.fn(() => (
+vi.mock("@/components/user/user-profile", () => ({
+  UserProfileCard: vi.fn(() => (
     <div data-testid="user-profile">Mocked User Profile</div>
   )),
 }));
 
 describe("Home Page", () => {
   it("should render the home page with mocked subcomponents", async () => {
-    const component = await Home();
-    render(component);
+    render(await Home());
 
-    expect(screen.getByText("Multi-App Portal")).toBeInTheDocument();
     expect(
-      screen.getByText("Welcome to your centralized hub for sub-applications."),
+      within(screen.getByRole("banner")).getByTestId("auth-buttons"),
     ).toBeInTheDocument();
-    expect(screen.getByTestId("api-version")).toBeInTheDocument();
-    expect(screen.getByTestId("auth-buttons")).toBeInTheDocument();
-    expect(screen.getByTestId("user-profile")).toBeInTheDocument();
+    const main = screen.getByRole("main");
+    expect(
+      within(main).getByRole("heading", {
+        name: "Multi-App Portal",
+      }),
+    ).toBeInTheDocument();
+    expect(
+      within(main).getByText(
+        "Welcome to your centralized hub for sub-applications.",
+      ),
+    ).toBeInTheDocument();
+    expect(within(main).getByTestId("user-profile")).toBeInTheDocument();
+    expect(
+      within(screen.getByRole("contentinfo")).getByTestId("api-version"),
+    ).toBeInTheDocument();
   });
 });

@@ -1,5 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { getApplicationInfo } from "@/generated";
+import { mockPartial } from "@/lib/test-utils";
 import { ApiVersion } from "./api-version";
 
 vi.mock("@/lib/auth0", () => ({
@@ -7,91 +9,47 @@ vi.mock("@/lib/auth0", () => ({
     getSession: vi.fn().mockResolvedValue(null),
   },
 }));
+vi.mock("@/generated/sdk.gen", () => ({
+  getApplicationInfo: vi.fn(),
+}));
 
 describe("ApiVersion", () => {
   beforeEach(() => {
-    vi.stubGlobal("fetch", vi.fn());
     vi.stubGlobal("console", { ...console, error: vi.fn() });
     vi.clearAllMocks();
   });
-
   it("should render the API version when the fetch is successful", async () => {
-    vi.mocked(fetch).mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve({ build: { version: "1.2.3" } }),
-    } as Response);
+    mockPartial(getApplicationInfo).mockResolvedValue({
+      data: { build: { version: "1.2.3" } },
+    });
 
-    const component = await ApiVersion();
-    render(component);
+    render(await ApiVersion());
 
+    expect.assertions(1);
     expect(screen.getByText("API Version: 1.2.3")).toBeInTheDocument();
   });
-
   it("should return null when the fetch fails", async () => {
-    vi.mocked(fetch).mockResolvedValue({
-      ok: false,
-    } as Response);
+    vi.mocked(getApplicationInfo).mockRejectedValue(new Error("Network error"));
 
-    const result = await ApiVersion();
-    expect(result).toBeNull();
-  });
-
-  it("should return null when the version is missing from the data", async () => {
-    vi.mocked(fetch).mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve({ build: {} }),
-    } as Response);
-
-    const result = await ApiVersion();
-    expect(result).toBeNull();
-  });
-
-  it("should return null and log an error when the fetch throws an error", async () => {
-    vi.mocked(fetch).mockRejectedValue(new Error("Network error"));
-
-    const result = await ApiVersion();
-    expect(result).toBeNull();
+    expect.assertions(2);
+    expect(await ApiVersion()).toBeNull();
     expect(console.error).toHaveBeenCalledWith(
       "Error fetching API version:",
-      expect.any(Error),
+      new Error("Network error"),
     );
   });
+  it("should return null when the version is missing from the data", async () => {
+    mockPartial(getApplicationInfo).mockResolvedValue({
+      data: { build: {} },
+    });
 
-  it("should use default API URL if NEXT_PUBLIC_API_URL is not set", async () => {
-    const originalEnv = process.env.NEXT_PUBLIC_API_URL;
-    delete process.env.NEXT_PUBLIC_API_URL;
-
-    vi.mocked(fetch).mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve({ build: { version: "1.0.0" } }),
-    } as Response);
-
-    await ApiVersion();
-
-    expect(fetch).toHaveBeenCalledWith(
-      "http://localhost:8080/actuator/info",
-      expect.any(Object),
-    );
-
-    process.env.NEXT_PUBLIC_API_URL = originalEnv;
+    expect(await ApiVersion()).toBeNull();
   });
+  it("should return null when the build info is missing from the data", async () => {
+    mockPartial(getApplicationInfo).mockResolvedValue({
+      data: {},
+    });
 
-  it("should remove trailing slash from API URL", async () => {
-    const originalEnv = process.env.NEXT_PUBLIC_API_URL;
-    process.env.NEXT_PUBLIC_API_URL = "http://api.test/";
-
-    vi.mocked(fetch).mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve({ build: { version: "1.0.0" } }),
-    } as Response);
-
-    await ApiVersion();
-
-    expect(fetch).toHaveBeenCalledWith(
-      "http://api.test/actuator/info",
-      expect.any(Object),
-    );
-
-    process.env.NEXT_PUBLIC_API_URL = originalEnv;
+    expect(await ApiVersion()).toBeNull();
   });
 });
