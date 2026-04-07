@@ -151,4 +151,19 @@ class UserControllerTest {
 
     verify(userRepository).save(any(UserEntity.class));
   }
+
+  @Test
+  void updateCurrentUser_missingDisplayName_returnsBadRequest() throws Exception {
+    mockMvc
+        .perform(
+            patch("/api/users/me")
+                .with(jwt().jwt(jwt -> jwt.subject("auth0|123")))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    """
+                    {
+                    }
+                    """))
+        .andExpect(status().isBadRequest());
+  }
 }

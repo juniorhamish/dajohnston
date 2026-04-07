@@ -79,6 +79,31 @@ class HouseholdControllerTest {
   }
 
   @Test
+  void createHousehold_missingName_returnsBadRequest() throws Exception {
+    mockMvc
+        .perform(
+            post("/api/households")
+                .with(jwt().jwt(jwt -> jwt.subject("auth0|123")))
+                .contentType(APPLICATION_JSON)
+                .content(
+                    """
+                    {
+                    }
+                    """))
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  void createHousehold_nullBody_returnsBadRequest() throws Exception {
+    mockMvc
+        .perform(
+            post("/api/households")
+                .with(jwt().jwt(jwt -> jwt.subject("auth0|123")))
+                .contentType(APPLICATION_JSON))
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
   void joinHousehold_noInvitation_returnsForbidden() throws Exception {
     UUID userId = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
     UUID householdId = UUID.fromString("456e4567-e89b-12d3-a456-426614174000");
@@ -190,5 +215,79 @@ class HouseholdControllerTest {
                     }
                     """))
         .andExpect(status().isForbidden());
+  }
+
+  @Test
+  void inviteUser_missingEmail_returnsBadRequest() throws Exception {
+    mockMvc
+        .perform(
+            post(
+                    "/api/households/{id}/invitations",
+                    UUID.fromString("123e4567-e89b-12d3-a456-426614174000"))
+                .with(jwt().jwt(jwt -> jwt.subject("auth0|123")))
+                .contentType(APPLICATION_JSON)
+                .content(
+                    """
+                    {
+                      "role": "MEMBER"
+                    }
+                    """))
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  void inviteUser_invalidEmail_returnsBadRequest() throws Exception {
+    mockMvc
+        .perform(
+            post(
+                    "/api/households/{id}/invitations",
+                    UUID.fromString("123e4567-e89b-12d3-a456-426614174000"))
+                .with(jwt().jwt(jwt -> jwt.subject("auth0|123")))
+                .contentType(APPLICATION_JSON)
+                .content(
+                    """
+                    {
+                      "email": "invalid-email",
+                      "role": "MEMBER"
+                    }
+                    """))
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  void inviteUser_missingRole_returnsBadRequest() throws Exception {
+    mockMvc
+        .perform(
+            post(
+                    "/api/households/{id}/invitations",
+                    UUID.fromString("123e4567-e89b-12d3-a456-426614174000"))
+                .with(jwt().jwt(jwt -> jwt.subject("auth0|123")))
+                .contentType(APPLICATION_JSON)
+                .content(
+                    """
+                    {
+                      "email": "friend@example.com"
+                    }
+                    """))
+        .andExpect(status().isBadRequest());
+  }
+
+  @Test
+  void inviteUser_invalidRole_returnsBadRequest() throws Exception {
+    mockMvc
+        .perform(
+            post(
+                    "/api/households/{id}/invitations",
+                    UUID.fromString("123e4567-e89b-12d3-a456-426614174000"))
+                .with(jwt().jwt(jwt -> jwt.subject("auth0|123")))
+                .contentType(APPLICATION_JSON)
+                .content(
+                    """
+                    {
+                      "email": "friend@example.com",
+                      "role": "INVALID_ROLE"
+                    }
+                    """))
+        .andExpect(status().isBadRequest());
   }
 }
