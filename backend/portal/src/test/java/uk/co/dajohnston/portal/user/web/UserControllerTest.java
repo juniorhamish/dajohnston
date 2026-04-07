@@ -5,6 +5,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -15,9 +16,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import uk.co.dajohnston.portal.household.HouseholdRole;
 import uk.co.dajohnston.portal.household.entity.HouseholdEntity;
 import uk.co.dajohnston.portal.household.entity.HouseholdMemberEntity;
 import uk.co.dajohnston.portal.household.entity.HouseholdMemberRepository;
@@ -104,7 +107,7 @@ class UserControllerTest {
         HouseholdMemberEntity.builder()
             .household(householdEntity)
             .user(userEntity)
-            .role("OWNER")
+            .role(HouseholdRole.OWNER)
             .build();
 
     when(userRepository.findByAuth0Id("auth0|123")).thenReturn(Optional.of(userEntity));
@@ -116,5 +119,36 @@ class UserControllerTest {
         .andExpect(jsonPath("$.households[0].id").value(householdId.toString()))
         .andExpect(jsonPath("$.households[0].name").value("Test Household"))
         .andExpect(jsonPath("$.households[0].role").value("OWNER"));
+  }
+
+  @Test
+  void updateCurrentUser_updatesDisplayName() throws Exception {
+    UUID userId = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
+    UserEntity userEntity =
+        UserEntity.builder()
+            .id(userId)
+            .auth0Id("auth0|123")
+            .email("test@example.com")
+            .displayName("Old Name")
+            .build();
+
+    when(userRepository.findByAuth0Id("auth0|123")).thenReturn(Optional.of(userEntity));
+    when(householdMemberRepository.findByUserId(userId)).thenReturn(List.of());
+
+    mockMvc
+        .perform(
+            patch("/api/users/me")
+                .with(jwt().jwt(jwt -> jwt.subject("auth0|123")))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    """
+                    {
+                      "displayName": "New Name"
+                    }
+                    """))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.displayName").value("New Name"));
+
+    verify(userRepository).save(any(UserEntity.class));
   }
 }
