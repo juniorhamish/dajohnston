@@ -18,11 +18,8 @@ public class UserService {
   private final UserRepository userRepository;
   private final HouseholdMemberRepository householdMemberRepository;
 
-  @Transactional
   public UserProfile getCurrentUser(JwtClaimAccessor jwt) {
-    String auth0Id = jwt.getSubject();
-
-    var user = userRepository.findByAuth0Id(auth0Id).orElseGet(() -> createUser(jwt));
+    var user = findOrCreateUser(jwt);
 
     List<Household> households =
         householdMemberRepository.findByUserId(user.getId()).stream()
@@ -42,6 +39,18 @@ public class UserService {
         .displayName(user.getDisplayName())
         .households(households)
         .build();
+  }
+
+  public UserProfile updateCurrentUser(JwtClaimAccessor jwt, String displayName) {
+    var user = findOrCreateUser(jwt);
+    user.setDisplayName(displayName);
+    userRepository.save(user);
+    return getCurrentUser(jwt);
+  }
+
+  public UserEntity findOrCreateUser(JwtClaimAccessor jwt) {
+    String auth0Id = jwt.getSubject();
+    return userRepository.findByAuth0Id(auth0Id).orElseGet(() -> createUser(jwt));
   }
 
   private UserEntity createUser(JwtClaimAccessor jwt) {

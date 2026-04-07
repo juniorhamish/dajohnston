@@ -24,8 +24,31 @@ export type UserProfile = {
 export type Household = {
     id: string;
     name: string;
-    role: string;
+    role: HouseholdRole;
 };
+
+export type UpdateUserProfileRequest = {
+    displayName: string;
+};
+
+export type CreateHouseholdRequest = {
+    name: string;
+};
+
+export type InviteUserRequest = {
+    email: string;
+    role: HouseholdRole;
+};
+
+export type Invitation = {
+    id: string;
+    householdId: string;
+    email: string;
+    role: HouseholdRole;
+    status: string;
+};
+
+export type HouseholdRole = 'OWNER' | 'MEMBER';
 
 export type GetApplicationInfoData = {
     body?: never;
@@ -65,3 +88,119 @@ export type GetCurrentUserResponses = {
 };
 
 export type GetCurrentUserResponse = GetCurrentUserResponses[keyof GetCurrentUserResponses];
+
+export type UpdateCurrentUserData = {
+    body: UpdateUserProfileRequest;
+    path?: never;
+    query?: never;
+    url: '/api/users/me';
+};
+
+export type UpdateCurrentUserErrors = {
+    /**
+     * Invalid request
+     */
+    400: unknown;
+    /**
+     * Unauthorized
+     */
+    401: unknown;
+};
+
+export type UpdateCurrentUserResponses = {
+    /**
+     * Successfully updated user profile
+     */
+    200: UserProfile;
+};
+
+export type UpdateCurrentUserResponse = UpdateCurrentUserResponses[keyof UpdateCurrentUserResponses];
+
+export type CreateHouseholdData = {
+    body: CreateHouseholdRequest;
+    path?: never;
+    query?: never;
+    url: '/api/households';
+};
+
+export type CreateHouseholdErrors = {
+    /**
+     * Invalid request
+     */
+    400: unknown;
+    /**
+     * Unauthorized
+     */
+    401: unknown;
+};
+
+export type CreateHouseholdResponses = {
+    /**
+     * Successfully created household
+     */
+    201: Household;
+};
+
+export type CreateHouseholdResponse = CreateHouseholdResponses[keyof CreateHouseholdResponses];
+
+export type JoinHouseholdData = {
+    body?: never;
+    path: {
+        householdId: string;
+    };
+    query?: never;
+    url: '/api/households/{householdId}/join';
+};
+
+export type JoinHouseholdErrors = {
+    /**
+     * Unauthorized
+     */
+    401: unknown;
+    /**
+     * Household not found
+     */
+    404: unknown;
+};
+
+export type JoinHouseholdResponses = {
+    /**
+     * Successfully joined household
+     */
+    200: Household;
+};
+
+export type JoinHouseholdResponse = JoinHouseholdResponses[keyof JoinHouseholdResponses];
+
+export type InviteUserData = {
+    body: InviteUserRequest;
+    path: {
+        householdId: string;
+    };
+    query?: never;
+    url: '/api/households/{householdId}/invitations';
+};
+
+export type InviteUserErrors = {
+    /**
+     * Unauthorized
+     */
+    401: unknown;
+    /**
+     * Forbidden - Only owners can invite
+     */
+    403: unknown;
+    /**
+     * Household not found
+     */
+    404: unknown;
+};
+
+export type InviteUserResponses = {
+    /**
+     * Successfully created invitation
+     */
+    201: Invitation;
+};
+
+export type InviteUserResponse = InviteUserResponses[keyof InviteUserResponses];

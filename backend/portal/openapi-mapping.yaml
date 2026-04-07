@@ -17,3 +17,12 @@ map:
     /api/users/me:
       parameters:
         - add: jwt => org.springframework.security.oauth2.jwt.JwtClaimAccessor
+    /api/households:
+      parameters:
+        - add: jwt => org.springframework.security.oauth2.jwt.JwtClaimAccessor
+    /api/households/{householdId}/join:
+      parameters:
+        - add: jwt => org.springframework.security.oauth2.jwt.JwtClaimAccessor
+    /api/households/{householdId}/invitations:
+      parameters:
+        - add: jwt => org.springframework.security.oauth2.jwt.JwtClaimAccessor

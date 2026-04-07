@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { GetApplicationInfoData, GetApplicationInfoResponses, GetCurrentUserData, GetCurrentUserErrors, GetCurrentUserResponses } from './types.gen';
+import type { CreateHouseholdData, CreateHouseholdErrors, CreateHouseholdResponses, GetApplicationInfoData, GetApplicationInfoResponses, GetCurrentUserData, GetCurrentUserErrors, GetCurrentUserResponses, InviteUserData, InviteUserErrors, InviteUserResponses, JoinHouseholdData, JoinHouseholdErrors, JoinHouseholdResponses, UpdateCurrentUserData, UpdateCurrentUserErrors, UpdateCurrentUserResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -36,4 +36,52 @@ export const getCurrentUser = <ThrowOnError extends boolean = false>(options?: O
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/api/users/me',
     ...options
+});
+
+/**
+ * Update user profile
+ */
+export const updateCurrentUser = <ThrowOnError extends boolean = false>(options: Options<UpdateCurrentUserData, ThrowOnError>) => (options.client ?? client).patch<UpdateCurrentUserResponses, UpdateCurrentUserErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/users/me',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Create a new household
+ */
+export const createHousehold = <ThrowOnError extends boolean = false>(options: Options<CreateHouseholdData, ThrowOnError>) => (options.client ?? client).post<CreateHouseholdResponses, CreateHouseholdErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/households',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Join an existing household
+ */
+export const joinHousehold = <ThrowOnError extends boolean = false>(options: Options<JoinHouseholdData, ThrowOnError>) => (options.client ?? client).post<JoinHouseholdResponses, JoinHouseholdErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/households/{householdId}/join',
+    ...options
+});
+
+/**
+ * Invite a user to a household
+ */
+export const inviteUser = <ThrowOnError extends boolean = false>(options: Options<InviteUserData, ThrowOnError>) => (options.client ?? client).post<InviteUserResponses, InviteUserErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/households/{householdId}/invitations',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
 });

@@ -1,15 +1,17 @@
 package uk.co.dajohnston.portal.household.entity;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.MapsId;
 import jakarta.persistence.Table;
 import java.time.OffsetDateTime;
+import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,34 +20,35 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 import uk.co.dajohnston.portal.household.HouseholdRole;
-import uk.co.dajohnston.portal.user.entity.UserEntity;
 
 @Entity
-@Table(name = "household_members")
+@Table(name = "invitations")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class HouseholdMemberEntity {
+public class InvitationEntity {
+
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private UUID id;
 
   @ManyToOne
-  @MapsId("householdId")
-  @JoinColumn(name = "household_id")
-  public HouseholdEntity household;
+  @JoinColumn(name = "household_id", nullable = false)
+  private HouseholdEntity household;
 
-  @ManyToOne
-  @MapsId("userId")
-  @JoinColumn(name = "user_id")
-  public UserEntity user;
+  @Column(nullable = false)
+  private String email;
 
   @Enumerated(EnumType.STRING)
   @JdbcTypeCode(SqlTypes.NAMED_ENUM)
   @Column(nullable = false)
-  public HouseholdRole role;
+  private HouseholdRole role;
 
-  @EmbeddedId private HouseholdMemberId id;
+  @Column(nullable = false)
+  private String status;
 
   @CreationTimestamp
-  @Column(name = "joined_at", nullable = false, updatable = false)
-  private OffsetDateTime joinedAt;
+  @Column(name = "created_at", nullable = false, updatable = false)
+  private OffsetDateTime createdAt;
 }
