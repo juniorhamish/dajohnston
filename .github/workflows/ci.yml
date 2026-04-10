@@ -9,6 +9,9 @@ on:
 
 jobs:
   backend:
+    permissions:
+      checks: write
+      pull-requests: write
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -46,6 +49,7 @@ jobs:
         if: success() || failure() # always run even if the previous step fails
         with:
           report_paths: '**/build/test-results/**/TEST-*.xml'
+          comment: 'true'
 
   frontend:
     runs-on: ubuntu-latest
