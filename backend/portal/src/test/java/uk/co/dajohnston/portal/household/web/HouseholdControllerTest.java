@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.co.dajohnston.portal.household.HouseholdRole.OWNER;
 
+import com.auth0.client.mgmt.ManagementApi;
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
@@ -28,6 +29,7 @@ import uk.co.dajohnston.portal.household.entity.HouseholdMemberRepository;
 import uk.co.dajohnston.portal.household.entity.HouseholdRepository;
 import uk.co.dajohnston.portal.household.entity.InvitationEntity;
 import uk.co.dajohnston.portal.household.entity.InvitationRepository;
+import uk.co.dajohnston.portal.user.GravatarService;
 import uk.co.dajohnston.portal.user.UserService;
 import uk.co.dajohnston.portal.user.entity.UserEntity;
 import uk.co.dajohnston.portal.user.entity.UserRepository;
@@ -48,7 +50,9 @@ class HouseholdControllerTest {
   @MockitoBean private HouseholdMemberRepository householdMemberRepository;
   @MockitoBean private UserRepository userRepository;
   @MockitoBean private InvitationRepository invitationRepository;
+  @MockitoBean private GravatarService gravatarService;
   @MockitoBean private JwtDecoder jwtDecoder;
+  @MockitoBean private ManagementApi managementApi;
 
   @Test
   void createHousehold_returnsCreatedHousehold() throws Exception {

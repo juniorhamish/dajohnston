@@ -1,58 +1,57 @@
 package uk.co.dajohnston.portal.user.web;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static uk.co.dajohnston.portal.household.HouseholdRole.MEMBER;
+import static uk.co.dajohnston.portal.household.HouseholdRole.OWNER;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.http.MediaType;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import uk.co.dajohnston.portal.household.HouseholdRole;
-import uk.co.dajohnston.portal.household.entity.HouseholdEntity;
-import uk.co.dajohnston.portal.household.entity.HouseholdMemberEntity;
-import uk.co.dajohnston.portal.household.entity.HouseholdMemberRepository;
+import uk.co.dajohnston.portal.household.Household;
 import uk.co.dajohnston.portal.user.UserMapperImpl;
+import uk.co.dajohnston.portal.user.UserProfile;
 import uk.co.dajohnston.portal.user.UserService;
-import uk.co.dajohnston.portal.user.entity.UserEntity;
-import uk.co.dajohnston.portal.user.entity.UserRepository;
 import uk.co.dajohnston.security.config.SecurityConfig;
 
 @WebMvcTest(UserController.class)
-@Import({SecurityConfig.class, UserService.class, UserMapperImpl.class})
+@Import({SecurityConfig.class, UserMapperImpl.class})
 class UserControllerTest {
 
   @Autowired private MockMvc mockMvc;
 
-  @MockitoBean private UserRepository userRepository;
-  @MockitoBean private HouseholdMemberRepository householdMemberRepository;
   @MockitoBean private JwtDecoder jwtDecoder;
+  @MockitoBean private UserService userService;
 
   @Test
   void getCurrentUser_userExists_returnsUser() throws Exception {
     UUID userId = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
-    UserEntity userEntity =
-        UserEntity.builder()
+    UserProfile userProfile =
+        UserProfile.builder()
             .id(userId)
             .auth0Id("auth0|123")
             .email("test@example.com")
-            .displayName("Test User")
+            .givenName("Test")
+            .familyName("User")
+            .nickname("Test User")
+            .picture("https://example.com/pic.jpg")
             .build();
 
-    when(userRepository.findByAuth0Id("auth0|123")).thenReturn(Optional.of(userEntity));
-    when(householdMemberRepository.findByUserId(userId)).thenReturn(List.of());
+    when(userService.getCurrentUser(any())).thenReturn(userProfile);
 
     mockMvc
         .perform(get("/api/users/me").with(jwt().jwt(jwt -> jwt.subject("auth0|123"))))
@@ -60,58 +59,19 @@ class UserControllerTest {
         .andExpect(jsonPath("$.id").value(userId.toString()))
         .andExpect(jsonPath("$.auth0Id").value("auth0|123"))
         .andExpect(jsonPath("$.email").value("test@example.com"))
-        .andExpect(jsonPath("$.displayName").value("Test User"));
-  }
-
-  @Test
-  void getCurrentUser_userDoesNotExist_createsAndReturnsUser() throws Exception {
-    UUID userId = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
-    UserEntity userEntity =
-        UserEntity.builder()
-            .id(userId)
-            .auth0Id("auth0|123")
-            .email("test@example.com")
-            .displayName("Test User")
-            .build();
-
-    when(userRepository.findByAuth0Id("auth0|123")).thenReturn(Optional.empty());
-    when(userRepository.save(any(UserEntity.class))).thenReturn(userEntity);
-    when(householdMemberRepository.findByUserId(userId)).thenReturn(List.of());
-
-    mockMvc
-        .perform(
-            get("/api/users/me")
-                .with(
-                    jwt()
-                        .jwt(
-                            jwt ->
-                                jwt.subject("auth0|123")
-                                    .claim("email", "test@example.com")
-                                    .claim("name", "Test User"))))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.id").value(userId.toString()))
-        .andExpect(jsonPath("$.email").value("test@example.com"))
-        .andExpect(jsonPath("$.displayName").value("Test User"));
-
-    verify(userRepository).save(any(UserEntity.class));
+        .andExpect(jsonPath("$.givenName").value("Test"))
+        .andExpect(jsonPath("$.familyName").value("User"))
+        .andExpect(jsonPath("$.nickname").value("Test User"))
+        .andExpect(jsonPath("$.picture").value("https://example.com/pic.jpg"));
   }
 
   @Test
   void getCurrentUser_withHouseholds_returnsHouseholds() throws Exception {
-    UUID userId = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
     UUID householdId = UUID.fromString("456e4567-e89b-12d3-a456-426614174000");
-    UserEntity userEntity = UserEntity.builder().id(userId).auth0Id("auth0|123").build();
-    HouseholdEntity householdEntity =
-        HouseholdEntity.builder().id(householdId).name("Test Household").build();
-    HouseholdMemberEntity membership =
-        HouseholdMemberEntity.builder()
-            .household(householdEntity)
-            .user(userEntity)
-            .role(HouseholdRole.OWNER)
-            .build();
-
-    when(userRepository.findByAuth0Id("auth0|123")).thenReturn(Optional.of(userEntity));
-    when(householdMemberRepository.findByUserId(userId)).thenReturn(List.of(membership));
+    Household household =
+        Household.builder().id(householdId).name("Test Household").role(OWNER).build();
+    UserProfile userProfile = UserProfile.builder().households(List.of(household)).build();
+    when(userService.getCurrentUser(any())).thenReturn(userProfile);
 
     mockMvc
         .perform(get("/api/users/me").with(jwt().jwt(jwt -> jwt.subject("auth0|123"))))
@@ -122,48 +82,84 @@ class UserControllerTest {
   }
 
   @Test
-  void updateCurrentUser_updatesDisplayName() throws Exception {
-    UUID userId = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
-    UserEntity userEntity =
-        UserEntity.builder()
-            .id(userId)
-            .auth0Id("auth0|123")
-            .email("test@example.com")
-            .displayName("Old Name")
-            .build();
+  void getCurrentUser_invokesServiceWithJwt() throws Exception {
+    mockMvc.perform(get("/api/users/me").with(jwt().jwt(jwt -> jwt.subject("auth0|123"))));
 
-    when(userRepository.findByAuth0Id("auth0|123")).thenReturn(Optional.of(userEntity));
-    when(householdMemberRepository.findByUserId(userId)).thenReturn(List.of());
-
-    mockMvc
-        .perform(
-            patch("/api/users/me")
-                .with(jwt().jwt(jwt -> jwt.subject("auth0|123")))
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(
-                    """
-                    {
-                      "displayName": "New Name"
-                    }
-                    """))
-        .andExpect(status().isOk())
-        .andExpect(jsonPath("$.displayName").value("New Name"));
-
-    verify(userRepository).save(any(UserEntity.class));
+    verify(userService).getCurrentUser(argThat(arg -> arg.getSubject().equals("auth0|123")));
   }
 
   @Test
-  void updateCurrentUser_missingDisplayName_returnsBadRequest() throws Exception {
+  void updateCurrentUser_returnsUpdatedUser() throws Exception {
+    UUID userId = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
+    UUID householdId = UUID.fromString("456e4567-e89b-12d3-a456-426614174000");
+    Household household =
+        Household.builder().id(householdId).name("Test Household").role(MEMBER).build();
+    UserProfile userProfile =
+        UserProfile.builder()
+            .id(userId)
+            .auth0Id("auth0|123")
+            .email("test@example.com")
+            .givenName("New")
+            .familyName("Users")
+            .nickname("newuser")
+            .picture("https://examples.com/pic.jpg")
+            .households(List.of(household))
+            .build();
+    when(userService.updateCurrentUser(any(), any())).thenReturn(userProfile);
+
     mockMvc
         .perform(
             patch("/api/users/me")
                 .with(jwt().jwt(jwt -> jwt.subject("auth0|123")))
-                .contentType(MediaType.APPLICATION_JSON)
+                .contentType(APPLICATION_JSON)
                 .content(
                     """
-                    {
-                    }
-                    """))
-        .andExpect(status().isBadRequest());
+                        {
+                          "givenName": "New",
+                          "familyName": "Users",
+                          "nickname": "newuser",
+                          "picture": "https://examples.com/pic.jpg",
+                          "useGravatar": false
+                        }
+                        """))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.id").value(userId.toString()))
+        .andExpect(jsonPath("$.auth0Id").value("auth0|123"))
+        .andExpect(jsonPath("$.email").value("test@example.com"))
+        .andExpect(jsonPath("$.givenName").value("New"))
+        .andExpect(jsonPath("$.familyName").value("Users"))
+        .andExpect(jsonPath("$.nickname").value("newuser"))
+        .andExpect(jsonPath("$.picture").value("https://examples.com/pic.jpg"))
+        .andExpect(jsonPath("$.households[0].id").value(householdId.toString()))
+        .andExpect(jsonPath("$.households[0].name").value("Test Household"))
+        .andExpect(jsonPath("$.households[0].role").value("MEMBER"));
+  }
+
+  @Test
+  void updateCurrentUser_invokesServiceWithJwt() throws Exception {
+    mockMvc.perform(
+        patch("/api/users/me")
+            .with(jwt().jwt(jwt -> jwt.subject("auth0|123")))
+            .contentType(APPLICATION_JSON)
+            .content("{}"));
+
+    verify(userService)
+        .updateCurrentUser(argThat(arg -> arg.getSubject().equals("auth0|123")), any());
+  }
+
+  @Test
+  void updateCurrentUser_invokesServiceWithUserBody() throws Exception {
+    mockMvc.perform(
+        patch("/api/users/me")
+            .with(jwt().jwt(jwt -> jwt.subject("auth0|123")))
+            .contentType(APPLICATION_JSON)
+            .content(
+                """
+                {
+                  "nickname": "DJ"
+                }
+                """));
+
+    verify(userService).updateCurrentUser(any(), argThat(arg -> arg.nickname().equals("DJ")));
   }
 }

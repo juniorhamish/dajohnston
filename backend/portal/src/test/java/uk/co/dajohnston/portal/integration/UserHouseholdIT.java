@@ -12,15 +12,16 @@ import org.junit.jupiter.api.Test;
 class UserHouseholdIT extends AbstractIntegrationTest {
 
   @Test
-  void updateCurrentUser_updatesDisplayName() {
+  void updateCurrentUser_updatesNickname() {
+    String newNickname = "New Nickname-%s".formatted(System.currentTimeMillis());
     authenticated()
         .contentType(JSON)
-        .body(Map.of("displayName", "New Display Name"))
+        .body(Map.of("nickname", newNickname))
         .when()
         .patch("/api/users/me")
         .then()
         .statusCode(200)
-        .body("displayName", equalTo("New Display Name"));
+        .body("nickname", equalTo(newNickname));
   }
 
   @Test

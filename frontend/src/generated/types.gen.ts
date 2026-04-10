@@ -17,7 +17,10 @@ export type UserProfile = {
     id: string;
     auth0Id: string;
     email: string;
-    displayName: string;
+    givenName?: string;
+    familyName?: string;
+    nickname?: string;
+    picture?: string;
     households: Array<Household>;
 };
 
@@ -28,7 +31,11 @@ export type Household = {
 };
 
 export type UpdateUserProfileRequest = {
-    displayName: string;
+    givenName?: string;
+    familyName?: string;
+    nickname?: string;
+    picture?: string;
+    useGravatar?: boolean;
 };
 
 export type CreateHouseholdRequest = {

@@ -53,7 +53,7 @@ resource "auth0_client" "portal_frontend" {
 
 resource "auth0_client" "m2m_app" {
   name        = "Portal M2M"
-  description = "A machine-to-machine app used to get tokens for integration tests"
+  description = "A machine-to-machine app used to manage users"
   app_type    = "non_interactive"
 
   grant_types = [
@@ -61,8 +61,15 @@ resource "auth0_client" "m2m_app" {
   ]
 }
 
+resource "auth0_client_credentials" "m2m_credentials" {
+  client_id             = auth0_client.m2m_app.id
+  authentication_method = "client_secret_post"
+}
+
+data "auth0_tenant" "current" {}
+
 resource "auth0_client_grant" "m2m_app_grant" {
   client_id = auth0_client.m2m_app.client_id
-  audience  = var.auth0_api_identifier
-  scopes    = []
+  audience  = data.auth0_tenant.current.management_api_identifier
+  scopes    = ["read:users", "update:users"]
 }

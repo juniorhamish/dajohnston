@@ -17,20 +17,32 @@ export async function UserProfileCard() {
   return (
     <div className="flex flex-col gap-6 p-8 bg-white rounded-xl shadow-lg border border-gray-100 w-full">
       <div className="flex items-center gap-6">
-        {user.picture && (
+        {(userProfile?.picture || user.picture) && (
           <Image
             width={80}
             height={80}
-            src={user.picture}
-            alt={user.name ?? "User Profile Picture"}
+            src={(userProfile?.picture || user.picture) as string}
+            alt={userProfile?.nickname || user.name || "User Profile Picture"}
             className="w-20 h-20 rounded-full shadow-md border-2 border-primary/10"
           />
         )}
         <div className="flex-1">
           <h2 className="text-2xl font-bold text-gray-900 leading-tight">
-            {user.name}
+            {userProfile?.nickname || user.name}
           </h2>
-          <p className="text-gray-500 font-medium">{user.email}</p>
+          <p className="text-gray-500 font-medium">
+            {userProfile?.email || user.email}
+          </p>
+          {userProfile?.givenName && (
+            <p className="text-sm text-gray-600">
+              {userProfile.givenName} {userProfile.familyName}
+            </p>
+          )}
+          {userProfile?.nickname && (
+            <p className="text-sm text-gray-400 italic">
+              @{userProfile.nickname}
+            </p>
+          )}
           {userProfile?.id && (
             <p className="text-xs text-gray-400 mt-1 font-mono uppercase tracking-wider">
               ID: {userProfile?.id}

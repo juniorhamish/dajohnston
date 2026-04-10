@@ -7,4 +7,11 @@ import uk.co.dajohnston.portal.household.Household;
 
 @Builder
 public record UserProfile(
-    UUID id, String auth0Id, String email, String displayName, List<Household> households) {}
+    UUID id,
+    String auth0Id,
+    String email,
+    String givenName,
+    String familyName,
+    String nickname,
+    String picture,
+    List<Household> households) {}
