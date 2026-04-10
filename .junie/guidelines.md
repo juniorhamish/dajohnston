@@ -766,6 +766,14 @@ log();
 * **Spring Boot:** 4.0.5
 * **Next.js:** 16
 
+## 18. Unit testing
+
+* Code should be tested in the defined layers in isolation (controller, service, repository)
+* Unit tests should be written in JUnit 5 and Mockito.
+* Integration tests should be written in JUnit 5 and Spring Boot Test.
+* Test coverage should be at least 80%.
+* Creating UUIDs for testing should be done using `UUID.fromString()` with a random UUID string.
+
 # Next.js 16 Project Guidelines
 
 <!-- BEGIN:nextjs-16-agent-rules -->
