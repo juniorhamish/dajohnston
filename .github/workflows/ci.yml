@@ -50,6 +50,7 @@ jobs:
         with:
           report_paths: '**/build/test-results/**/TEST-*.xml'
           comment: 'true'
+          include_passed: 'true'
 
   frontend:
     runs-on: ubuntu-latest
