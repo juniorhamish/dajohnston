@@ -97,6 +97,8 @@ tasks.register('integrationTest', Test) {
   environment "TEST_AUTH0_TOKEN_URL", System.getenv("TEST_AUTH0_TOKEN_URL")
   environment "TEST_AUTH0_USERNAME", System.getenv("TEST_AUTH0_USERNAME")
   environment "TEST_AUTH0_PASSWORD", System.getenv("TEST_AUTH0_PASSWORD")
+  environment "AUTH0_MANAGEMENT_CLIENT_ID", System.getenv("AUTH0_MANAGEMENT_CLIENT_ID")
+  environment "AUTH0_MANAGEMENT_CLIENT_SECRET", System.getenv("AUTH0_MANAGEMENT_CLIENT_SECRET")
 }
 
 jacocoTestReport {

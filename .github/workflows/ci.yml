@@ -36,6 +36,8 @@ jobs:
           TEST_AUTH0_TOKEN_URL: ${{ secrets.TEST_AUTH0_TOKEN_URL }}
           TEST_AUTH0_USERNAME: ${{ secrets.TEST_AUTH0_USERNAME }}
           TEST_AUTH0_PASSWORD: ${{ secrets.TEST_AUTH0_PASSWORD }}
+          AUTH0_MANAGEMENT_CLIENT_ID: ${{ secrets.AUTH0_MANAGEMENT_CLIENT_ID }}
+          AUTH0_MANAGEMENT_CLIENT_SECRET: ${{ secrets.AUTH0_MANAGEMENT_CLIENT_SECRET }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         working-directory: backend
         run: ./gradlew build spotlessCheck sonar --info
