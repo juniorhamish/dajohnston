@@ -23,7 +23,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.junit.jupiter.MockitoSettings;
-import org.mockito.quality.Strictness;
 import org.springframework.security.oauth2.jwt.JwtClaimAccessor;
 import uk.co.dajohnston.model.UpdateUserProfileRequestDto;
 import uk.co.dajohnston.portal.household.HouseholdRole;
@@ -34,7 +33,7 @@ import uk.co.dajohnston.portal.user.entity.UserEntity;
 import uk.co.dajohnston.portal.user.entity.UserRepository;
 
 @ExtendWith(MockitoExtension.class)
-@MockitoSettings(strictness = Strictness.LENIENT)
+@MockitoSettings
 class UserServiceTest {
 
   @Mock private UserRepository userRepository;
@@ -172,7 +171,6 @@ class UserServiceTest {
     when(auth0User.getGivenName()).thenReturn(Optional.of("NewName"));
     when(auth0User.getFamilyName()).thenReturn(Optional.empty());
     when(auth0User.getNickname()).thenReturn(Optional.empty());
-    when(auth0User.getPicture()).thenReturn(Optional.empty());
     when(usersEntity.get("auth0|123")).thenReturn(auth0User);
     when(householdMemberRepository.findByUserId(userId)).thenReturn(Collections.emptyList());
 
