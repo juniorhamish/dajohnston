@@ -9,7 +9,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static uk.co.dajohnston.portal.household.HouseholdRole.OWNER;
 
-import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,48 +17,29 @@ import org.springframework.context.annotation.Import;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import uk.co.dajohnston.portal.household.Household;
 import uk.co.dajohnston.portal.household.HouseholdMapperImpl;
 import uk.co.dajohnston.portal.household.HouseholdRole;
 import uk.co.dajohnston.portal.household.HouseholdService;
-import uk.co.dajohnston.portal.household.entity.HouseholdEntity;
-import uk.co.dajohnston.portal.household.entity.HouseholdMemberEntity;
-import uk.co.dajohnston.portal.household.entity.HouseholdMemberId;
-import uk.co.dajohnston.portal.household.entity.HouseholdMemberRepository;
-import uk.co.dajohnston.portal.household.entity.HouseholdRepository;
-import uk.co.dajohnston.portal.household.entity.InvitationEntity;
-import uk.co.dajohnston.portal.household.entity.InvitationRepository;
-import uk.co.dajohnston.portal.user.UserService;
-import uk.co.dajohnston.portal.user.entity.UserEntity;
-import uk.co.dajohnston.portal.user.entity.UserRepository;
+import uk.co.dajohnston.portal.household.Invitation;
 import uk.co.dajohnston.security.config.SecurityConfig;
 
 @WebMvcTest(HouseholdController.class)
-@Import({
-  SecurityConfig.class,
-  HouseholdService.class,
-  UserService.class,
-  HouseholdMapperImpl.class
-})
+@Import({SecurityConfig.class, HouseholdMapperImpl.class})
 class HouseholdControllerTest {
 
   @Autowired private MockMvc mockMvc;
 
-  @MockitoBean private HouseholdRepository householdRepository;
-  @MockitoBean private HouseholdMemberRepository householdMemberRepository;
-  @MockitoBean private UserRepository userRepository;
-  @MockitoBean private InvitationRepository invitationRepository;
+  @MockitoBean private HouseholdService householdService;
   @MockitoBean private JwtDecoder jwtDecoder;
 
   @Test
   void createHousehold_returnsCreatedHousehold() throws Exception {
-    UUID userId = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
     UUID householdId = UUID.fromString("456e4567-e89b-12d3-a456-426614174000");
-    UserEntity user = UserEntity.builder().id(userId).auth0Id("auth0|123").build();
-    HouseholdEntity household =
-        HouseholdEntity.builder().id(householdId).name("New Household").build();
+    Household household =
+        Household.builder().id(householdId).name("New Household").role(OWNER).build();
 
-    when(userRepository.findByAuth0Id("auth0|123")).thenReturn(Optional.of(user));
-    when(householdRepository.save(any(HouseholdEntity.class))).thenReturn(household);
+    when(householdService.createHousehold(any(), any())).thenReturn(household);
 
     mockMvc
         .perform(
@@ -105,16 +85,10 @@ class HouseholdControllerTest {
 
   @Test
   void joinHousehold_noInvitation_returnsForbidden() throws Exception {
-    UUID userId = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
     UUID householdId = UUID.fromString("456e4567-e89b-12d3-a456-426614174000");
-    UserEntity user = UserEntity.builder().id(userId).auth0Id("auth0|123").build();
-    HouseholdEntity household =
-        HouseholdEntity.builder().id(householdId).name("Existing Household").build();
 
-    when(userRepository.findByAuth0Id("auth0|123")).thenReturn(Optional.of(user));
-    when(householdRepository.findById(householdId)).thenReturn(Optional.of(household));
-    when(invitationRepository.findByHouseholdIdAndEmail(householdId, "test@example.com"))
-        .thenReturn(Optional.empty());
+    when(householdService.joinHousehold(any(), any()))
+        .thenThrow(new org.springframework.security.access.AccessDeniedException(""));
 
     mockMvc
         .perform(
@@ -126,23 +100,15 @@ class HouseholdControllerTest {
 
   @Test
   void joinHousehold_withInvitation_returnsJoinedHousehold() throws Exception {
-    UUID userId = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
     UUID householdId = UUID.fromString("456e4567-e89b-12d3-a456-426614174000");
-    UserEntity user = UserEntity.builder().id(userId).auth0Id("auth0|123").build();
-    HouseholdEntity household =
-        HouseholdEntity.builder().id(householdId).name("Existing Household").build();
-    InvitationEntity invitation =
-        InvitationEntity.builder()
-            .household(household)
-            .email("test@example.com")
+    Household household =
+        Household.builder()
+            .id(householdId)
+            .name("Existing Household")
             .role(HouseholdRole.MEMBER)
-            .status("PENDING")
             .build();
 
-    when(userRepository.findByAuth0Id("auth0|123")).thenReturn(Optional.of(user));
-    when(householdRepository.findById(householdId)).thenReturn(Optional.of(household));
-    when(invitationRepository.findByHouseholdIdAndEmail(householdId, "test@example.com"))
-        .thenReturn(Optional.of(invitation));
+    when(householdService.joinHousehold(any(), any())).thenReturn(household);
 
     mockMvc
         .perform(
@@ -157,19 +123,15 @@ class HouseholdControllerTest {
 
   @Test
   void inviteUser_ownerInvites_returnsCreated() throws Exception {
-    UUID userId = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
     UUID householdId = UUID.fromString("456e4567-e89b-12d3-a456-426614174000");
-    UserEntity user = UserEntity.builder().id(userId).auth0Id("auth0|123").build();
-    HouseholdEntity household =
-        HouseholdEntity.builder().id(householdId).name("Existing Household").build();
-    HouseholdMemberEntity member = HouseholdMemberEntity.builder().role(OWNER).build();
+    Invitation invitation =
+        Invitation.builder()
+            .email("friend@example.com")
+            .role(HouseholdRole.MEMBER)
+            .status("PENDING")
+            .build();
 
-    when(userRepository.findByAuth0Id("auth0|123")).thenReturn(Optional.of(user));
-    when(householdRepository.findById(householdId)).thenReturn(Optional.of(household));
-    when(householdMemberRepository.findById(new HouseholdMemberId(householdId, userId)))
-        .thenReturn(Optional.of(member));
-    when(invitationRepository.save(any(InvitationEntity.class)))
-        .thenAnswer(invocation -> invocation.getArgument(0));
+    when(householdService.inviteUser(any(), any(), any(), any())).thenReturn(invitation);
 
     mockMvc
         .perform(
@@ -191,16 +153,10 @@ class HouseholdControllerTest {
 
   @Test
   void inviteUser_nonOwnerInvites_returnsForbidden() throws Exception {
-    UUID userId = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
     UUID householdId = UUID.fromString("456e4567-e89b-12d3-a456-426614174000");
-    UserEntity user = UserEntity.builder().id(userId).auth0Id("auth0|123").build();
-    HouseholdEntity household =
-        HouseholdEntity.builder().id(householdId).name("Existing Household").build();
 
-    when(userRepository.findByAuth0Id("auth0|123")).thenReturn(Optional.of(user));
-    when(householdRepository.findById(householdId)).thenReturn(Optional.of(household));
-    when(householdMemberRepository.findById(new HouseholdMemberId(householdId, userId)))
-        .thenReturn(Optional.empty());
+    when(householdService.inviteUser(any(), any(), any(), any()))
+        .thenThrow(new org.springframework.security.access.AccessDeniedException(""));
 
     mockMvc
         .perform(

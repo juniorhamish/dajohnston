@@ -6,7 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import java.time.OffsetDateTime;
+import java.time.Instant;
 import java.util.UUID;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,13 +32,10 @@ public class UserEntity {
   @Column(unique = true, nullable = false)
   private String email;
 
-  @Column(name = "display_name")
-  private String displayName;
+  @Column(name = "use_gravatar")
+  private boolean useGravatar;
 
   @CreationTimestamp
   @Column(name = "created_at", nullable = false, updatable = false)
-  private OffsetDateTime createdAt;
-
-  @Column(name = "last_login_at")
-  private OffsetDateTime lastLoginAt;
+  private Instant createdAt;
 }

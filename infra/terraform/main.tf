@@ -154,6 +154,18 @@ resource "google_cloud_run_v2_service" "backend" {
         name  = "AUTH0_AUDIENCE"
         value = auth0_resource_server.portal_api.identifier
       }
+      env {
+        name  = "AUTH0_DOMAIN"
+        value = var.auth0_domain
+      }
+      env {
+        name  = "AUTH0_MANAGEMENT_CLIENT_ID"
+        value = auth0_client.m2m_app.client_id
+      }
+      env {
+        name  = "AUTH0_MANAGEMENT_CLIENT_SECRET"
+        value = auth0_client_credentials.m2m_credentials.client_secret
+      }
       liveness_probe {
         http_get {
           path = "/actuator/health/liveness"

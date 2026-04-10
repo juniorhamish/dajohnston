@@ -25,6 +25,11 @@ spring:
         jwt:
           issuer-uri: ${AUTH0_ISSUER_URI:https://dajohnston.eu.auth0.com/}
           audience: ${AUTH0_AUDIENCE:https://api.dajohnston.co.uk}
+auth0:
+  management:
+    domain: ${AUTH0_DOMAIN:dajohnston.eu.auth0.com}
+    clientId: ${AUTH0_MANAGEMENT_CLIENT_ID:}
+    clientSecret: ${AUTH0_MANAGEMENT_CLIENT_SECRET:}
 management:
   endpoint:
     health:

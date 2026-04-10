@@ -45,7 +45,7 @@ describe("UserProfileCard", () => {
       data: {
         id: "user-uuid",
         auth0Id: "auth0-uuid",
-        households: [{ id: "h1", name: "My House", role: "Owner" }],
+        households: [{ id: "h1", name: "My House", role: "OWNER" }],
       },
     });
 
@@ -102,6 +102,38 @@ describe("UserProfileCard", () => {
     expect(screen.getByRole("img")).toHaveAttribute(
       "alt",
       "User Profile Picture",
+    );
+  });
+  it("renders extended profile fields when available", async () => {
+    mockPartial(auth0.getSession).mockResolvedValue({
+      user: {
+        name: "Old Name",
+        email: "test@example.com",
+        picture: "https://old.com/pic.jpg",
+      },
+    });
+
+    mockPartial(getCurrentUser).mockResolvedValue({
+      data: {
+        id: "123",
+        auth0Id: "auth|123",
+        email: "test@example.com",
+        givenName: "John",
+        familyName: "Doe",
+        nickname: "jdoe",
+        picture: "https://new.com/pic.jpg",
+        households: [],
+      },
+    });
+
+    render(await UserProfileCard());
+
+    expect(screen.getByText("John Doe")).toBeInTheDocument();
+    expect(screen.getByText("@jdoe")).toBeInTheDocument();
+    const image = screen.getByAltText("jdoe");
+    expect(image).toHaveAttribute(
+      "src",
+      expect.stringContaining("new.com%2Fpic.jpg"),
     );
   });
 });

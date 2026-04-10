@@ -27,7 +27,6 @@ class UserController implements UsersApi {
   @Override
   public ResponseEntity<UserProfileDto> updateCurrentUser(
       @AuthenticationPrincipal JwtClaimAccessor jwt, UpdateUserProfileRequestDto body) {
-    return ResponseEntity.ok(
-        userMapper.toDto(userService.updateCurrentUser(jwt, body.displayName())));
+    return ResponseEntity.ok(userMapper.toDto(userService.updateCurrentUser(jwt, body)));
   }
 }

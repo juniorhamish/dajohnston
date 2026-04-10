@@ -184,7 +184,13 @@ components:
         email:
           type: string
           format: email
-        displayName:
+        givenName:
+          type: string
+        familyName:
+          type: string
+        nickname:
+          type: string
+        picture:
           type: string
         households:
           type: array
@@ -213,10 +219,16 @@ components:
     UpdateUserProfileRequest:
       type: object
       properties:
-        displayName:
+        givenName:
           type: string
-      required:
-        - displayName
+        familyName:
+          type: string
+        nickname:
+          type: string
+        picture:
+          type: string
+        useGravatar:
+          type: boolean
     CreateHouseholdRequest:
       type: object
       properties:
