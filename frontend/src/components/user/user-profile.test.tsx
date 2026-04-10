@@ -109,7 +109,7 @@ describe("UserProfileCard", () => {
       user: {
         name: "Old Name",
         email: "test@example.com",
-        picture: "http://old.com/pic.jpg",
+        picture: "https://old.com/pic.jpg",
       },
     });
 
