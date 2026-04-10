@@ -2,9 +2,12 @@ package uk.co.dajohnston.portal.user;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -40,14 +43,14 @@ class UserServiceTest {
   @Mock private HouseholdMemberRepository householdMemberRepository;
   @Mock private GravatarService gravatarService;
   @Mock private ManagementApi auth0ManagementApi;
-  @Mock private UsersClient usersEntity;
+  @Mock private UsersClient usersClient;
   @Mock private JwtClaimAccessor jwt;
 
   @InjectMocks private UserService userService;
 
   @BeforeEach
   void setUp() {
-    lenient().when(auth0ManagementApi.users()).thenReturn(usersEntity);
+    lenient().when(auth0ManagementApi.users()).thenReturn(usersClient);
   }
 
   @Test
@@ -70,7 +73,7 @@ class UserServiceTest {
     when(jwt.getSubject()).thenReturn("auth0|123");
     when(userRepository.findByAuth0Id("auth0|123")).thenReturn(Optional.of(user));
     when(householdMemberRepository.findByUserId(userId)).thenReturn(Collections.emptyList());
-    when(usersEntity.get("auth0|123")).thenReturn(auth0User);
+    when(usersClient.get("auth0|123")).thenReturn(auth0User);
 
     UserProfile profile = userService.getCurrentUser(jwt);
 
@@ -100,7 +103,7 @@ class UserServiceTest {
     when(userRepository.findByAuth0Id("auth0|123")).thenReturn(Optional.of(user));
     when(householdMemberRepository.findByUserId(userId))
         .thenReturn(Collections.singletonList(member));
-    when(usersEntity.get("auth0|123")).thenReturn(auth0User);
+    when(usersClient.get("auth0|123")).thenReturn(auth0User);
 
     UserProfile profile = userService.getCurrentUser(jwt);
 
@@ -129,7 +132,7 @@ class UserServiceTest {
     when(jwt.getSubject()).thenReturn("auth0|123");
     when(userRepository.findByAuth0Id("auth0|123")).thenReturn(Optional.of(user));
     when(householdMemberRepository.findByUserId(userId)).thenReturn(Collections.emptyList());
-    when(usersEntity.get("auth0|123")).thenReturn(auth0User);
+    when(usersClient.get("auth0|123")).thenReturn(auth0User);
     when(gravatarService.getGravatarUrl("test@example.com"))
         .thenReturn("http://gravatar.com/pic.jpg");
 
@@ -171,7 +174,7 @@ class UserServiceTest {
     when(auth0User.getGivenName()).thenReturn(Optional.of("NewName"));
     when(auth0User.getFamilyName()).thenReturn(Optional.empty());
     when(auth0User.getNickname()).thenReturn(Optional.empty());
-    when(usersEntity.get("auth0|123")).thenReturn(auth0User);
+    when(usersClient.get("auth0|123")).thenReturn(auth0User);
     when(householdMemberRepository.findByUserId(userId)).thenReturn(Collections.emptyList());
 
     UpdateUserProfileRequestDto request =
@@ -181,7 +184,7 @@ class UserServiceTest {
 
     assertThat(user.isUseGravatar()).isTrue();
     verify(userRepository).save(user);
-    verify(usersEntity).update(eq("auth0|123"), any(UpdateUserRequestContent.class));
+    verify(usersClient).update(eq("auth0|123"), any(UpdateUserRequestContent.class));
   }
 
   @Test
@@ -203,7 +206,7 @@ class UserServiceTest {
     when(auth0User.getFamilyName()).thenReturn(Optional.empty());
     when(auth0User.getNickname()).thenReturn(Optional.empty());
     when(auth0User.getPicture()).thenReturn(Optional.empty());
-    when(usersEntity.get("auth0|123")).thenReturn(auth0User);
+    when(usersClient.get("auth0|123")).thenReturn(auth0User);
     when(householdMemberRepository.findByUserId(userId)).thenReturn(Collections.emptyList());
 
     UpdateUserProfileRequestDto request =
@@ -212,7 +215,6 @@ class UserServiceTest {
     userService.updateCurrentUser(jwt, request);
 
     verifyNoInteractions(gravatarService);
-    // verify(usersEntity, never()).update(anyString(), any()); // already checked implicitly
   }
 
   @Test
@@ -222,20 +224,92 @@ class UserServiceTest {
 
     when(jwt.getSubject()).thenReturn("auth0|123");
     when(userRepository.findByAuth0Id("auth0|123")).thenReturn(Optional.of(user));
-
-    GetUserResponseContent auth0User = mock(GetUserResponseContent.class);
-    when(auth0User.getGivenName()).thenReturn(Optional.empty());
-    when(auth0User.getFamilyName()).thenReturn(Optional.empty());
-    when(auth0User.getNickname()).thenReturn(Optional.of("NewNick"));
-    when(auth0User.getPicture()).thenReturn(Optional.empty());
-    when(usersEntity.get("auth0|123")).thenReturn(auth0User);
+    when(usersClient.get("auth0|123")).thenReturn(mock(GetUserResponseContent.class));
     when(householdMemberRepository.findByUserId(userId)).thenReturn(Collections.emptyList());
 
-    UpdateUserProfileRequestDto request =
-        new UpdateUserProfileRequestDto(null, null, "NewNick", null, null);
+    userService.updateCurrentUser(
+        jwt, new UpdateUserProfileRequestDto(null, null, "NewNick", null, null));
 
-    userService.updateCurrentUser(jwt, request);
+    verify(usersClient)
+        .update(
+            eq("auth0|123"),
+            argThat((UpdateUserRequestContent arg) -> arg.getNickname().get().equals("NewNick")));
+  }
 
-    verify(usersEntity).update(eq("auth0|123"), any(UpdateUserRequestContent.class));
+  @Test
+  void updateCurrentUser_onlyGivenName_updatesAuth0() {
+    UUID userId = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
+    UserEntity user = UserEntity.builder().id(userId).auth0Id("auth0|123").build();
+
+    when(jwt.getSubject()).thenReturn("auth0|123");
+    when(userRepository.findByAuth0Id("auth0|123")).thenReturn(Optional.of(user));
+    when(usersClient.get("auth0|123")).thenReturn(mock(GetUserResponseContent.class));
+    when(householdMemberRepository.findByUserId(userId)).thenReturn(Collections.emptyList());
+
+    userService.updateCurrentUser(
+        jwt, new UpdateUserProfileRequestDto("New First", null, null, null, null));
+
+    verify(usersClient)
+        .update(
+            eq("auth0|123"),
+            argThat(
+                (UpdateUserRequestContent arg) -> arg.getGivenName().get().equals("New First")));
+  }
+
+  @Test
+  void updateCurrentUser_onlyFamilyName_updatesAuth0() {
+    UUID userId = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
+    UserEntity user = UserEntity.builder().id(userId).auth0Id("auth0|123").build();
+
+    when(jwt.getSubject()).thenReturn("auth0|123");
+    when(userRepository.findByAuth0Id("auth0|123")).thenReturn(Optional.of(user));
+    when(usersClient.get("auth0|123")).thenReturn(mock(GetUserResponseContent.class));
+    when(householdMemberRepository.findByUserId(userId)).thenReturn(Collections.emptyList());
+
+    userService.updateCurrentUser(
+        jwt, new UpdateUserProfileRequestDto(null, "New Last", null, null, null));
+
+    verify(usersClient)
+        .update(
+            eq("auth0|123"),
+            argThat(
+                (UpdateUserRequestContent arg) -> arg.getFamilyName().get().equals("New Last")));
+  }
+
+  @Test
+  void updateCurrentUser_onlyPicture_updatesAuth0() {
+    UUID userId = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
+    UserEntity user = UserEntity.builder().id(userId).auth0Id("auth0|123").build();
+
+    when(jwt.getSubject()).thenReturn("auth0|123");
+    when(userRepository.findByAuth0Id("auth0|123")).thenReturn(Optional.of(user));
+    when(usersClient.get("auth0|123")).thenReturn(mock(GetUserResponseContent.class));
+    when(householdMemberRepository.findByUserId(userId)).thenReturn(Collections.emptyList());
+
+    userService.updateCurrentUser(
+        jwt, new UpdateUserProfileRequestDto(null, null, null, "https://newpicture", null));
+
+    verify(usersClient)
+        .update(
+            eq("auth0|123"),
+            argThat(
+                (UpdateUserRequestContent arg) ->
+                    arg.getPicture().get().equals("https://newpicture")));
+  }
+
+  @Test
+  void updateCurrentUser_onlyUseGravatar_doesNotUpdateAuth0() {
+    UUID userId = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
+    UserEntity user = UserEntity.builder().id(userId).auth0Id("auth0|123").build();
+
+    when(jwt.getSubject()).thenReturn("auth0|123");
+    when(userRepository.findByAuth0Id("auth0|123")).thenReturn(Optional.of(user));
+    when(usersClient.get("auth0|123")).thenReturn(mock(GetUserResponseContent.class));
+    when(householdMemberRepository.findByUserId(userId)).thenReturn(Collections.emptyList());
+
+    userService.updateCurrentUser(
+        jwt, new UpdateUserProfileRequestDto(null, null, null, null, true));
+
+    verify(usersClient, never()).update(anyString(), any(UpdateUserRequestContent.class));
   }
 }
