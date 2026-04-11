@@ -74,7 +74,9 @@ class ApiIntegrationIT extends AbstractIntegrationTest {
                     requestToken(
                         System.getenv("TEST_AUTH0_CLIENT_ID"),
                         System.getenv("TEST_AUTH0_CLIENT_SECRET"),
-                        "https://spice-tracker-service.dajohnston.co.uk")))
+                        "https://spice-tracker-service.dajohnston.co.uk",
+                        System.getenv("TEST_AUTH0_USERNAME"),
+                        System.getenv("TEST_AUTH0_PASSWORD"))))
         .when()
         .get("/api/users/me")
         .then()

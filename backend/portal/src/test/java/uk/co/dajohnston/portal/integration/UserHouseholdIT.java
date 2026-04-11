@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.notNullValue;
 import static uk.co.dajohnston.portal.integration.IntegrationTestHelper.authenticated;
+import static uk.co.dajohnston.portal.integration.IntegrationTestHelper.authenticatedAsUser2;
 
 import java.util.Map;
 import org.junit.jupiter.api.Test;
@@ -61,13 +62,13 @@ class UserHouseholdIT extends AbstractIntegrationTest {
 
     authenticated()
         .contentType(JSON)
-        .body(Map.of("email", System.getenv("TEST_AUTH0_USERNAME"), "role", "MEMBER"))
+        .body(Map.of("email", System.getenv("TEST_AUTH0_USERNAME_2"), "role", "MEMBER"))
         .when()
         .post("/api/households/{id}/invitations", householdId)
         .then()
         .statusCode(201);
 
-    authenticated()
+    authenticatedAsUser2()
         .when()
         .post("/api/households/{id}/join", householdId)
         .then()

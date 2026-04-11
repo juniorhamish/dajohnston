@@ -44,6 +44,7 @@ management:
       enabled: true
 logging:
   level:
+    uk.co.dajohnston: DEBUG
     org.zalando.logbook: TRACE
   structured:
     format:

@@ -10,13 +10,25 @@ import lombok.experimental.UtilityClass;
 public class IntegrationTestHelper {
 
   private static String getAccessToken() {
+    return requestToken(System.getenv("TEST_AUTH0_USERNAME"), System.getenv("TEST_AUTH0_PASSWORD"));
+  }
+
+  private static String getAccessTokenUser2() {
+    return requestToken(
+        System.getenv("TEST_AUTH0_USERNAME_2"), System.getenv("TEST_AUTH0_PASSWORD_2"));
+  }
+
+  public static String requestToken(String username, String password) {
     return requestToken(
         System.getenv("TEST_AUTH0_CLIENT_ID"),
         System.getenv("TEST_AUTH0_CLIENT_SECRET"),
-        System.getenv("TEST_AUTH0_AUDIENCE"));
+        System.getenv("TEST_AUTH0_AUDIENCE"),
+        username,
+        password);
   }
 
-  public static String requestToken(String clientId, String clientSecret, String audience) {
+  public static String requestToken(
+      String clientId, String clientSecret, String audience, String username, String password) {
     Map<String, String> body =
         Map.of(
             "client_id",
@@ -28,9 +40,9 @@ public class IntegrationTestHelper {
             "grant_type",
             "password",
             "username",
-            System.getenv("TEST_AUTH0_USERNAME"),
+            username,
             "password",
-            System.getenv("TEST_AUTH0_PASSWORD"),
+            password,
             "scope",
             "openid profile email");
     return given()
@@ -43,5 +55,9 @@ public class IntegrationTestHelper {
 
   public static RequestSpecification authenticated() {
     return given().header("Authorization", "Bearer %s".formatted(getAccessToken()));
+  }
+
+  public static RequestSpecification authenticatedAsUser2() {
+    return given().header("Authorization", "Bearer %s".formatted(getAccessTokenUser2()));
   }
 }
