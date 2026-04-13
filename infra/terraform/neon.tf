@@ -15,6 +15,11 @@ resource "neon_role" "db_app" {
   name       = var.database_app_user
 }
 
+import {
+  to = neon_role.db_app
+  id = "${neon_project.portal_project.id}/${neon_project.portal_project.default_branch_id}/${var.database_app_user}"
+}
+
 resource "neon_database" "portal_db" {
   project_id = neon_project.portal_project.id
   branch_id  = neon_project.portal_project.default_branch_id
