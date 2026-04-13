@@ -27,17 +27,17 @@ class RlsIT extends AbstractIntegrationTest {
 
     authenticated()
         .when()
-        .get("/api/users/me")
+        .get("/api/households")
         .then()
         .statusCode(200)
-        .body("households.name", hasItem(householdName));
+        .body("name", hasItem(householdName));
 
     authenticatedAsUser2()
         .when()
-        .get("/api/users/me")
+        .get("/api/households")
         .then()
         .statusCode(200)
-        .body("households.name", not(hasItem(householdName)));
+        .body("name", not(hasItem(householdName)));
   }
 
   @Test
@@ -55,17 +55,17 @@ class RlsIT extends AbstractIntegrationTest {
 
     authenticatedAsUser2()
         .when()
-        .get("/api/users/me")
+        .get("/api/households")
         .then()
         .statusCode(200)
-        .body("households.name", hasItem(householdName));
+        .body("name", hasItem(householdName));
 
     authenticated()
         .when()
-        .get("/api/users/me")
+        .get("/api/households")
         .then()
         .statusCode(200)
-        .body("households.name", not(hasItem(householdName)));
+        .body("name", not(hasItem(householdName)));
   }
 
   @Test
@@ -85,7 +85,7 @@ class RlsIT extends AbstractIntegrationTest {
 
     authenticatedAsUser2()
         .when()
-        .get("/api/users/me")
+        .get("/api/households")
         .then()
         .statusCode(200)
         .body("households.name", not(hasItem(householdName)));
@@ -108,9 +108,9 @@ class RlsIT extends AbstractIntegrationTest {
 
     authenticatedAsUser2()
         .when()
-        .get("/api/users/me")
+        .get("/api/households")
         .then()
         .statusCode(200)
-        .body("households.name", hasItem(householdName));
+        .body("name", hasItem(householdName));
   }
 }

@@ -38,6 +38,7 @@ class TenantSessionAspectTest {
     verify(jdbcTemplate)
         .queryForObject(
             "SELECT set_config('app.current_user_id', ?, false)", String.class, userId.toString());
+    verify(jdbcTemplate).execute("RESET app.current_user_email");
     verify(jdbcTemplate).execute("RESET app.current_household_id");
   }
 
@@ -46,6 +47,7 @@ class TenantSessionAspectTest {
     tenantSessionAspect.setTenantSessionVariable();
 
     verify(jdbcTemplate).execute("RESET app.current_user_id");
+    verify(jdbcTemplate).execute("RESET app.current_user_email");
     verify(jdbcTemplate).execute("RESET app.current_household_id");
   }
 
@@ -63,6 +65,7 @@ class TenantSessionAspectTest {
     tenantSessionAspect.setTenantSessionVariable();
 
     verify(jdbcTemplate).execute("RESET app.current_user_id");
+    verify(jdbcTemplate).execute("RESET app.current_user_email");
     verify(jdbcTemplate)
         .queryForObject(
             "SELECT set_config('app.current_household_id', ?, false)",
@@ -91,10 +94,36 @@ class TenantSessionAspectTest {
     verify(jdbcTemplate)
         .queryForObject(
             "SELECT set_config('app.current_user_id', ?, false)", String.class, userId.toString());
+    verify(jdbcTemplate).execute("RESET app.current_user_email");
     verify(jdbcTemplate)
         .queryForObject(
             "SELECT set_config('app.current_household_id', ?, false)",
             String.class,
             tenantId.toString());
+  }
+
+  @Test
+  void setTenantSessionVariable_setsEmailWhenPresent() {
+    UUID userId = UUID.fromString("a1b2c3d4-e5f6-7890-abcd-ef1234567890");
+    String email = "test@example.com";
+    TenantContext.setUserId(userId);
+    TenantContext.setUserEmail(email);
+
+    when(jdbcTemplate.queryForObject(
+            "SELECT set_config('app.current_user_id', ?, false)", String.class, userId.toString()))
+        .thenReturn(userId.toString());
+    when(jdbcTemplate.queryForObject(
+            "SELECT set_config('app.current_user_email', ?, false)", String.class, email))
+        .thenReturn(email);
+
+    tenantSessionAspect.setTenantSessionVariable();
+
+    verify(jdbcTemplate)
+        .queryForObject(
+            "SELECT set_config('app.current_user_id', ?, false)", String.class, userId.toString());
+    verify(jdbcTemplate)
+        .queryForObject(
+            "SELECT set_config('app.current_user_email', ?, false)", String.class, email);
+    verify(jdbcTemplate).execute("RESET app.current_household_id");
   }
 }

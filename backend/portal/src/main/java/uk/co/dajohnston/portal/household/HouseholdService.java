@@ -2,6 +2,7 @@ package uk.co.dajohnston.portal.household;
 
 import static uk.co.dajohnston.portal.household.HouseholdRole.*;
 
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
@@ -27,6 +28,20 @@ public class HouseholdService {
   private final HouseholdMemberRepository householdMemberRepository;
   private final InvitationRepository invitationRepository;
   private final UserService userService;
+
+  @Transactional(readOnly = true)
+  public List<Household> listHouseholds(JwtClaimAccessor jwt) {
+    userService.findOrCreateUser(jwt);
+    return householdMemberRepository.findAll().stream()
+        .map(
+            member ->
+                Household.builder()
+                    .id(member.getHousehold().getId())
+                    .name(member.getHousehold().getName())
+                    .role(member.getRole())
+                    .build())
+        .toList();
+  }
 
   public Household createHousehold(JwtClaimAccessor jwt, String name) {
     UserEntity user = userService.findOrCreateUser(jwt);

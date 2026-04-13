@@ -61,6 +61,21 @@ paths:
         '401':
           description: Unauthorized
   /api/households:
+    get:
+      tags:
+        - Households
+      summary: List households for the current user
+      description: Returns all households that the currently authenticated user is a member of.
+      operationId: listHouseholds
+      responses:
+        '200':
+          description: Successfully retrieved households
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Households'
+        '401':
+          description: Unauthorized
     post:
       tags:
         - Households
@@ -216,6 +231,10 @@ components:
         - id
         - name
         - role
+    Households:
+      type: array
+      items:
+        $ref: '#/components/schemas/Household'
     UpdateUserProfileRequest:
       type: object
       properties:

@@ -7,6 +7,12 @@ resource "google_secret_manager_secret_iam_member" "db_password_access" {
   member    = "serviceAccount:${data.google_project.project.number}-compute@developer.gserviceaccount.com"
 }
 
+resource "google_secret_manager_secret_iam_member" "db_app_password_access" {
+  secret_id = google_secret_manager_secret.db_app_password.id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${data.google_project.project.number}-compute@developer.gserviceaccount.com"
+}
+
 # Allow the Cloud Run service account to read from the Artifact Registry
 resource "google_artifact_registry_repository_iam_member" "ar_reader" {
   location   = google_artifact_registry_repository.portal_repo.location
@@ -80,6 +86,20 @@ resource "google_secret_manager_secret_version" "db_password_version" {
   secret_data = neon_role.db_admin.password
 }
 
+# Secret Manager for Application User Database Password
+resource "google_secret_manager_secret" "db_app_password" {
+  secret_id = "portal-db-app-password"
+  replication {
+    auto {}
+  }
+  depends_on = [google_project_service.secret_manager]
+}
+
+resource "google_secret_manager_secret_version" "db_app_password_version" {
+  secret      = google_secret_manager_secret.db_app_password.id
+  secret_data = neon_role.db_app.password
+}
+
 # Artifact Registry for Backend Docker images
 resource "google_artifact_registry_repository" "portal_repo" {
   location      = var.region
@@ -135,10 +155,23 @@ resource "google_cloud_run_v2_service" "backend" {
       }
       env {
         name  = "DATABASE_USERNAME"
-        value = neon_role.db_admin.name
+        value = neon_role.db_app.name
       }
       env {
         name = "DATABASE_PASSWORD"
+        value_source {
+          secret_key_ref {
+            secret  = google_secret_manager_secret.db_app_password.secret_id
+            version = "latest"
+          }
+        }
+      }
+      env {
+        name  = "FLYWAY_USER"
+        value = neon_role.db_admin.name
+      }
+      env {
+        name = "FLYWAY_PASSWORD"
         value_source {
           secret_key_ref {
             secret  = google_secret_manager_secret.db_password.secret_id
@@ -205,6 +238,7 @@ resource "google_cloud_run_v2_service" "backend" {
   depends_on = [
     google_project_service.cloud_run,
     google_secret_manager_secret_iam_member.db_password_access,
+    google_secret_manager_secret_iam_member.db_app_password_access,
     google_artifact_registry_repository_iam_member.ar_reader
   ]
 }

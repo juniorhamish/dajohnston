@@ -62,9 +62,15 @@ variable "database_name" {
 }
 
 variable "database_user" {
-  description = "The name of the database user"
+  description = "The name of the database admin user (table owner, runs migrations)"
   type        = string
   default     = "portal_admin"
+}
+
+variable "database_app_user" {
+  description = "The name of the database application user (non-owner, subject to RLS)"
+  type        = string
+  default     = "portal_app"
 }
 
 variable "vercel_api_token" {

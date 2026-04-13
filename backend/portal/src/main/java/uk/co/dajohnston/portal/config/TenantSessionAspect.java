@@ -29,6 +29,15 @@ public class TenantSessionAspect {
       jdbcTemplate.execute("RESET app.current_user_id");
     }
 
+    String email = TenantContext.getUserEmail();
+    if (email != null) {
+      log.debug("Setting PostgreSQL session variable app.current_user_email to {}", email);
+      jdbcTemplate.queryForObject(
+          "SELECT set_config('app.current_user_email', ?, false)", String.class, email);
+    } else {
+      jdbcTemplate.execute("RESET app.current_user_email");
+    }
+
     UUID tenantId = TenantContext.getTenantId();
     if (tenantId != null) {
       log.debug("Setting PostgreSQL session variable app.current_household_id to {}", tenantId);

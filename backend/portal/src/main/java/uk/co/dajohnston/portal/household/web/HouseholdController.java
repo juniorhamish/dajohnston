@@ -4,6 +4,7 @@ import static org.springframework.http.HttpStatus.*;
 import static org.springframework.http.ResponseEntity.ok;
 import static org.springframework.http.ResponseEntity.status;
 
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import uk.co.dajohnston.model.CreateHouseholdRequestDto;
 import uk.co.dajohnston.model.HouseholdDto;
 import uk.co.dajohnston.model.InvitationDto;
 import uk.co.dajohnston.model.InviteUserRequestDto;
+import uk.co.dajohnston.portal.household.Household;
 import uk.co.dajohnston.portal.household.HouseholdMapper;
 import uk.co.dajohnston.portal.household.HouseholdRole;
 import uk.co.dajohnston.portal.household.HouseholdService;
@@ -25,6 +27,13 @@ class HouseholdController implements HouseholdsApi {
 
   private final HouseholdService householdService;
   private final HouseholdMapper householdMapper;
+
+  @Override
+  public ResponseEntity<List<HouseholdDto>> listHouseholds(
+      @AuthenticationPrincipal JwtClaimAccessor jwt) {
+    List<Household> households = householdService.listHouseholds(jwt);
+    return ok(households.stream().map(householdMapper::toDto).toList());
+  }
 
   @Override
   public ResponseEntity<HouseholdDto> createHousehold(

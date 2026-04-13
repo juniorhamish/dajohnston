@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 import static uk.co.dajohnston.portal.household.HouseholdRole.MEMBER;
 import static uk.co.dajohnston.portal.household.HouseholdRole.OWNER;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
@@ -37,6 +38,41 @@ class HouseholdServiceTest {
   @Mock private JwtClaimAccessor jwt;
 
   @InjectMocks private HouseholdService householdService;
+
+  @Test
+  void listHouseholds_returnsHouseholdsFromRepository() {
+    UUID householdId1 = UUID.fromString("11111111-1111-1111-1111-111111111111");
+    UUID householdId2 = UUID.fromString("22222222-2222-2222-2222-222222222222");
+    HouseholdEntity household1 = HouseholdEntity.builder().id(householdId1).name("House 1").build();
+    HouseholdEntity household2 = HouseholdEntity.builder().id(householdId2).name("House 2").build();
+    HouseholdMemberEntity member1 =
+        HouseholdMemberEntity.builder().household(household1).role(OWNER).build();
+    HouseholdMemberEntity member2 =
+        HouseholdMemberEntity.builder().household(household2).role(MEMBER).build();
+
+    when(userService.findOrCreateUser(jwt)).thenReturn(UserEntity.builder().build());
+    when(householdMemberRepository.findAll()).thenReturn(List.of(member1, member2));
+
+    List<Household> result = householdService.listHouseholds(jwt);
+
+    assertThat(result).hasSize(2);
+    assertThat(result.getFirst().id()).isEqualTo(householdId1);
+    assertThat(result.getFirst().name()).isEqualTo("House 1");
+    assertThat(result.getFirst().role()).isEqualTo(OWNER);
+    assertThat(result.get(1).id()).isEqualTo(householdId2);
+    assertThat(result.get(1).name()).isEqualTo("House 2");
+    assertThat(result.get(1).role()).isEqualTo(MEMBER);
+  }
+
+  @Test
+  void listHouseholds_returnsEmptyList_whenNoMemberships() {
+    when(userService.findOrCreateUser(jwt)).thenReturn(UserEntity.builder().build());
+    when(householdMemberRepository.findAll()).thenReturn(List.of());
+
+    List<Household> result = householdService.listHouseholds(jwt);
+
+    assertThat(result).isEmpty();
+  }
 
   @Test
   void createHousehold_returnsCreatedHousehold() {

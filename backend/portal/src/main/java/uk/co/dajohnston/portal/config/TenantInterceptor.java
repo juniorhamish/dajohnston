@@ -32,6 +32,7 @@ public class TenantInterceptor implements HandlerInterceptor {
     if (authentication != null && authentication.getPrincipal() instanceof Jwt jwt) {
       UserEntity user = userService.findOrCreateUser(jwt);
       TenantContext.setUserId(user.getId());
+      TenantContext.setUserEmail(user.getEmail());
 
       String householdIdHeader = request.getHeader(HOUSEHOLD_ID_HEADER);
       if (householdIdHeader != null && !householdIdHeader.isBlank()) {
