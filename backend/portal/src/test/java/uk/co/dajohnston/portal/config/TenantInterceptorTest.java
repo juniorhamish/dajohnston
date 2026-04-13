@@ -18,6 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
@@ -105,6 +106,17 @@ class TenantInterceptorTest {
 
   @Test
   void preHandle_doesNotSetContextWhenNotAuthenticated() {
+    boolean result = tenantInterceptor.preHandle(request, response, new Object());
+
+    assertThat(result).isTrue();
+    assertThat(TenantContext.getUserId()).isNull();
+    assertThat(TenantContext.getTenantId()).isNull();
+    verify(userService, never()).findOrCreateUser(any());
+  }
+
+  @Test
+  void preHandle_doesNotSetContextWhenNotUsingJwtAuthentication() {
+    SecurityContextHolder.getContext().setAuthentication(new TestingAuthenticationToken("", ""));
     boolean result = tenantInterceptor.preHandle(request, response, new Object());
 
     assertThat(result).isTrue();
