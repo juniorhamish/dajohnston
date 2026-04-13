@@ -122,6 +122,22 @@ paths:
           description: Unauthorized
         '404':
           description: Household not found
+  /api/apps:
+    get:
+      tags:
+        - Apps
+      summary: List available sub-applications
+      description: Returns all active sub-applications available in the portal.
+      operationId: listApps
+      responses:
+        '200':
+          description: Successfully retrieved available apps
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Apps'
+        '401':
+          description: Unauthorized
   /api/households/{householdId}/invitations:
     post:
       tags:
@@ -288,6 +304,32 @@ components:
         - email
         - role
         - status
+    App:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        icon:
+          type: string
+        url:
+          type: string
+      required:
+        - id
+        - name
+        - url
+    Apps:
+      type: object
+      properties:
+        apps:
+          type: array
+          items:
+            $ref: '#/components/schemas/App'
+      required:
+        - apps
     HouseholdRole:
       type: string
       enum: [ OWNER, MEMBER ]

@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { CreateHouseholdData, CreateHouseholdErrors, CreateHouseholdResponses, GetApplicationInfoData, GetApplicationInfoResponses, GetCurrentUserData, GetCurrentUserErrors, GetCurrentUserResponses, InviteUserData, InviteUserErrors, InviteUserResponses, JoinHouseholdData, JoinHouseholdErrors, JoinHouseholdResponses, UpdateCurrentUserData, UpdateCurrentUserErrors, UpdateCurrentUserResponses } from './types.gen';
+import type { CreateHouseholdData, CreateHouseholdErrors, CreateHouseholdResponses, GetApplicationInfoData, GetApplicationInfoResponses, GetCurrentUserData, GetCurrentUserErrors, GetCurrentUserResponses, InviteUserData, InviteUserErrors, InviteUserResponses, JoinHouseholdData, JoinHouseholdErrors, JoinHouseholdResponses, ListAppsData, ListAppsErrors, ListAppsResponses, ListHouseholdsData, ListHouseholdsErrors, ListHouseholdsResponses, UpdateCurrentUserData, UpdateCurrentUserErrors, UpdateCurrentUserResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -52,6 +52,17 @@ export const updateCurrentUser = <ThrowOnError extends boolean = false>(options:
 });
 
 /**
+ * List households for the current user
+ *
+ * Returns all households that the currently authenticated user is a member of.
+ */
+export const listHouseholds = <ThrowOnError extends boolean = false>(options?: Options<ListHouseholdsData, ThrowOnError>) => (options?.client ?? client).get<ListHouseholdsResponses, ListHouseholdsErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/households',
+    ...options
+});
+
+/**
  * Create a new household
  */
 export const createHousehold = <ThrowOnError extends boolean = false>(options: Options<CreateHouseholdData, ThrowOnError>) => (options.client ?? client).post<CreateHouseholdResponses, CreateHouseholdErrors, ThrowOnError>({
@@ -70,6 +81,17 @@ export const createHousehold = <ThrowOnError extends boolean = false>(options: O
 export const joinHousehold = <ThrowOnError extends boolean = false>(options: Options<JoinHouseholdData, ThrowOnError>) => (options.client ?? client).post<JoinHouseholdResponses, JoinHouseholdErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/api/households/{householdId}/join',
+    ...options
+});
+
+/**
+ * List available sub-applications
+ *
+ * Returns all active sub-applications available in the portal.
+ */
+export const listApps = <ThrowOnError extends boolean = false>(options?: Options<ListAppsData, ThrowOnError>) => (options?.client ?? client).get<ListAppsResponses, ListAppsErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/apps',
     ...options
 });
 
