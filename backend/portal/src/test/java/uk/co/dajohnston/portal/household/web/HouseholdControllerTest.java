@@ -1,15 +1,20 @@
 package uk.co.dajohnston.portal.household.web;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static uk.co.dajohnston.portal.household.HouseholdRole.MEMBER;
 import static uk.co.dajohnston.portal.household.HouseholdRole.OWNER;
 
+import java.util.List;
 import java.util.UUID;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -17,6 +22,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import uk.co.dajohnston.portal.config.TenantInterceptor;
 import uk.co.dajohnston.portal.household.Household;
 import uk.co.dajohnston.portal.household.HouseholdMapperImpl;
 import uk.co.dajohnston.portal.household.HouseholdRole;
@@ -32,6 +38,50 @@ class HouseholdControllerTest {
 
   @MockitoBean private HouseholdService householdService;
   @MockitoBean private JwtDecoder jwtDecoder;
+  @MockitoBean private TenantInterceptor tenantInterceptor;
+
+  @BeforeEach
+  void setUp() {
+    when(tenantInterceptor.preHandle(any(), any(), any())).thenReturn(true);
+  }
+
+  @Test
+  void listHouseholds_returnsHouseholdsForUser() throws Exception {
+    UUID householdId1 = UUID.fromString("456e4567-e89b-12d3-a456-426614174000");
+    UUID householdId2 = UUID.fromString("556e4567-e89b-12d3-a456-426614174000");
+    List<Household> households =
+        List.of(
+            Household.builder().id(householdId1).name("House 1").role(OWNER).build(),
+            Household.builder().id(householdId2).name("House 2").role(MEMBER).build());
+
+    when(householdService.listHouseholds(any())).thenReturn(households);
+
+    mockMvc
+        .perform(get("/api/households").with(jwt().jwt(jwt -> jwt.subject("auth0|123"))))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$", hasSize(2)))
+        .andExpect(jsonPath("$[0].id").value(householdId1.toString()))
+        .andExpect(jsonPath("$[0].name").value("House 1"))
+        .andExpect(jsonPath("$[0].role").value("OWNER"))
+        .andExpect(jsonPath("$[1].id").value(householdId2.toString()))
+        .andExpect(jsonPath("$[1].name").value("House 2"))
+        .andExpect(jsonPath("$[1].role").value("MEMBER"));
+  }
+
+  @Test
+  void listHouseholds_returnsEmptyList_whenNoHouseholds() throws Exception {
+    when(householdService.listHouseholds(any())).thenReturn(List.of());
+
+    mockMvc
+        .perform(get("/api/households").with(jwt().jwt(jwt -> jwt.subject("auth0|123"))))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$", hasSize(0)));
+  }
+
+  @Test
+  void listHouseholds_unauthenticated_returnsUnauthorized() throws Exception {
+    mockMvc.perform(get("/api/households")).andExpect(status().isUnauthorized());
+  }
 
   @Test
   void createHousehold_returnsCreatedHousehold() throws Exception {

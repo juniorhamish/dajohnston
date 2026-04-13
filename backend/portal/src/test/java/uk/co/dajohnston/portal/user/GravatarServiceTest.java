@@ -32,13 +32,13 @@ class GravatarServiceTest {
   void getGravatarUrl_normalEmail_returnsCorrectUrl() {
     // MD5 for test@example.com is 55502f40dc8b7c769880b10874abc9d0
     assertThat(gravatarService.getGravatarUrl("test@example.com"))
-        .isEqualTo("https://www.gravatar.com/avatar/55502f40dc8b7c769880b10874abc9d0");
+        .isEqualTo("https://s.gravatar.com/avatar/55502f40dc8b7c769880b10874abc9d0");
   }
 
   @Test
   void getGravatarUrl_uppercaseAndWhitespace_returnsSameUrl() {
     assertThat(gravatarService.getGravatarUrl(" TEST@EXAMPLE.COM  "))
-        .isEqualTo("https://www.gravatar.com/avatar/55502f40dc8b7c769880b10874abc9d0");
+        .isEqualTo("https://s.gravatar.com/avatar/55502f40dc8b7c769880b10874abc9d0");
   }
 
   @Test
@@ -49,7 +49,7 @@ class GravatarServiceTest {
           .thenThrow(new NoSuchAlgorithmException("MD5 not found"));
 
       assertThat(gravatarService.getGravatarUrl("test@example.com"))
-          .isEqualTo("https://www.gravatar.com/avatar/");
+          .isEqualTo("https://s.gravatar.com/avatar/");
     }
   }
 }

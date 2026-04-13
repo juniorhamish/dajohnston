@@ -10,6 +10,7 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/18/docker
+      - ./docker/postgres/init-app-user.sql:/docker-entrypoint-initdb.d/init-app-user.sql:ro
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U portal_user -d portal_db" ]
       interval: 10s

@@ -29,6 +29,6 @@ public class GravatarService {
       return null;
     }
     String hash = md5Hex(email.toLowerCase(ROOT).trim());
-    return "https://www.gravatar.com/avatar/" + hash;
+    return "https://s.gravatar.com/avatar/" + hash;
   }
 }

@@ -15,6 +15,7 @@ import static uk.co.dajohnston.portal.household.HouseholdRole.OWNER;
 
 import java.util.List;
 import java.util.UUID;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -22,6 +23,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import uk.co.dajohnston.portal.config.TenantInterceptor;
 import uk.co.dajohnston.portal.household.Household;
 import uk.co.dajohnston.portal.user.UserMapperImpl;
 import uk.co.dajohnston.portal.user.UserProfile;
@@ -36,6 +38,12 @@ class UserControllerTest {
 
   @MockitoBean private JwtDecoder jwtDecoder;
   @MockitoBean private UserService userService;
+  @MockitoBean private TenantInterceptor tenantInterceptor;
+
+  @BeforeEach
+  void setUp() {
+    when(tenantInterceptor.preHandle(any(), any(), any())).thenReturn(true);
+  }
 
   @Test
   void getCurrentUser_userExists_returnsUser() throws Exception {
