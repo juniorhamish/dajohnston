@@ -18,6 +18,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.oauth2.jwt.JwtClaimAccessor;
+import uk.co.dajohnston.portal.config.ResourceNotFoundException;
 import uk.co.dajohnston.portal.household.entity.HouseholdEntity;
 import uk.co.dajohnston.portal.household.entity.HouseholdMemberEntity;
 import uk.co.dajohnston.portal.household.entity.HouseholdMemberId;
@@ -244,5 +245,199 @@ class HouseholdServiceTest {
             () -> householdService.inviteUser(householdId, jwt, "email@example.com", MEMBER))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage("Household not found");
+  }
+
+  @Test
+  void listPendingInvitations_returnsInvitationsForEmail() {
+    UUID invitationId = UUID.fromString("00000000-0000-0000-0000-000000000010");
+    UUID householdId = UUID.fromString("00000000-0000-0000-0000-000000000011");
+    HouseholdEntity household =
+        HouseholdEntity.builder().id(householdId).name("Test House").build();
+    InvitationEntity invitation =
+        InvitationEntity.builder()
+            .id(invitationId)
+            .household(household)
+            .email("user@example.com")
+            .role(MEMBER)
+            .status("PENDING")
+            .build();
+
+    when(userService.findOrCreateUser(jwt)).thenReturn(UserEntity.builder().build());
+    when(jwt.getClaimAsString("email")).thenReturn("user@example.com");
+    when(invitationRepository.findByEmailAndStatus("user@example.com", "PENDING"))
+        .thenReturn(List.of(invitation));
+
+    List<Invitation> result = householdService.listPendingInvitations(jwt);
+
+    assertThat(result).hasSize(1);
+    assertThat(result.getFirst().id()).isEqualTo(invitationId);
+    assertThat(result.getFirst().householdId()).isEqualTo(householdId);
+    assertThat(result.getFirst().householdName()).isEqualTo("Test House");
+    assertThat(result.getFirst().email()).isEqualTo("user@example.com");
+    assertThat(result.getFirst().role()).isEqualTo(MEMBER);
+    assertThat(result.getFirst().status()).isEqualTo("PENDING");
+  }
+
+  @Test
+  void listPendingInvitations_returnsEmptyList_whenNoPending() {
+    when(userService.findOrCreateUser(jwt)).thenReturn(UserEntity.builder().build());
+    when(jwt.getClaimAsString("email")).thenReturn("user@example.com");
+    when(invitationRepository.findByEmailAndStatus("user@example.com", "PENDING"))
+        .thenReturn(List.of());
+
+    List<Invitation> result = householdService.listPendingInvitations(jwt);
+
+    assertThat(result).isEmpty();
+  }
+
+  @Test
+  void acceptInvitation_success() {
+    UUID invitationId = UUID.fromString("00000000-0000-0000-0000-000000000020");
+    UUID userId = UUID.fromString("00000000-0000-0000-0000-000000000021");
+    UUID householdId = UUID.fromString("00000000-0000-0000-0000-000000000022");
+    UserEntity user = UserEntity.builder().id(userId).build();
+    HouseholdEntity household =
+        HouseholdEntity.builder().id(householdId).name("Accept House").build();
+    InvitationEntity invitation =
+        InvitationEntity.builder()
+            .id(invitationId)
+            .household(household)
+            .email("user@example.com")
+            .role(MEMBER)
+            .status("PENDING")
+            .build();
+
+    when(userService.findOrCreateUser(jwt)).thenReturn(user);
+    when(jwt.getClaimAsString("email")).thenReturn("user@example.com");
+    when(invitationRepository.findById(invitationId)).thenReturn(Optional.of(invitation));
+
+    Invitation result = householdService.acceptInvitation(invitationId, jwt);
+
+    assertThat(result.id()).isEqualTo(invitationId);
+    assertThat(result.householdId()).isEqualTo(householdId);
+    assertThat(result.householdName()).isEqualTo("Accept House");
+    assertThat(result.status()).isEqualTo("ACCEPTED");
+    verify(householdMemberRepository).save(any(HouseholdMemberEntity.class));
+    verify(invitationRepository).save(invitation);
+  }
+
+  @Test
+  void acceptInvitation_notFound_throwsException() {
+    UUID invitationId = UUID.fromString("00000000-0000-0000-0000-000000000030");
+
+    when(userService.findOrCreateUser(jwt)).thenReturn(UserEntity.builder().build());
+    when(jwt.getClaimAsString("email")).thenReturn("user@example.com");
+    when(invitationRepository.findById(invitationId)).thenReturn(Optional.empty());
+
+    assertThatThrownBy(() -> householdService.acceptInvitation(invitationId, jwt))
+        .isInstanceOf(ResourceNotFoundException.class)
+        .hasMessage("Invitation not found");
+  }
+
+  @Test
+  void acceptInvitation_wrongEmail_throwsException() {
+    UUID invitationId = UUID.fromString("00000000-0000-0000-0000-000000000031");
+    HouseholdEntity household = HouseholdEntity.builder().build();
+    InvitationEntity invitation =
+        InvitationEntity.builder()
+            .id(invitationId)
+            .household(household)
+            .email("other@example.com")
+            .role(MEMBER)
+            .status("PENDING")
+            .build();
+
+    when(userService.findOrCreateUser(jwt)).thenReturn(UserEntity.builder().build());
+    when(jwt.getClaimAsString("email")).thenReturn("user@example.com");
+    when(invitationRepository.findById(invitationId)).thenReturn(Optional.of(invitation));
+
+    assertThatThrownBy(() -> householdService.acceptInvitation(invitationId, jwt))
+        .isInstanceOf(ResourceNotFoundException.class)
+        .hasMessage("Invitation not found");
+  }
+
+  @Test
+  void acceptInvitation_alreadyAccepted_throwsException() {
+    UUID invitationId = UUID.fromString("00000000-0000-0000-0000-000000000032");
+    HouseholdEntity household = HouseholdEntity.builder().build();
+    InvitationEntity invitation =
+        InvitationEntity.builder()
+            .id(invitationId)
+            .household(household)
+            .email("user@example.com")
+            .role(MEMBER)
+            .status("ACCEPTED")
+            .build();
+
+    when(userService.findOrCreateUser(jwt)).thenReturn(UserEntity.builder().build());
+    when(jwt.getClaimAsString("email")).thenReturn("user@example.com");
+    when(invitationRepository.findById(invitationId)).thenReturn(Optional.of(invitation));
+
+    assertThatThrownBy(() -> householdService.acceptInvitation(invitationId, jwt))
+        .isInstanceOf(ResourceNotFoundException.class)
+        .hasMessage("Invitation not found");
+  }
+
+  @Test
+  void declineInvitation_success() {
+    UUID invitationId = UUID.fromString("00000000-0000-0000-0000-000000000040");
+    UUID householdId = UUID.fromString("00000000-0000-0000-0000-000000000041");
+    HouseholdEntity household =
+        HouseholdEntity.builder().id(householdId).name("Decline House").build();
+    InvitationEntity invitation =
+        InvitationEntity.builder()
+            .id(invitationId)
+            .household(household)
+            .email("user@example.com")
+            .role(MEMBER)
+            .status("PENDING")
+            .build();
+
+    when(userService.findOrCreateUser(jwt)).thenReturn(UserEntity.builder().build());
+    when(jwt.getClaimAsString("email")).thenReturn("user@example.com");
+    when(invitationRepository.findById(invitationId)).thenReturn(Optional.of(invitation));
+
+    Invitation result = householdService.declineInvitation(invitationId, jwt);
+
+    assertThat(result.id()).isEqualTo(invitationId);
+    assertThat(result.householdId()).isEqualTo(householdId);
+    assertThat(result.householdName()).isEqualTo("Decline House");
+    assertThat(result.status()).isEqualTo("DECLINED");
+    verify(invitationRepository).save(invitation);
+  }
+
+  @Test
+  void declineInvitation_notFound_throwsException() {
+    UUID invitationId = UUID.fromString("00000000-0000-0000-0000-000000000050");
+
+    when(userService.findOrCreateUser(jwt)).thenReturn(UserEntity.builder().build());
+    when(jwt.getClaimAsString("email")).thenReturn("user@example.com");
+    when(invitationRepository.findById(invitationId)).thenReturn(Optional.empty());
+
+    assertThatThrownBy(() -> householdService.declineInvitation(invitationId, jwt))
+        .isInstanceOf(ResourceNotFoundException.class)
+        .hasMessage("Invitation not found");
+  }
+
+  @Test
+  void declineInvitation_wrongEmail_throwsException() {
+    UUID invitationId = UUID.fromString("00000000-0000-0000-0000-000000000051");
+    HouseholdEntity household = HouseholdEntity.builder().build();
+    InvitationEntity invitation =
+        InvitationEntity.builder()
+            .id(invitationId)
+            .household(household)
+            .email("other@example.com")
+            .role(MEMBER)
+            .status("PENDING")
+            .build();
+
+    when(userService.findOrCreateUser(jwt)).thenReturn(UserEntity.builder().build());
+    when(jwt.getClaimAsString("email")).thenReturn("user@example.com");
+    when(invitationRepository.findById(invitationId)).thenReturn(Optional.of(invitation));
+
+    assertThatThrownBy(() -> householdService.declineInvitation(invitationId, jwt))
+        .isInstanceOf(ResourceNotFoundException.class)
+        .hasMessage("Invitation not found");
   }
 }

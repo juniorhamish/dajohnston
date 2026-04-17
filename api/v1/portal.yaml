@@ -170,6 +170,72 @@ paths:
           description: Forbidden - Only owners can invite
         '404':
           description: Household not found
+  /api/invitations:
+    get:
+      tags:
+        - Invitations
+      summary: List pending invitations for the current user
+      description: Returns all pending invitations for the currently authenticated user's email.
+      operationId: listPendingInvitations
+      responses:
+        '200':
+          description: Successfully retrieved pending invitations
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Invitations'
+        '401':
+          description: Unauthorized
+  /api/invitations/{invitationId}/accept:
+    post:
+      tags:
+        - Invitations
+      summary: Accept an invitation
+      description: Accepts a pending invitation and adds the user to the household.
+      operationId: acceptInvitation
+      parameters:
+        - name: invitationId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Successfully accepted invitation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Invitation'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Invitation not found
+  /api/invitations/{invitationId}/decline:
+    post:
+      tags:
+        - Invitations
+      summary: Decline an invitation
+      description: Declines a pending invitation.
+      operationId: declineInvitation
+      parameters:
+        - name: invitationId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Successfully declined invitation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Invitation'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Invitation not found
 components:
   securitySchemes:
     oauth:
@@ -291,6 +357,8 @@ components:
         householdId:
           type: string
           format: uuid
+        householdName:
+          type: string
         email:
           type: string
           format: email
@@ -301,9 +369,19 @@ components:
       required:
         - id
         - householdId
+        - householdName
         - email
         - role
         - status
+    Invitations:
+      type: object
+      properties:
+        invitations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Invitation'
+      required:
+        - invitations
     App:
       type: object
       properties:

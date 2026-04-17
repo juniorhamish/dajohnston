@@ -52,9 +52,14 @@ export type InviteUserRequest = {
 export type Invitation = {
     id: string;
     householdId: string;
+    householdName: string;
     email: string;
     role: HouseholdRole;
     status: string;
+};
+
+export type Invitations = {
+    invitations: Array<Invitation>;
 };
 
 export type App = {
@@ -271,3 +276,84 @@ export type InviteUserResponses = {
 };
 
 export type InviteUserResponse = InviteUserResponses[keyof InviteUserResponses];
+
+export type ListPendingInvitationsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/invitations';
+};
+
+export type ListPendingInvitationsErrors = {
+    /**
+     * Unauthorized
+     */
+    401: unknown;
+};
+
+export type ListPendingInvitationsResponses = {
+    /**
+     * Successfully retrieved pending invitations
+     */
+    200: Invitations;
+};
+
+export type ListPendingInvitationsResponse = ListPendingInvitationsResponses[keyof ListPendingInvitationsResponses];
+
+export type AcceptInvitationData = {
+    body?: never;
+    path: {
+        invitationId: string;
+    };
+    query?: never;
+    url: '/api/invitations/{invitationId}/accept';
+};
+
+export type AcceptInvitationErrors = {
+    /**
+     * Unauthorized
+     */
+    401: unknown;
+    /**
+     * Invitation not found
+     */
+    404: unknown;
+};
+
+export type AcceptInvitationResponses = {
+    /**
+     * Successfully accepted invitation
+     */
+    200: Invitation;
+};
+
+export type AcceptInvitationResponse = AcceptInvitationResponses[keyof AcceptInvitationResponses];
+
+export type DeclineInvitationData = {
+    body?: never;
+    path: {
+        invitationId: string;
+    };
+    query?: never;
+    url: '/api/invitations/{invitationId}/decline';
+};
+
+export type DeclineInvitationErrors = {
+    /**
+     * Unauthorized
+     */
+    401: unknown;
+    /**
+     * Invitation not found
+     */
+    404: unknown;
+};
+
+export type DeclineInvitationResponses = {
+    /**
+     * Successfully declined invitation
+     */
+    200: Invitation;
+};
+
+export type DeclineInvitationResponse = DeclineInvitationResponses[keyof DeclineInvitationResponses];

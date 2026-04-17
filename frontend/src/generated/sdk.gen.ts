@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { CreateHouseholdData, CreateHouseholdErrors, CreateHouseholdResponses, GetApplicationInfoData, GetApplicationInfoResponses, GetCurrentUserData, GetCurrentUserErrors, GetCurrentUserResponses, InviteUserData, InviteUserErrors, InviteUserResponses, JoinHouseholdData, JoinHouseholdErrors, JoinHouseholdResponses, ListAppsData, ListAppsErrors, ListAppsResponses, ListHouseholdsData, ListHouseholdsErrors, ListHouseholdsResponses, UpdateCurrentUserData, UpdateCurrentUserErrors, UpdateCurrentUserResponses } from './types.gen';
+import type { AcceptInvitationData, AcceptInvitationErrors, AcceptInvitationResponses, CreateHouseholdData, CreateHouseholdErrors, CreateHouseholdResponses, DeclineInvitationData, DeclineInvitationErrors, DeclineInvitationResponses, GetApplicationInfoData, GetApplicationInfoResponses, GetCurrentUserData, GetCurrentUserErrors, GetCurrentUserResponses, InviteUserData, InviteUserErrors, InviteUserResponses, JoinHouseholdData, JoinHouseholdErrors, JoinHouseholdResponses, ListAppsData, ListAppsErrors, ListAppsResponses, ListHouseholdsData, ListHouseholdsErrors, ListHouseholdsResponses, ListPendingInvitationsData, ListPendingInvitationsErrors, ListPendingInvitationsResponses, UpdateCurrentUserData, UpdateCurrentUserErrors, UpdateCurrentUserResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -106,4 +106,37 @@ export const inviteUser = <ThrowOnError extends boolean = false>(options: Option
         'Content-Type': 'application/json',
         ...options.headers
     }
+});
+
+/**
+ * List pending invitations for the current user
+ *
+ * Returns all pending invitations for the currently authenticated user's email.
+ */
+export const listPendingInvitations = <ThrowOnError extends boolean = false>(options?: Options<ListPendingInvitationsData, ThrowOnError>) => (options?.client ?? client).get<ListPendingInvitationsResponses, ListPendingInvitationsErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/invitations',
+    ...options
+});
+
+/**
+ * Accept an invitation
+ *
+ * Accepts a pending invitation and adds the user to the household.
+ */
+export const acceptInvitation = <ThrowOnError extends boolean = false>(options: Options<AcceptInvitationData, ThrowOnError>) => (options.client ?? client).post<AcceptInvitationResponses, AcceptInvitationErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/invitations/{invitationId}/accept',
+    ...options
+});
+
+/**
+ * Decline an invitation
+ *
+ * Declines a pending invitation.
+ */
+export const declineInvitation = <ThrowOnError extends boolean = false>(options: Options<DeclineInvitationData, ThrowOnError>) => (options.client ?? client).post<DeclineInvitationResponses, DeclineInvitationErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/invitations/{invitationId}/decline',
+    ...options
 });

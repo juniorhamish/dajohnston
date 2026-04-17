@@ -20,6 +20,11 @@ vi.mock("@/components/user/user-profile", () => ({
 vi.mock("@/components/apps/app-grid", () => ({
   AppGrid: vi.fn(() => <div data-testid="app-grid">Mocked App Grid</div>),
 }));
+vi.mock("@/components/invitations/pending-invitations", () => ({
+  PendingInvitations: vi.fn(() => (
+    <div data-testid="pending-invitations">Mocked Pending Invitations</div>
+  )),
+}));
 
 describe("Home Page", () => {
   it("should render the home page with mocked subcomponents", async () => {
@@ -40,6 +45,7 @@ describe("Home Page", () => {
       ),
     ).toBeInTheDocument();
     expect(within(main).getByTestId("user-profile")).toBeInTheDocument();
+    expect(within(main).getByTestId("pending-invitations")).toBeInTheDocument();
     expect(within(main).getByTestId("app-grid")).toBeInTheDocument();
     expect(
       within(screen.getByRole("contentinfo")).getByTestId("api-version"),

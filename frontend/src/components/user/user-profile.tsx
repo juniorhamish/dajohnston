@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { InviteUserForm } from "@/components/invitations/invite-user-form";
 import { getCurrentUser } from "@/generated";
 import { auth0 } from "@/lib/auth0";
 
@@ -61,12 +62,19 @@ export async function UserProfileCard() {
             {userProfile?.households.map((h) => (
               <div
                 key={h.id}
-                className="flex items-center justify-between bg-blue-50/50 px-4 py-3 rounded-lg border border-blue-100/50"
+                className="flex flex-col bg-blue-50/50 p-4 rounded-lg border border-blue-100/50"
               >
-                <span className="font-semibold text-blue-900">{h.name}</span>
-                <span className="text-xs font-bold uppercase px-2 py-1 bg-blue-100 text-blue-700 rounded-md">
-                  {h.role}
-                </span>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="font-semibold text-blue-900">{h.name}</span>
+                  <span className="text-xs font-bold uppercase px-2 py-1 bg-blue-100 text-blue-700 rounded-md">
+                    {h.role}
+                  </span>
+                </div>
+                {h.role === "OWNER" && (
+                  <div className="mt-2 pt-2 border-t border-blue-100/50">
+                    <InviteUserForm householdId={h.id} householdName={h.name} />
+                  </div>
+                )}
               </div>
             ))}
           </div>
