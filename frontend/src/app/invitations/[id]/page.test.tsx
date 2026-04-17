@@ -82,4 +82,17 @@ describe("InvitationPage", () => {
       "inv-1 - Cool House",
     );
   });
+
+  it("should show not found message if listPendingInvitations fails", async () => {
+    mockPartial(auth0.getSession).mockResolvedValue({ user: { name: "Test" } });
+    mockPartial(listPendingInvitations).mockRejectedValue(new Error("API Error"));
+
+    render(await InvitationPage({ params: Promise.resolve({ id: "inv-1" }) }));
+
+    expect(screen.getByText("Invitation Not Found")).toBeInTheDocument();
+    expect(console.error).toHaveBeenCalledWith(
+      "Failed to fetch pending invitations:",
+      expect.any(Error),
+    );
+  });
 });

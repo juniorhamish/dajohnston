@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { inviteUserAction } from "./invitation-actions";
 
 export interface InviteUserFormProps {
@@ -13,18 +13,17 @@ export function InviteUserForm({
   householdName,
 }: Readonly<InviteUserFormProps>) {
   const [isOpen, setIsOpen] = useState(false);
-  const [isPending, setIsPending] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
-  async function handleSubmit(formData: FormData) {
-    setIsPending(true);
-    try {
-      await inviteUserAction(householdId, formData);
-      setIsOpen(false);
-    } catch (e) {
-      console.error("Failed to invite user:", e);
-    } finally {
-      setIsPending(false);
-    }
+  function handleSubmit(formData: FormData) {
+    startTransition(async () => {
+      try {
+        await inviteUserAction(householdId, formData);
+        setIsOpen(false);
+      } catch (e) {
+        console.error("Failed to invite user:", e);
+      }
+    });
   }
 
   if (!isOpen) {
