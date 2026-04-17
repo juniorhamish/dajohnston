@@ -1,10 +1,5 @@
-import {
-  act,
-  cleanup,
-  fireEvent,
-  render,
-  screen,
-} from "@testing-library/react";
+import { act, cleanup, render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockPartial } from "@/lib/test-utils";
 import { inviteUserAction } from "./invitation-actions";
@@ -31,50 +26,45 @@ describe("InviteUserForm", () => {
     expect(screen.queryByLabelText(/Email Address/i)).not.toBeInTheDocument();
   });
 
-  it("should show the form when invite button is clicked", () => {
+  it("should show the form when invite button is clicked", async () => {
+    const user = userEvent.setup();
     render(<InviteUserForm householdId="h1" householdName="My House" />);
 
-    fireEvent.click(screen.getByText("+ Invite User"));
+    await user.click(screen.getByText("+ Invite User"));
 
     expect(screen.getByText("Invite to My House")).toBeInTheDocument();
     expect(screen.getByLabelText(/Email Address/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/Role/i)).toBeInTheDocument();
   });
 
-  it("should close the form when cancel is clicked", () => {
+  it("should close the form when cancel is clicked", async () => {
+    const user = userEvent.setup();
     render(<InviteUserForm householdId="h1" householdName="My House" />);
 
-    fireEvent.click(screen.getByText("+ Invite User"));
-    fireEvent.click(screen.getByText("Cancel"));
+    await user.click(screen.getByText("+ Invite User"));
+    await user.click(screen.getByText("Cancel"));
 
     expect(screen.getByText("+ Invite User")).toBeInTheDocument();
     expect(screen.queryByText("Invite to My House")).not.toBeInTheDocument();
   });
 
   it("should call inviteUserAction on submit", async () => {
+    const user = userEvent.setup();
     render(<InviteUserForm householdId="h1" householdName="My House" />);
 
-    fireEvent.click(screen.getByText("+ Invite User"));
+    await user.click(screen.getByText("+ Invite User"));
 
     const emailInput = screen.getByLabelText(/Email Address/i);
     const roleSelect = screen.getByLabelText(/Role/i);
     const submitButton = screen.getByText("Send Invitation");
 
-    fireEvent.change(emailInput, { target: { value: "test@example.com" } });
-    fireEvent.change(roleSelect, { target: { value: "OWNER" } });
-
-    // We can't easily fireEvent.submit on a form with Server Action in Vitest JSDOM without more setup,
-    // but since we're using a standard form with 'action', we can try to find the button and click it.
-    // However, handleSubmit is an async function passed to action.
+    await user.type(emailInput, "test@example.com");
+    await user.selectOptions(roleSelect, "OWNER");
 
     // Mocking the action response
     vi.mocked(inviteUserAction).mockResolvedValue(undefined);
 
-    fireEvent.click(submitButton);
-
-    // In a real environment, the form action would be triggered.
-    // In our component, we have 'action={handleSubmit}'.
-    // fireEvent.click(submitButton) should trigger it.
+    await user.click(submitButton);
 
     // Wait for the action to be called
     expect(inviteUserAction).toHaveBeenCalled();
@@ -85,17 +75,18 @@ describe("InviteUserForm", () => {
   });
 
   it("should log error and stay open if inviteUserAction fails", async () => {
+    const user = userEvent.setup();
     mockPartial(inviteUserAction).mockRejectedValue(new Error("API Error"));
 
     render(<InviteUserForm householdId="h1" householdName="My House" />);
 
-    fireEvent.click(screen.getByText("+ Invite User"));
+    await user.click(screen.getByText("+ Invite User"));
 
     const emailInput = screen.getByLabelText(/Email Address/i);
     const submitButton = screen.getByText("Send Invitation");
 
-    fireEvent.change(emailInput, { target: { value: "test@example.com" } });
-    fireEvent.click(submitButton);
+    await user.type(emailInput, "test@example.com");
+    await user.click(submitButton);
 
     // Wait for the action to be called
     await vi.waitFor(() => expect(inviteUserAction).toHaveBeenCalled());
@@ -116,6 +107,7 @@ describe("InviteUserForm", () => {
   });
 
   it("should show loading state while inviteUserAction is pending", async () => {
+    const user = userEvent.setup();
     let resolveAction!: (value: void | PromiseLike<void>) => void;
     const actionPromise = new Promise<void>((resolve) => {
       resolveAction = resolve;
@@ -124,15 +116,15 @@ describe("InviteUserForm", () => {
 
     render(<InviteUserForm householdId="h1" householdName="My House" />);
 
-    fireEvent.click(screen.getByText("+ Invite User"));
+    await user.click(screen.getByText("+ Invite User"));
 
     const emailInput = screen.getByLabelText(/Email Address/i);
-    fireEvent.change(emailInput, { target: { value: "test@example.com" } });
+    await user.type(emailInput, "test@example.com");
 
     const submitButton = screen.getByText("Send Invitation");
 
     // Trigger submit
-    fireEvent.click(submitButton);
+    await user.click(submitButton);
 
     // Verify loading state
     await vi.waitFor(() => {
