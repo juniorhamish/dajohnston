@@ -1,7 +1,7 @@
-import {cleanup, render, screen} from "@testing-library/react";
-import {afterEach, describe, expect, it, vi} from "vitest";
-import {listApps} from "@/generated";
-import {AppGrid} from "./app-grid";
+import { cleanup, render, screen } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { listApps } from "@/generated";
+import { AppGrid } from "./app-grid";
 
 vi.mock("@/generated", () => ({
   listApps: vi.fn(),
@@ -36,26 +36,26 @@ describe("AppGrid", () => {
     render(await AppGrid());
 
     expect(
-        screen.getByRole("heading", {name: "Available Applications"}),
+      screen.getByRole("heading", { name: "Available Applications" }),
     ).toBeInTheDocument();
     expect(
-        screen.getByRole("heading", {name: "Spice Tracker"}),
+      screen.getByRole("heading", { name: "Spice Tracker" }),
     ).toBeInTheDocument();
     expect(
-        screen.getByRole("heading", {name: "Meal Planner"}),
+      screen.getByRole("heading", { name: "Meal Planner" }),
     ).toBeInTheDocument();
     expect(screen.getAllByRole("link")).toHaveLength(2);
   });
 
   it("should render empty state when no apps available", async () => {
     vi.mocked(listApps).mockResolvedValue({
-      data: {apps: []},
+      data: { apps: [] },
     } as Awaited<ReturnType<typeof listApps>>);
 
     render(await AppGrid());
 
     expect(
-        screen.getByText("No applications available yet."),
+      screen.getByText("No applications available yet."),
     ).toBeInTheDocument();
   });
 
@@ -65,7 +65,7 @@ describe("AppGrid", () => {
     render(await AppGrid());
 
     expect(
-        screen.getByText("No applications available yet."),
+      screen.getByText("No applications available yet."),
     ).toBeInTheDocument();
   });
 });
