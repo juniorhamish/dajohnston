@@ -30,6 +30,8 @@ export type Household = {
     role: HouseholdRole;
 };
 
+export type Households = Array<Household>;
+
 export type UpdateUserProfileRequest = {
     givenName?: string;
     familyName?: string;
@@ -53,6 +55,18 @@ export type Invitation = {
     email: string;
     role: HouseholdRole;
     status: string;
+};
+
+export type App = {
+    id: string;
+    name: string;
+    description?: string;
+    icon?: string;
+    url: string;
+};
+
+export type Apps = {
+    apps: Array<App>;
 };
 
 export type HouseholdRole = 'OWNER' | 'MEMBER';
@@ -123,6 +137,29 @@ export type UpdateCurrentUserResponses = {
 
 export type UpdateCurrentUserResponse = UpdateCurrentUserResponses[keyof UpdateCurrentUserResponses];
 
+export type ListHouseholdsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/households';
+};
+
+export type ListHouseholdsErrors = {
+    /**
+     * Unauthorized
+     */
+    401: unknown;
+};
+
+export type ListHouseholdsResponses = {
+    /**
+     * Successfully retrieved households
+     */
+    200: Households;
+};
+
+export type ListHouseholdsResponse = ListHouseholdsResponses[keyof ListHouseholdsResponses];
+
 export type CreateHouseholdData = {
     body: CreateHouseholdRequest;
     path?: never;
@@ -178,6 +215,29 @@ export type JoinHouseholdResponses = {
 };
 
 export type JoinHouseholdResponse = JoinHouseholdResponses[keyof JoinHouseholdResponses];
+
+export type ListAppsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/apps';
+};
+
+export type ListAppsErrors = {
+    /**
+     * Unauthorized
+     */
+    401: unknown;
+};
+
+export type ListAppsResponses = {
+    /**
+     * Successfully retrieved available apps
+     */
+    200: Apps;
+};
+
+export type ListAppsResponse = ListAppsResponses[keyof ListAppsResponses];
 
 export type InviteUserData = {
     body: InviteUserRequest;
