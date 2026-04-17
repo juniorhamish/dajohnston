@@ -85,7 +85,9 @@ describe("InvitationPage", () => {
 
   it("should show not found message if listPendingInvitations fails", async () => {
     mockPartial(auth0.getSession).mockResolvedValue({ user: { name: "Test" } });
-    mockPartial(listPendingInvitations).mockRejectedValue(new Error("API Error"));
+    mockPartial(listPendingInvitations).mockRejectedValue(
+      new Error("API Error"),
+    );
 
     render(await InvitationPage({ params: Promise.resolve({ id: "inv-1" }) }));
 
