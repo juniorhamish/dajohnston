@@ -94,7 +94,8 @@ function urlBase64ToUint8Array(base64String: string) {
   const rawData = globalThis.atob(base64);
   const outputArray = new Uint8Array(rawData.length);
   for (let i = 0; i < rawData.length; ++i) {
-    outputArray[i] = rawData.codePointAt(i) ?? /* v8 ignore next */ 0;
+    /* v8 ignore next -- @preserve */
+    outputArray[i] = rawData.codePointAt(i) ?? 0;
   }
   return outputArray;
 }
