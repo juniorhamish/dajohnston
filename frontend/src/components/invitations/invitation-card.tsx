@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import {
   acceptInvitationAction,
   declineInvitationAction,
@@ -17,10 +18,10 @@ export function InvitationCard({
   householdRole,
 }: Readonly<InvitationCardProps>) {
   return (
-    <div className="flex items-center justify-between bg-green-50/50 px-4 py-3 rounded-lg border border-green-100/50">
+    <div className="flex items-center justify-between bg-accent/30 px-4 py-3 rounded-lg border">
       <div>
-        <span className="font-semibold text-green-900">{householdName}</span>
-        <span className="ml-2 text-xs font-bold uppercase px-2 py-1 bg-green-100 text-green-700 rounded-md">
+        <span className="font-semibold">{householdName}</span>
+        <span className="ml-2 text-[10px] font-bold uppercase px-2 py-1 bg-primary text-primary-foreground rounded-md">
           {householdRole}
         </span>
       </div>
@@ -29,23 +30,21 @@ export function InvitationCard({
           action={acceptInvitationAction.bind(null, id)}
           aria-label="Accept invitation"
         >
-          <button
+          <Button
             type="submit"
-            className="px-3 py-1.5 text-sm font-medium text-white bg-green-600 rounded-md hover:bg-green-700 transition-colors cursor-pointer"
+            size="sm"
+            className="bg-green-600 hover:bg-green-700 text-white"
           >
             Accept
-          </button>
+          </Button>
         </form>
         <form
           action={declineInvitationAction.bind(null, id)}
           aria-label="Decline invitation"
         >
-          <button
-            type="submit"
-            className="px-3 py-1.5 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 transition-colors cursor-pointer"
-          >
+          <Button type="submit" variant="secondary" size="sm">
             Decline
-          </button>
+          </Button>
         </form>
       </div>
     </div>

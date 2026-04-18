@@ -1,4 +1,10 @@
 import Link from "next/link";
+import {
+  Card,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import type { App } from "@/generated";
 
 interface AppCardProps {
@@ -7,23 +13,30 @@ interface AppCardProps {
 
 export function AppCard({ app }: Readonly<AppCardProps>) {
   return (
-    <Link
-      href={app.url}
-      className="group flex flex-col gap-3 p-6 bg-white rounded-xl shadow-lg border border-gray-100 hover:shadow-xl hover:border-primary/20 transition-all duration-200"
-    >
-      {app.icon && (
-        <span className="text-3xl" role="img" aria-label={`${app.name} icon`}>
-          {app.icon}
-        </span>
-      )}
-      <h3 className="text-lg font-bold text-gray-900 group-hover:text-primary transition-colors">
-        {app.name}
-      </h3>
-      {app.description && (
-        <p className="text-sm text-gray-500 leading-relaxed">
-          {app.description}
-        </p>
-      )}
+    <Link href={app.url} className="group">
+      <Card className="h-full hover:shadow-md transition-all duration-200 hover:border-primary/20">
+        <CardHeader>
+          <div className="flex items-center gap-3">
+            {app.icon && (
+              <span
+                className="text-2xl"
+                role="img"
+                aria-label={`${app.name} icon`}
+              >
+                {app.icon}
+              </span>
+            )}
+            <CardTitle className="group-hover:text-primary transition-colors">
+              {app.name}
+            </CardTitle>
+          </div>
+          {app.description && (
+            <CardDescription className="mt-2">
+              {app.description}
+            </CardDescription>
+          )}
+        </CardHeader>
+      </Card>
     </Link>
   );
 }

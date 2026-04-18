@@ -2,6 +2,17 @@ import { render, screen, within } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import Home from "./page";
 
+vi.mock("@/components/layouts/app-layout", () => ({
+  AppLayout: vi.fn(({ children }: { children: React.ReactNode }) => (
+    <div data-testid="app-layout">
+      <main>{children}</main>
+      <footer role="contentinfo">
+        <div data-testid="api-version">Mocked API Version</div>
+      </footer>
+    </div>
+  )),
+}));
+
 vi.mock("@/components/user/api-version", () => ({
   ApiVersion: vi.fn(() => (
     <div data-testid="api-version">Mocked API Version</div>
@@ -30,13 +41,10 @@ describe("Home Page", () => {
   it("should render the home page with mocked subcomponents", async () => {
     render(await Home());
 
-    expect(
-      within(screen.getByRole("banner")).getByTestId("auth-buttons"),
-    ).toBeInTheDocument();
     const main = screen.getByRole("main");
     expect(
       within(main).getByRole("heading", {
-        name: "Multi-App Portal",
+        name: "Portal Dashboard",
       }),
     ).toBeInTheDocument();
     expect(

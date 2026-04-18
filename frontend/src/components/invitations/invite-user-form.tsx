@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { Button } from "@/components/ui/button";
 import { inviteUserAction } from "./invitation-actions";
 
 export interface InviteUserFormProps {
@@ -28,26 +29,25 @@ export function InviteUserForm({
 
   if (!isOpen) {
     return (
-      <button
-        type="button"
+      <Button
+        variant="ghost"
+        size="sm"
         onClick={() => setIsOpen(true)}
-        className="text-xs font-bold text-blue-600 hover:text-blue-800 transition-colors cursor-pointer uppercase tracking-wider"
+        className="text-[10px] font-bold uppercase tracking-wider h-auto p-0 hover:bg-transparent text-primary hover:text-primary/80"
       >
         + Invite User
-      </button>
+      </Button>
     );
   }
 
   return (
-    <div className="mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
-      <h4 className="text-sm font-bold text-gray-900 mb-3">
-        Invite to {householdName}
-      </h4>
+    <div className="mt-4 p-4 bg-accent/30 rounded-lg border">
+      <h4 className="text-sm font-bold mb-3">Invite to {householdName}</h4>
       <form action={handleSubmit} className="flex flex-col gap-3">
         <div>
           <label
             htmlFor="email"
-            className="block text-xs font-medium text-gray-500 uppercase mb-1"
+            className="block text-[10px] font-bold text-muted-foreground uppercase mb-1"
           >
             Email Address
           </label>
@@ -56,14 +56,14 @@ export function InviteUserForm({
             id="email"
             name="email"
             required
-            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+            className="w-full px-3 py-2 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-ring bg-background"
             placeholder="user@example.com"
           />
         </div>
         <div>
           <label
             htmlFor="role"
-            className="block text-xs font-medium text-gray-500 uppercase mb-1"
+            className="block text-[10px] font-bold text-muted-foreground uppercase mb-1"
           >
             Role
           </label>
@@ -71,7 +71,7 @@ export function InviteUserForm({
             id="role"
             name="role"
             required
-            className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+            className="w-full px-3 py-2 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-ring bg-background"
             defaultValue="MEMBER"
           >
             <option value="MEMBER">Member</option>
@@ -79,20 +79,22 @@ export function InviteUserForm({
           </select>
         </div>
         <div className="flex gap-2 mt-1">
-          <button
+          <Button
             type="submit"
             disabled={isPending}
-            className="flex-1 px-3 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50 transition-colors cursor-pointer"
+            className="flex-1"
+            size="sm"
           >
             {isPending ? "Sending..." : "Send Invitation"}
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
+            variant="secondary"
             onClick={() => setIsOpen(false)}
-            className="px-3 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 transition-colors cursor-pointer"
+            size="sm"
           >
             Cancel
-          </button>
+          </Button>
         </div>
       </form>
     </div>
