@@ -88,18 +88,20 @@ export function NotificationManager() {
 
 function urlBase64ToUint8Array(base64String: string) {
   const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
-  const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
-  const rawData = window.atob(base64);
+  const base64 = (base64String + padding)
+    .replaceAll("-", "+")
+    .replaceAll("_", "/");
+  const rawData = globalThis.atob(base64);
   const outputArray = new Uint8Array(rawData.length);
   for (let i = 0; i < rawData.length; ++i) {
-    outputArray[i] = rawData.charCodeAt(i);
+    outputArray[i] = rawData.codePointAt(i) ?? 0;
   }
   return outputArray;
 }
 
 function arrayBufferToBase64(buffer: ArrayBuffer) {
-  return btoa(String.fromCharCode(...new Uint8Array(buffer)))
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_")
+  return btoa(String.fromCodePoint(...new Uint8Array(buffer)))
+    .replaceAll("+", "-")
+    .replaceAll("/", "_")
     .replace(/=+$/, "");
 }
