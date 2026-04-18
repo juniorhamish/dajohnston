@@ -13,6 +13,18 @@ resource "google_secret_manager_secret_iam_member" "db_app_password_access" {
   member    = "serviceAccount:${data.google_project.project.number}-compute@developer.gserviceaccount.com"
 }
 
+resource "google_secret_manager_secret_iam_member" "vapid_public_key_access" {
+  secret_id = google_secret_manager_secret.vapid_public_key.id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${data.google_project.project.number}-compute@developer.gserviceaccount.com"
+}
+
+resource "google_secret_manager_secret_iam_member" "vapid_private_key_access" {
+  secret_id = google_secret_manager_secret.vapid_private_key.id
+  role      = "roles/secretmanager.secretAccessor"
+  member    = "serviceAccount:${data.google_project.project.number}-compute@developer.gserviceaccount.com"
+}
+
 # Allow the Cloud Run service account to read from the Artifact Registry
 resource "google_artifact_registry_repository_iam_member" "ar_reader" {
   location   = google_artifact_registry_repository.portal_repo.location
@@ -98,6 +110,34 @@ resource "google_secret_manager_secret" "db_app_password" {
 resource "google_secret_manager_secret_version" "db_app_password_version" {
   secret      = google_secret_manager_secret.db_app_password.id
   secret_data = neon_role.db_app.password
+}
+
+# Secret Manager for Vapid public key
+resource "google_secret_manager_secret" "vapid_public_key" {
+  secret_id = "vapid_public_key"
+  replication {
+    auto {}
+  }
+  depends_on = [google_project_service.secret_manager]
+}
+
+resource "google_secret_manager_secret_version" "vapid_public_key_version" {
+  secret      = google_secret_manager_secret.vapid_public_key.id
+  secret_data = var.vapid_public_key
+}
+
+# Secret Manager for Vapid private key
+resource "google_secret_manager_secret" "vapid_private_key" {
+  secret_id = "vapid_private_key"
+  replication {
+    auto {}
+  }
+  depends_on = [google_project_service.secret_manager]
+}
+
+resource "google_secret_manager_secret_version" "vapid_private_key_version" {
+  secret      = google_secret_manager_secret.vapid_private_key.id
+  secret_data = var.vapid_private_key
 }
 
 # Artifact Registry for Backend Docker images
@@ -198,6 +238,24 @@ resource "google_cloud_run_v2_service" "backend" {
       env {
         name  = "AUTH0_MANAGEMENT_CLIENT_SECRET"
         value = auth0_client_credentials.m2m_credentials.client_secret
+      }
+      env {
+        name = "VAPID_PUBLIC_KEY"
+        value_source {
+          secret_key_ref {
+            secret  = google_secret_manager_secret.vapid_public_key.secret_id
+            version = "latest"
+          }
+        }
+      }
+      env {
+        name = "VAPID_PRIVATE_KEY"
+        value_source {
+          secret_key_ref {
+            secret  = google_secret_manager_secret.vapid_private_key.secret_id
+            version = "latest"
+          }
+        }
       }
       liveness_probe {
         http_get {

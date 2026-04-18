@@ -106,3 +106,15 @@ variable "monthly_budget_amount" {
   type        = number
   default     = 10
 }
+
+variable "vapid_public_key" {
+  description = "The public key for push notifications"
+  type        = string
+  sensitive   = true
+}
+
+variable "vapid_private_key" {
+  description = "The private key for push notifications"
+  type        = string
+  sensitive   = true
+}
