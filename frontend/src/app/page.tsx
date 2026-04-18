@@ -1,5 +1,6 @@
 import { AppGrid } from "@/components/apps/app-grid";
 import { AuthButtons } from "@/components/auth/auth-buttons";
+import { PendingInvitations } from "@/components/invitations/pending-invitations";
 import { ApiVersion } from "@/components/user/api-version";
 import { UserProfileCard } from "@/components/user/user-profile";
 
@@ -17,6 +18,7 @@ export default async function Home() {
           Welcome to your centralized hub for sub-applications.
         </p>
         <UserProfileCard />
+        <PendingInvitations />
         <AppGrid />
       </main>
       <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">

@@ -68,7 +68,7 @@ follows a phased approach to build a solid foundation before adding individual s
 
 | Task ID | Task Description            | Success Criteria                                                           |
 |:--------|:----------------------------|:---------------------------------------------------------------------------|
-| **5.1** | Portal Dashboard UI         | User can see their profile and a list of available sub-apps.               |
+| **5.1** | Portal Dashboard UI         | User can see their profile and a list of available sub-apps. [✓]           |
 | **5.2** | App Invitation System       | User can invite others to their household via email/link.                  |
 | **5.3** | Shared UI Component Library | Reusable navigation, layout, and theme providers.                          |
 | **5.4** | Web Push Notification Setup | Backend service to send push tokens; Frontend service worker registration. |

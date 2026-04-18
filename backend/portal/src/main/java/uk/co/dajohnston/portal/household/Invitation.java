@@ -5,4 +5,9 @@ import lombok.Builder;
 
 @Builder
 public record Invitation(
-    UUID id, UUID householdId, String email, HouseholdRole role, String status) {}
+    UUID id,
+    UUID householdId,
+    String householdName,
+    String email,
+    HouseholdRole role,
+    String status) {}

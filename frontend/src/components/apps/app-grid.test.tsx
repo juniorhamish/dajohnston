@@ -1,6 +1,7 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { listApps } from "@/generated";
+import { mockPartial } from "@/lib/test-utils";
 import { AppGrid } from "./app-grid";
 
 vi.mock("@/generated", () => ({
@@ -48,9 +49,9 @@ describe("AppGrid", () => {
   });
 
   it("should render empty state when no apps available", async () => {
-    vi.mocked(listApps).mockResolvedValue({
+    mockPartial(listApps).mockResolvedValue({
       data: { apps: [] },
-    } as Awaited<ReturnType<typeof listApps>>);
+    });
 
     render(await AppGrid());
 
