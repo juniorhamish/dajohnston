@@ -5,12 +5,10 @@ import static nl.martijndwars.webpush.Encoding.AES128GCM;
 import jakarta.validation.Valid;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.security.Security;
 import java.util.concurrent.ExecutionException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import nl.martijndwars.webpush.PushService;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jose4j.lang.JoseException;
 import org.springframework.security.oauth2.jwt.JwtClaimAccessor;
 import org.springframework.stereotype.Service;
@@ -25,12 +23,6 @@ import uk.co.dajohnston.portal.user.UserService;
 @Transactional
 @Slf4j
 public class NotificationService {
-
-  static {
-    if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
-      Security.addProvider(new BouncyCastleProvider());
-    }
-  }
 
   private final PushSubscriptionRepository pushSubscriptionRepository;
   private final UserService userService;
