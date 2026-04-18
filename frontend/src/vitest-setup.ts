@@ -18,7 +18,7 @@ vi.mock("next/navigation", () => ({
 }));
 
 // Mock matchMedia for next-themes
-Object.defineProperty(window, "matchMedia", {
+Object.defineProperty(globalThis, "matchMedia", {
   writable: true,
   value: vi.fn().mockImplementation((query) => ({
     matches: false,

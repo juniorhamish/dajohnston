@@ -6,7 +6,7 @@ interface AppLayoutProps {
   children: ReactNode;
 }
 
-export function AppLayout({ children }: AppLayoutProps) {
+export function AppLayout({ children }: Readonly<AppLayoutProps>) {
   return (
     <div className="relative flex min-h-screen flex-col">
       <Navbar />

@@ -31,4 +31,19 @@ describe("Card Components", () => {
     expect(screen.getByTestId("content")).toBeInTheDocument();
     expect(screen.getByTestId("footer")).toBeInTheDocument();
   });
+
+  it("should not render CardTitle when it has no content", () => {
+    const { container } = render(<CardTitle />);
+    expect(container.firstChild).toBeNull();
+  });
+
+  it("should render CardTitle when it has children", () => {
+    render(<CardTitle>Title Content</CardTitle>);
+    expect(screen.getByText("Title Content")).toBeInTheDocument();
+  });
+
+  it("should render CardTitle when it has aria-label", () => {
+    render(<CardTitle aria-label="Accessible Title" />);
+    expect(screen.getByLabelText("Accessible Title")).toBeInTheDocument();
+  });
 });
