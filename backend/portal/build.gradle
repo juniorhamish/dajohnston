@@ -30,6 +30,10 @@ dependencies {
   implementation 'org.zalando:logbook-logstash:4.0.3'
   implementation 'net.logstash.logback:logstash-logback-encoder:9.0'
   implementation 'com.auth0:auth0:3.3.0'
+  implementation 'nl.martijndwars:web-push:5.1.2'
+  implementation 'org.bouncycastle:bcprov-jdk18on:1.84'
+  implementation 'org.apache.httpcomponents:httpclient:4.5.14'
+  implementation 'org.bitbucket.b_c:jose4j:0.9.6'
   implementation project(':shared-security')
   runtimeOnly 'org.flywaydb:flyway-database-postgresql'
   runtimeOnly 'org.postgresql:postgresql'
@@ -148,7 +152,8 @@ compileJava {
   options.compilerArgs += [
     '-Amapstruct.suppressGeneratorTimestamp=true',
     '-Amapstruct.suppressGeneratorVersionInfoComment=true',
-    '-Amapstruct.defaultComponentModel=spring'
+    '-Amapstruct.defaultComponentModel=spring',
+    '-Amapstruct.unmappedTargetPolicy=ERROR'
   ]
 }
 compileJava.dependsOn('processSpring')
