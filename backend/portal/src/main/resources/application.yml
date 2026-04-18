@@ -32,6 +32,9 @@ auth0:
     domain: ${AUTH0_DOMAIN:dajohnston.eu.auth0.com}
     clientId: ${AUTH0_MANAGEMENT_CLIENT_ID:}
     clientSecret: ${AUTH0_MANAGEMENT_CLIENT_SECRET:}
+vapid:
+  publicKey: ${VAPID_PUBLIC_KEY:}
+  privateKey: ${VAPID_PRIVATE_KEY:}
 management:
   endpoint:
     health:

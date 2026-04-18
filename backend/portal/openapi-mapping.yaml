@@ -35,3 +35,9 @@ map:
     /api/invitations/{invitationId}/decline:
       parameters:
         - add: jwt => org.springframework.security.oauth2.jwt.JwtClaimAccessor
+    /api/notifications/vapid-public-key:
+      parameters:
+        - add: jwt => org.springframework.security.oauth2.jwt.JwtClaimAccessor
+    /api/notifications/subscriptions:
+      parameters:
+        - add: jwt => org.springframework.security.oauth2.jwt.JwtClaimAccessor

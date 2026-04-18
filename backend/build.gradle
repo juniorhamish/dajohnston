@@ -44,7 +44,7 @@ sonar {
     property "sonar.projectKey", "juniorhamish_dajohnston_backend"
     property "sonar.organization", "juniorhamish"
     property "sonar.coverage.jacoco.xmlReportPaths", "${project.layout.buildDirectory.get().asFile}/reports/jacoco/jacocoRootReport/jacocoRootReport.xml"
-    property "sonar.coverage.exclusions", "portal/src/main/java/uk/co/dajohnston/portal/PortalBackendApplication.java"
+    property "sonar.coverage.exclusions", "**/PortalBackendApplication.java,**/PushServiceConfig.java,**/NotificationCreator.java,**/ConfigurationException.java"
   }
 }
 

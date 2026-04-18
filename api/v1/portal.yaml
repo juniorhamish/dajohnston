@@ -236,6 +236,38 @@ paths:
           description: Unauthorized
         '404':
           description: Invitation not found
+  /api/notifications/vapid-public-key:
+    get:
+      tags:
+        - Notifications
+      summary: Get VAPID public key
+      operationId: getVapidPublicKey
+      responses:
+        '200':
+          description: VAPID public key
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VapidPublicKey'
+        '401':
+          description: Unauthorized
+  /api/notifications/subscriptions:
+    post:
+      tags:
+        - Notifications
+      summary: Register a push subscription
+      operationId: registerSubscription
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PushSubscriptionRequest'
+      responses:
+        '201':
+          description: Successfully registered subscription
+        '401':
+          description: Unauthorized
 components:
   securitySchemes:
     oauth:
@@ -411,5 +443,34 @@ components:
     HouseholdRole:
       type: string
       enum: [ OWNER, MEMBER ]
+    VapidPublicKey:
+      type: object
+      properties:
+        publicKey:
+          type: string
+      required:
+        - publicKey
+    PushSubscriptionRequest:
+      type: object
+      properties:
+        endpoint:
+          type: string
+        expirationTime:
+          type: integer
+          format: int64
+          nullable: true
+        keys:
+          type: object
+          properties:
+            p256dh:
+              type: string
+            auth:
+              type: string
+          required:
+            - p256dh
+            - auth
+      required:
+        - endpoint
+        - keys
 security:
   - oauth: [ openid, email, offline_access ]
