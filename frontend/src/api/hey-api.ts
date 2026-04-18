@@ -1,3 +1,5 @@
+import "server-only";
+
 import type { CreateClientConfig } from "@/generated/client";
 import { auth0 } from "@/lib/auth0";
 
