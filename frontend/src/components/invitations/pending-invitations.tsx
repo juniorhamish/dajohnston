@@ -21,9 +21,7 @@ export async function PendingInvitations() {
 
   return (
     <div className="w-full">
-      <h2 className="text-xl font-bold text-gray-900 mb-4">
-        Pending Invitations
-      </h2>
+      <h2 className="text-xl font-bold mb-4">Pending Invitations</h2>
       <div className="grid gap-3">
         {invitations.map((invitation) => (
           <InvitationCard

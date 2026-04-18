@@ -21,9 +21,7 @@ export async function AppGrid() {
 
   return (
     <div className="w-full">
-      <h2 className="text-xl font-bold text-gray-900 mb-4">
-        Available Applications
-      </h2>
+      <h2 className="text-xl font-bold mb-4">Available Applications</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {apps.map((app) => (
           <AppCard key={app.id} app={app} />
