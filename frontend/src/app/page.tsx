@@ -4,6 +4,8 @@ import { PendingInvitations } from "@/components/invitations/pending-invitations
 import { ApiVersion } from "@/components/user/api-version";
 import { UserProfileCard } from "@/components/user/user-profile";
 
+export const dynamic = "force-dynamic";
+
 export default async function Home() {
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-(family-name:--font-geist-sans)">
