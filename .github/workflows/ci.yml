@@ -81,6 +81,12 @@ jobs:
         working-directory: frontend
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+          AUTH0_SECRET: ${{ secrets.AUTH0_SECRET }}
+          APP_BASE_URL: http://localhost:3000
+          AUTH0_DOMAIN: ${{ secrets.AUTH0_DOMAIN }}
+          AUTH0_CLIENT_ID: ${{ secrets.AUTH0_CLIENT_ID }}
+          AUTH0_CLIENT_SECRET: ${{ secrets.AUTH0_CLIENT_SECRET }}
+          AUTH0_AUDIENCE: ${{ secrets.AUTH0_AUDIENCE }}
         run: |
           npm install -g @lhci/cli@0.15.1
           lhci autorun
