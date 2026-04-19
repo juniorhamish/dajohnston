@@ -137,6 +137,7 @@ registry for the latest versions.
 - TypeScript: write erasableSyntaxOnly compliant code (no enums, namespaces, class parameter
   properties)
 - Use vitest + react testing library for tests
+- Prefer the use of userEvent over fireEvent for interactions in tests
 
 # API Guidelines
 

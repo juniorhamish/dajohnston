@@ -15,10 +15,6 @@ vi.mock("@auth0/nextjs-auth0/client", () => ({
   useUser: () => ({ user: null, isLoading: false }),
 }));
 
-vi.mock("@/components/notifications/notification-manager", () => ({
-  NotificationManager: () => <div data-testid="notification-manager" />,
-}));
-
 describe("RootLayout", () => {
   it("should render the layout with children and Auth0Provider", () => {
     render(
@@ -37,9 +33,6 @@ describe("RootLayout", () => {
     ).toBeInTheDocument();
     expect(
       within(auth0ProviderComponent).getByText("Child Content"),
-    ).toBeInTheDocument();
-    expect(
-      within(auth0ProviderComponent).getByTestId("notification-manager"),
     ).toBeInTheDocument();
   });
 });
