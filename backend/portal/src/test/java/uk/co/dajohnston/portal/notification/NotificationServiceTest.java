@@ -2,16 +2,21 @@ package uk.co.dajohnston.portal.notification;
 
 import static nl.martijndwars.webpush.Encoding.AES128GCM;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import nl.martijndwars.webpush.Notification;
@@ -23,6 +28,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.oauth2.jwt.JwtClaimAccessor;
+import uk.co.dajohnston.portal.config.ResourceNotFoundException;
 import uk.co.dajohnston.portal.notification.config.VapidProperties;
 import uk.co.dajohnston.portal.notification.entity.PushSubscriptionEntity;
 import uk.co.dajohnston.portal.notification.entity.PushSubscriptionRepository;
@@ -39,6 +45,7 @@ class NotificationServiceTest {
   @Mock private PushService pushService;
   @Mock private NotificationCreator notificationCreator;
   @Mock private Notification notification;
+  @Mock private ObjectMapper objectMapper;
 
   @InjectMocks private NotificationService notificationService;
 
@@ -225,6 +232,35 @@ class NotificationServiceTest {
     assertThat(logger.list)
         .extracting(ILoggingEvent::getFormattedMessage)
         .contains("Thread interrupted sending push notification");
+  }
+
+  @Test
+  void sendNotificationToUser_userNotFound_throwsException() {
+    when(userService.findByEmail("user@example.com")).thenReturn(Optional.empty());
+
+    assertThatThrownBy(
+            () -> notificationService.sendNotificationToUser("user@example.com", "title", "body"))
+        .isInstanceOf(ResourceNotFoundException.class)
+        .hasMessage("User not found: user@example.com");
+  }
+
+  @Test
+  void sendNotificationToUser_sendsNotificationToAllSubscriptions() throws Exception {
+    UserEntity user = UserEntity.builder().email("user@example.com").build();
+    PushSubscriptionEntity sub1 =
+        PushSubscriptionEntity.builder().endpoint("e1").p256dh("p1").auth("a1").build();
+    PushSubscriptionEntity sub2 =
+        PushSubscriptionEntity.builder().endpoint("e2").p256dh("p2").auth("a2").build();
+
+    when(userService.findByEmail("user@example.com")).thenReturn(Optional.of(user));
+    when(pushSubscriptionRepository.findByUser(user)).thenReturn(List.of(sub1, sub2));
+    when(objectMapper.writeValueAsString(any()))
+        .thenReturn("{\"title\":\"title\",\"body\":\"body\"}");
+    when(notificationCreator.create(any(), any(), any(), any())).thenReturn(notification);
+
+    notificationService.sendNotificationToUser("user@example.com", "title", "body");
+
+    verify(pushService, times(2)).send(notification, AES128GCM);
   }
 
   private ListAppender<ILoggingEvent> mockLogger() {

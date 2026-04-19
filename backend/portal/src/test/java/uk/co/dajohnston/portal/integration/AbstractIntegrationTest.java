@@ -24,7 +24,7 @@ abstract class AbstractIntegrationTest {
     postgres.start();
   }
 
-  @MockitoBean private PushService pushService;
+  @MockitoBean protected PushService pushService;
   @LocalServerPort private int port;
 
   @DynamicPropertySource

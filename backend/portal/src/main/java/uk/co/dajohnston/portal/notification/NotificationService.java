@@ -2,9 +2,12 @@ package uk.co.dajohnston.portal.notification;
 
 import static nl.martijndwars.webpush.Encoding.AES128GCM;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +16,7 @@ import org.jose4j.lang.JoseException;
 import org.springframework.security.oauth2.jwt.JwtClaimAccessor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import uk.co.dajohnston.portal.config.ResourceNotFoundException;
 import uk.co.dajohnston.portal.notification.config.VapidProperties;
 import uk.co.dajohnston.portal.notification.entity.PushSubscriptionEntity;
 import uk.co.dajohnston.portal.notification.entity.PushSubscriptionRepository;
@@ -29,6 +33,7 @@ public class NotificationService {
   @Valid private final VapidProperties vapidProperties;
   private final PushService pushService;
   private final NotificationCreator notificationCreator;
+  private final ObjectMapper objectMapper;
 
   public void registerSubscription(JwtClaimAccessor jwt, SubscriptionDetails request) {
     var user = userService.findOrCreateUser(jwt);
@@ -47,12 +52,26 @@ public class NotificationService {
     subscription.setExpirationTime(request.expirationTime());
 
     pushSubscriptionRepository.save(subscription);
-    sendNotification(
-        subscription, "{\"body\": \"Welcome to the portal!\", \"title\": \"Welcome\"}");
   }
 
   public String getVapidPublicKey() {
     return vapidProperties.getPublicKey();
+  }
+
+  public void sendNotificationToUser(String username, String title, String body) {
+    var user =
+        userService
+            .findByEmail(username)
+            .orElseThrow(() -> new ResourceNotFoundException("User not found: " + username));
+
+    var subscriptions = pushSubscriptionRepository.findByUser(user);
+
+    try {
+      var payload = objectMapper.writeValueAsString(Map.of("title", title, "body", body));
+      subscriptions.forEach(sub -> sendNotification(sub, payload));
+    } catch (JsonProcessingException e) {
+      log.error("Error creating notification payload", e);
+    }
   }
 
   public void sendNotification(PushSubscriptionEntity subscriptionEntity, String payload) {

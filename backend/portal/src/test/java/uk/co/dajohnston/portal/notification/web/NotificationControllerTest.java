@@ -2,6 +2,7 @@ package uk.co.dajohnston.portal.notification.web;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -20,6 +21,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import uk.co.dajohnston.portal.config.ResourceNotFoundException;
 import uk.co.dajohnston.portal.config.TenantInterceptor;
 import uk.co.dajohnston.portal.notification.NotificationMapperImpl;
 import uk.co.dajohnston.portal.notification.NotificationService;
@@ -95,5 +97,48 @@ class NotificationControllerTest {
                 .contentType(APPLICATION_JSON)
                 .content(""))
         .andExpect(status().isUnauthorized());
+  }
+
+  @Test
+  void sendNotification_callsService() throws Exception {
+    mockMvc
+        .perform(
+            post("/api/notifications/send")
+                .with(jwt())
+                .contentType(APPLICATION_JSON)
+                .content(
+                    """
+                    {
+                      "username": "user@example.com",
+                      "title": "Notification Title",
+                      "body": "Notification Body"
+                    }
+                    """))
+        .andExpect(status().isNoContent());
+
+    verify(notificationService)
+        .sendNotificationToUser("user@example.com", "Notification Title", "Notification Body");
+  }
+
+  @Test
+  void sendNotification_userNotFound_returnsNotFound() throws Exception {
+    doThrow(new ResourceNotFoundException("User not found: user@example.com"))
+        .when(notificationService)
+        .sendNotificationToUser("user@example.com", "title", "body");
+
+    mockMvc
+        .perform(
+            post("/api/notifications/send")
+                .with(jwt())
+                .contentType(APPLICATION_JSON)
+                .content(
+                    """
+                    {
+                      "username": "user@example.com",
+                      "title": "title",
+                      "body": "body"
+                    }
+                    """))
+        .andExpect(status().isNotFound());
   }
 }

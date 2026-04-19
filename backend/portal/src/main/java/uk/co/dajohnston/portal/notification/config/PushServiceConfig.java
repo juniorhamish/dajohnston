@@ -1,5 +1,6 @@
 package uk.co.dajohnston.portal.notification.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
 import java.security.GeneralSecurityException;
 import lombok.RequiredArgsConstructor;
@@ -27,5 +28,10 @@ public class PushServiceConfig {
       log.error("Security error initializing PushService with VAPID properties", e);
       throw new ConfigurationException(e);
     }
+  }
+
+  @Bean
+  public ObjectMapper objectMapper() {
+    return new ObjectMapper();
   }
 }

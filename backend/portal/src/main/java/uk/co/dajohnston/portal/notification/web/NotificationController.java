@@ -8,6 +8,7 @@ import org.springframework.security.oauth2.jwt.JwtClaimAccessor;
 import org.springframework.web.bind.annotation.RestController;
 import uk.co.dajohnston.api.NotificationsApi;
 import uk.co.dajohnston.model.PushSubscriptionRequestDto;
+import uk.co.dajohnston.model.SendNotificationRequestDto;
 import uk.co.dajohnston.model.VapidPublicKeyDto;
 import uk.co.dajohnston.portal.notification.NotificationMapper;
 import uk.co.dajohnston.portal.notification.NotificationService;
@@ -33,5 +34,15 @@ class NotificationController implements NotificationsApi {
     notificationService.registerSubscription(
         jwt, notificationMapper.fromDto(pushSubscriptionRequestDto));
     return ResponseEntity.status(HttpStatus.CREATED).build();
+  }
+
+  @Override
+  public ResponseEntity<Void> sendNotification(
+      SendNotificationRequestDto sendNotificationRequestDto) {
+    notificationService.sendNotificationToUser(
+        sendNotificationRequestDto.username(),
+        sendNotificationRequestDto.title(),
+        sendNotificationRequestDto.body());
+    return ResponseEntity.noContent().build();
   }
 }
