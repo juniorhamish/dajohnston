@@ -183,9 +183,10 @@ resource "google_cloud_run_v2_service" "backend" {
 
       # Resources configuration for scale-to-zero
       resources {
+        startup_cpu_boost = true
         limits = {
-          cpu    = "1"
-          memory = "512Mi"
+          cpu    = "2"
+          memory = "1Gi"
         }
       }
 
