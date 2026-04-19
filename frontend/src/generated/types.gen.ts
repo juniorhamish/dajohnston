@@ -89,6 +89,12 @@ export type PushSubscriptionRequest = {
     };
 };
 
+export type SendNotificationRequest = {
+    username: string;
+    title: string;
+    body: string;
+};
+
 export type GetApplicationInfoData = {
     body?: never;
     path?: never;
@@ -414,3 +420,30 @@ export type RegisterSubscriptionResponses = {
      */
     201: unknown;
 };
+
+export type SendNotificationData = {
+    body: SendNotificationRequest;
+    path?: never;
+    query?: never;
+    url: '/api/notifications/send';
+};
+
+export type SendNotificationErrors = {
+    /**
+     * Unauthorized
+     */
+    401: unknown;
+    /**
+     * User not found
+     */
+    404: unknown;
+};
+
+export type SendNotificationResponses = {
+    /**
+     * Notification sent
+     */
+    204: void;
+};
+
+export type SendNotificationResponse = SendNotificationResponses[keyof SendNotificationResponses];

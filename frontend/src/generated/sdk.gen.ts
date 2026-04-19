@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { AcceptInvitationData, AcceptInvitationErrors, AcceptInvitationResponses, CreateHouseholdData, CreateHouseholdErrors, CreateHouseholdResponses, DeclineInvitationData, DeclineInvitationErrors, DeclineInvitationResponses, GetApplicationInfoData, GetApplicationInfoResponses, GetCurrentUserData, GetCurrentUserErrors, GetCurrentUserResponses, GetVapidPublicKeyData, GetVapidPublicKeyErrors, GetVapidPublicKeyResponses, InviteUserData, InviteUserErrors, InviteUserResponses, JoinHouseholdData, JoinHouseholdErrors, JoinHouseholdResponses, ListAppsData, ListAppsErrors, ListAppsResponses, ListHouseholdsData, ListHouseholdsErrors, ListHouseholdsResponses, ListPendingInvitationsData, ListPendingInvitationsErrors, ListPendingInvitationsResponses, RegisterSubscriptionData, RegisterSubscriptionErrors, RegisterSubscriptionResponses, UpdateCurrentUserData, UpdateCurrentUserErrors, UpdateCurrentUserResponses } from './types.gen';
+import type { AcceptInvitationData, AcceptInvitationErrors, AcceptInvitationResponses, CreateHouseholdData, CreateHouseholdErrors, CreateHouseholdResponses, DeclineInvitationData, DeclineInvitationErrors, DeclineInvitationResponses, GetApplicationInfoData, GetApplicationInfoResponses, GetCurrentUserData, GetCurrentUserErrors, GetCurrentUserResponses, GetVapidPublicKeyData, GetVapidPublicKeyErrors, GetVapidPublicKeyResponses, InviteUserData, InviteUserErrors, InviteUserResponses, JoinHouseholdData, JoinHouseholdErrors, JoinHouseholdResponses, ListAppsData, ListAppsErrors, ListAppsResponses, ListHouseholdsData, ListHouseholdsErrors, ListHouseholdsResponses, ListPendingInvitationsData, ListPendingInvitationsErrors, ListPendingInvitationsResponses, RegisterSubscriptionData, RegisterSubscriptionErrors, RegisterSubscriptionResponses, SendNotificationData, SendNotificationErrors, SendNotificationResponses, UpdateCurrentUserData, UpdateCurrentUserErrors, UpdateCurrentUserResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -156,6 +156,19 @@ export const getVapidPublicKey = <ThrowOnError extends boolean = false>(options?
 export const registerSubscription = <ThrowOnError extends boolean = false>(options: Options<RegisterSubscriptionData, ThrowOnError>) => (options.client ?? client).post<RegisterSubscriptionResponses, RegisterSubscriptionErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/api/notifications/subscriptions',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Send a notification to a user
+ */
+export const sendNotification = <ThrowOnError extends boolean = false>(options: Options<SendNotificationData, ThrowOnError>) => (options.client ?? client).post<SendNotificationResponses, SendNotificationErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/notifications/send',
     ...options,
     headers: {
         'Content-Type': 'application/json',

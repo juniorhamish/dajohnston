@@ -268,6 +268,25 @@ paths:
           description: Successfully registered subscription
         '401':
           description: Unauthorized
+  /api/notifications/send:
+    post:
+      tags:
+        - Notifications
+      summary: Send a notification to a user
+      operationId: sendNotification
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SendNotificationRequest'
+      responses:
+        '204':
+          description: Notification sent
+        '401':
+          description: Unauthorized
+        '404':
+          description: User not found
 components:
   securitySchemes:
     oauth:
@@ -472,5 +491,18 @@ components:
       required:
         - endpoint
         - keys
+    SendNotificationRequest:
+      type: object
+      properties:
+        username:
+          type: string
+        title:
+          type: string
+        body:
+          type: string
+      required:
+        - username
+        - title
+        - body
 security:
   - oauth: [ openid, email, offline_access ]

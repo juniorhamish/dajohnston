@@ -90,6 +90,10 @@ public class UserService {
     return userRepository.findByAuth0Id(auth0Id).orElseGet(() -> createUser(jwt));
   }
 
+  public Optional<UserEntity> findByEmail(String email) {
+    return userRepository.findByEmail(email);
+  }
+
   private UserEntity createUser(JwtClaimAccessor jwt) {
     return userRepository.save(
         UserEntity.builder()
