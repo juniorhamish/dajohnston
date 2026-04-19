@@ -10,6 +10,12 @@ vi.mock("@/components/theme-toggle", () => ({
   ThemeToggle: () => <div data-testid="theme-toggle">Theme Toggle</div>,
 }));
 
+vi.mock("@/components/notifications/notification-manager", () => ({
+  NotificationManager: () => (
+    <div data-testid="notification-manager">Notification Manager</div>
+  ),
+}));
+
 describe("Navbar", () => {
   it("should render the navbar with logo and navigation links", () => {
     render(<Navbar />);
@@ -18,5 +24,6 @@ describe("Navbar", () => {
     expect(screen.getByText("Dashboard")).toBeInTheDocument();
     expect(screen.getByTestId("theme-toggle")).toBeInTheDocument();
     expect(screen.getByTestId("auth-buttons")).toBeInTheDocument();
+    expect(screen.getByTestId("notification-manager")).toBeInTheDocument();
   });
 });

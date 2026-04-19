@@ -1,7 +1,8 @@
 "use client";
 
 import { useUser } from "@auth0/nextjs-auth0/client";
-import { useCallback, useEffect } from "react";
+import { Bell, BellOff } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
 import {
   getVapidPublicKeyAction,
   registerSubscriptionAction,
@@ -9,49 +10,36 @@ import {
 
 export function NotificationManager() {
   const { user, isLoading } = useUser();
-  const subscribeUser = useCallback(
-    async (registration: ServiceWorkerRegistration) => {
+  const [isSupported, setIsSupported] = useState(false);
+  const [isSubscribed, setIsSubscribed] = useState(false);
+  const [isBusy, setIsBusy] = useState(false);
+
+  // On mount, only check whether the browser supports push notifications and
+  // whether the user is already subscribed. Do NOT request permission here:
+  // iOS Safari (installed PWA) only allows `Notification.requestPermission`
+  // and `PushManager.subscribe` when triggered by a user gesture.
+  useEffect(() => {
+    const supported =
+      "serviceWorker" in navigator &&
+      "PushManager" in globalThis &&
+      "Notification" in globalThis;
+    setIsSupported(supported);
+
+    if (!supported) return;
+
+    (async () => {
       try {
-        const vapidPublicKey = await getVapidPublicKeyAction();
-        if (!vapidPublicKey) return;
-
-        const subscription = await registration.pushManager.subscribe({
-          userVisibleOnly: true,
-          applicationServerKey: urlBase64ToUint8Array(vapidPublicKey),
-        });
-
-        const p256dh = subscription.getKey("p256dh");
-        const auth = subscription.getKey("auth");
-
-        await registerSubscriptionAction(
-          subscription.endpoint,
-          p256dh ? arrayBufferToBase64(p256dh) : "",
-          auth ? arrayBufferToBase64(auth) : "",
-        );
-        console.log("User is subscribed to push notifications.");
+        const registration = await navigator.serviceWorker.getRegistration();
+        const subscription = await registration?.pushManager.getSubscription();
+        setIsSubscribed(!!subscription);
       } catch (error) {
-        console.error("Failed to subscribe the user: ", error);
+        console.error("Failed to read push subscription state: ", error);
       }
-    },
-    [],
-  );
-  const unregisterServiceWorker = useCallback(async () => {
-    try {
-      const registration = await navigator.serviceWorker.getRegistration();
-      if (registration) {
-        const subscription = await registration.pushManager.getSubscription();
-        if (subscription) {
-          await subscription.unsubscribe();
-        }
-        await registration.unregister();
-        console.log("Service Worker unregistered and push unsubscribed.");
-      }
-    } catch (error) {
-      console.error("Failed to unregister the Service Worker: ", error);
-    }
+    })();
   }, []);
 
-  const registerServiceWorker = useCallback(async () => {
+  const subscribe = useCallback(async () => {
+    setIsBusy(true);
     try {
       const registration = await navigator.serviceWorker.register("/sw.js", {
         scope: "/",
@@ -59,31 +47,84 @@ export function NotificationManager() {
       });
       console.log("Service Worker registered with scope:", registration.scope);
 
-      // Check current permission
-      if (Notification.permission === "default") {
-        const permission = await Notification.requestPermission();
-        if (permission === "granted") {
-          subscribeUser(registration).then();
-        }
-      } else if (Notification.permission === "granted") {
-        subscribeUser(registration).then();
+      // Must be called from a user-gesture on iOS PWAs.
+      let permission = Notification.permission;
+      if (permission === "default") {
+        permission = await Notification.requestPermission();
       }
+      if (permission !== "granted") {
+        console.warn("Notification permission not granted.");
+        return;
+      }
+
+      const vapidPublicKey = await getVapidPublicKeyAction();
+      if (!vapidPublicKey) return;
+
+      const subscription = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: urlBase64ToUint8Array(vapidPublicKey),
+      });
+
+      const p256dh = subscription.getKey("p256dh");
+      const auth = subscription.getKey("auth");
+
+      await registerSubscriptionAction(
+        subscription.endpoint,
+        p256dh ? arrayBufferToBase64(p256dh) : "",
+        auth ? arrayBufferToBase64(auth) : "",
+      );
+      setIsSubscribed(true);
+      console.log("User is subscribed to push notifications.");
     } catch (error) {
-      console.error("Service Worker registration failed:", error);
+      console.error("Failed to subscribe the user: ", error);
+    } finally {
+      setIsBusy(false);
     }
-  }, [subscribeUser]);
+  }, []);
 
-  useEffect(() => {
-    if (isLoading) return;
-
-    if (user) {
-      registerServiceWorker().then();
-    } else {
-      unregisterServiceWorker().then();
+  const unsubscribe = useCallback(async () => {
+    setIsBusy(true);
+    try {
+      const registration = await navigator.serviceWorker.getRegistration();
+      if (registration) {
+        const subscription = await registration.pushManager.getSubscription();
+        if (subscription) {
+          await subscription.unsubscribe();
+        }
+      }
+      setIsSubscribed(false);
+      console.log("User unsubscribed from push notifications.");
+    } catch (error) {
+      console.error("Failed to unsubscribe the user: ", error);
+    } finally {
+      setIsBusy(false);
     }
-  }, [isLoading, user, registerServiceWorker, unregisterServiceWorker]);
+  }, []);
 
-  return null;
+  if (isLoading || !user || !isSupported) return null;
+
+  return (
+    <button
+      type="button"
+      onClick={isSubscribed ? unsubscribe : subscribe}
+      disabled={isBusy}
+      aria-pressed={isSubscribed}
+      aria-label={
+        isSubscribed ? "Disable notifications" : "Enable notifications"
+      }
+      title={isSubscribed ? "Disable notifications" : "Enable notifications"}
+      className="inline-flex items-center justify-center rounded-md p-2 hover:bg-accent hover:text-accent-foreground transition-colors disabled:opacity-50"
+    >
+      {isSubscribed ? (
+        <Bell className="h-5 w-5" />
+      ) : (
+        <BellOff className="h-5 w-5" />
+      )}
+      <span className="sr-only">
+        {isSubscribed ? "Disable notifications" : "Enable notifications"}
+      </span>
+    </button>
+  );
 }
 
 function urlBase64ToUint8Array(base64String: string) {
