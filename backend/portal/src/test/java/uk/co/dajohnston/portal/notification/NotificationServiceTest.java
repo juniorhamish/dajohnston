@@ -13,6 +13,7 @@ import static org.mockito.Mockito.when;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -261,6 +262,26 @@ class NotificationServiceTest {
     notificationService.sendNotificationToUser("user@example.com", "title", "body");
 
     verify(pushService, times(2)).send(notification, AES128GCM);
+  }
+
+  @Test
+  void sendNotificationToUser_jsonException_logsError() throws Exception {
+    ListAppender<ILoggingEvent> logger = mockLogger();
+    UserEntity user = UserEntity.builder().email("user@example.com").build();
+
+    when(userService.findByEmail("user@example.com")).thenReturn(Optional.of(user));
+    when(pushSubscriptionRepository.findByUser(user)).thenReturn(List.of());
+    when(objectMapper.writeValueAsString(any()))
+        .thenAnswer(
+            _ -> {
+              throw new JsonParseException("");
+            });
+
+    notificationService.sendNotificationToUser("user@example.com", "title", "body");
+
+    assertThat(logger.list)
+        .extracting(ILoggingEvent::getFormattedMessage)
+        .contains("Error creating notification payload");
   }
 
   private ListAppender<ILoggingEvent> mockLogger() {
