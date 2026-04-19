@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { auth0 } from "@/lib/auth0";
 import { mockPartial } from "@/lib/test-utils";
 
+vi.mock("server-only", () => ({}));
 vi.mock("@/lib/auth0", () => ({
   auth0: {
     getSession: vi.fn(),

@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { AcceptInvitationData, AcceptInvitationErrors, AcceptInvitationResponses, CreateHouseholdData, CreateHouseholdErrors, CreateHouseholdResponses, DeclineInvitationData, DeclineInvitationErrors, DeclineInvitationResponses, GetApplicationInfoData, GetApplicationInfoResponses, GetCurrentUserData, GetCurrentUserErrors, GetCurrentUserResponses, InviteUserData, InviteUserErrors, InviteUserResponses, JoinHouseholdData, JoinHouseholdErrors, JoinHouseholdResponses, ListAppsData, ListAppsErrors, ListAppsResponses, ListHouseholdsData, ListHouseholdsErrors, ListHouseholdsResponses, ListPendingInvitationsData, ListPendingInvitationsErrors, ListPendingInvitationsResponses, UpdateCurrentUserData, UpdateCurrentUserErrors, UpdateCurrentUserResponses } from './types.gen';
+import type { AcceptInvitationData, AcceptInvitationErrors, AcceptInvitationResponses, CreateHouseholdData, CreateHouseholdErrors, CreateHouseholdResponses, DeclineInvitationData, DeclineInvitationErrors, DeclineInvitationResponses, GetApplicationInfoData, GetApplicationInfoResponses, GetCurrentUserData, GetCurrentUserErrors, GetCurrentUserResponses, GetVapidPublicKeyData, GetVapidPublicKeyErrors, GetVapidPublicKeyResponses, InviteUserData, InviteUserErrors, InviteUserResponses, JoinHouseholdData, JoinHouseholdErrors, JoinHouseholdResponses, ListAppsData, ListAppsErrors, ListAppsResponses, ListHouseholdsData, ListHouseholdsErrors, ListHouseholdsResponses, ListPendingInvitationsData, ListPendingInvitationsErrors, ListPendingInvitationsResponses, RegisterSubscriptionData, RegisterSubscriptionErrors, RegisterSubscriptionResponses, UpdateCurrentUserData, UpdateCurrentUserErrors, UpdateCurrentUserResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -139,4 +139,26 @@ export const declineInvitation = <ThrowOnError extends boolean = false>(options:
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/api/invitations/{invitationId}/decline',
     ...options
+});
+
+/**
+ * Get VAPID public key
+ */
+export const getVapidPublicKey = <ThrowOnError extends boolean = false>(options?: Options<GetVapidPublicKeyData, ThrowOnError>) => (options?.client ?? client).get<GetVapidPublicKeyResponses, GetVapidPublicKeyErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/notifications/vapid-public-key',
+    ...options
+});
+
+/**
+ * Register a push subscription
+ */
+export const registerSubscription = <ThrowOnError extends boolean = false>(options: Options<RegisterSubscriptionData, ThrowOnError>) => (options.client ?? client).post<RegisterSubscriptionResponses, RegisterSubscriptionErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/notifications/subscriptions',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
 });

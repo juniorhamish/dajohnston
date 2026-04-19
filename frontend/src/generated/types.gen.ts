@@ -76,6 +76,19 @@ export type Apps = {
 
 export type HouseholdRole = 'OWNER' | 'MEMBER';
 
+export type VapidPublicKey = {
+    publicKey: string;
+};
+
+export type PushSubscriptionRequest = {
+    endpoint: string;
+    expirationTime?: number;
+    keys: {
+        p256dh: string;
+        auth: string;
+    };
+};
+
 export type GetApplicationInfoData = {
     body?: never;
     path?: never;
@@ -357,3 +370,47 @@ export type DeclineInvitationResponses = {
 };
 
 export type DeclineInvitationResponse = DeclineInvitationResponses[keyof DeclineInvitationResponses];
+
+export type GetVapidPublicKeyData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/notifications/vapid-public-key';
+};
+
+export type GetVapidPublicKeyErrors = {
+    /**
+     * Unauthorized
+     */
+    401: unknown;
+};
+
+export type GetVapidPublicKeyResponses = {
+    /**
+     * VAPID public key
+     */
+    200: VapidPublicKey;
+};
+
+export type GetVapidPublicKeyResponse = GetVapidPublicKeyResponses[keyof GetVapidPublicKeyResponses];
+
+export type RegisterSubscriptionData = {
+    body: PushSubscriptionRequest;
+    path?: never;
+    query?: never;
+    url: '/api/notifications/subscriptions';
+};
+
+export type RegisterSubscriptionErrors = {
+    /**
+     * Unauthorized
+     */
+    401: unknown;
+};
+
+export type RegisterSubscriptionResponses = {
+    /**
+     * Successfully registered subscription
+     */
+    201: unknown;
+};
