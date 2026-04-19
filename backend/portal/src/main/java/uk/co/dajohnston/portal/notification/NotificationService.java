@@ -47,6 +47,8 @@ public class NotificationService {
     subscription.setExpirationTime(request.expirationTime());
 
     pushSubscriptionRepository.save(subscription);
+    sendNotification(
+        subscription, "{\"body\": \"Welcome to the portal!\", \"title\": \"Welcome\"}");
   }
 
   public String getVapidPublicKey() {
