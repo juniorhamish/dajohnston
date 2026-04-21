@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { CreateHouseholdForm } from "@/components/households/create-household-form";
 import { DeleteHouseholdButton } from "@/components/households/delete-household-button";
 import { InviteUserForm } from "@/components/invitations/invite-user-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -95,6 +96,7 @@ export async function UserProfileCard() {
               No household assigned. Contact your administrator or create one.
             </div>
           )}
+          <CreateHouseholdForm />
         </div>
       </CardContent>
     </Card>
