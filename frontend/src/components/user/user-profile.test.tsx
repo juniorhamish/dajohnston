@@ -1,5 +1,6 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type { DeleteHouseholdButtonProps } from "@/components/households/delete-household-button";
 import type { InviteUserFormProps } from "@/components/invitations/invite-user-form";
 import { getCurrentUser } from "@/generated";
 import { auth0 } from "@/lib/auth0";
@@ -17,6 +18,11 @@ vi.mock("@/generated/sdk.gen", () => ({
 vi.mock("@/components/invitations/invite-user-form", () => ({
   InviteUserForm: ({ householdName }: InviteUserFormProps) => (
     <div data-testid="invite-form">Invite to {householdName}</div>
+  ),
+}));
+vi.mock("@/components/households/delete-household-button", () => ({
+  DeleteHouseholdButton: ({ householdName }: DeleteHouseholdButtonProps) => (
+    <div data-testid="delete-button">Delete {householdName}</div>
   ),
 }));
 
@@ -57,7 +63,7 @@ describe("UserProfileCard", () => {
 
     render(await UserProfileCard());
 
-    expect.assertions(7); // Ensures all assertions execute
+    expect.assertions(9); // Ensures all assertions execute
     expect(screen.getByText("John Doe")).toBeInTheDocument();
     expect(screen.getByText("john@example.com")).toBeInTheDocument();
     expect(screen.getByText("My House")).toBeInTheDocument();
@@ -65,6 +71,8 @@ describe("UserProfileCard", () => {
     expect(screen.getByText(/ID: user-uuid/)).toBeInTheDocument();
     expect(screen.getByTestId("invite-form")).toBeInTheDocument();
     expect(screen.getByText("Invite to My House")).toBeInTheDocument();
+    expect(screen.getByTestId("delete-button")).toBeInTheDocument();
+    expect(screen.getByText("Delete My House")).toBeInTheDocument();
   });
   it("should not show invite form when user is not OWNER", async () => {
     mockPartial(auth0.getSession).mockResolvedValue({
@@ -86,6 +94,7 @@ describe("UserProfileCard", () => {
     expect(screen.getByText("My House")).toBeInTheDocument();
     expect(screen.getByText(/Member/i)).toBeInTheDocument();
     expect(screen.queryByTestId("invite-form")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("delete-button")).not.toBeInTheDocument();
   });
   it("should show 'No household assigned' when user has no households", async () => {
     mockPartial(auth0.getSession).mockResolvedValue({ user: {} });

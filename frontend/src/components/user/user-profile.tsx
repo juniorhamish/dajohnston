@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { DeleteHouseholdButton } from "@/components/households/delete-household-button";
 import { InviteUserForm } from "@/components/invitations/invite-user-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getCurrentUser } from "@/generated";
@@ -75,8 +76,12 @@ export async function UserProfileCard() {
                     </span>
                   </div>
                   {h.role === "OWNER" && (
-                    <div className="mt-2 pt-2 border-t border-border/50">
+                    <div className="mt-2 pt-2 border-t border-border/50 flex justify-between items-center">
                       <InviteUserForm
+                        householdId={h.id}
+                        householdName={h.name}
+                      />
+                      <DeleteHouseholdButton
                         householdId={h.id}
                         householdName={h.name}
                       />
