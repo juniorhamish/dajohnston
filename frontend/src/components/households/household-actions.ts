@@ -1,7 +1,19 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { deleteHousehold } from "@/generated";
+import { createHousehold, deleteHousehold } from "@/generated";
+
+export async function createHouseholdAction(name: string) {
+  try {
+    await createHousehold({
+      body: { name },
+    });
+    revalidatePath("/");
+  } catch (error) {
+    console.error("Failed to create household:", error);
+    throw error;
+  }
+}
 
 export async function deleteHouseholdAction(householdId: string) {
   try {
