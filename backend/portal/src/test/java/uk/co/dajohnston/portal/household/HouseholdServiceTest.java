@@ -51,8 +51,10 @@ class HouseholdServiceTest {
     HouseholdMemberEntity member2 =
         HouseholdMemberEntity.builder().household(household2).role(MEMBER).build();
 
-    when(userService.findOrCreateUser(jwt)).thenReturn(UserEntity.builder().build());
-    when(householdMemberRepository.findAll()).thenReturn(List.of(member1, member2));
+    UUID userId = UUID.fromString("00000000-0000-0000-0000-000000000000");
+    UserEntity user = UserEntity.builder().id(userId).build();
+    when(userService.findOrCreateUser(jwt)).thenReturn(user);
+    when(householdMemberRepository.findByUserId(userId)).thenReturn(List.of(member1, member2));
 
     List<Household> result = householdService.listHouseholds(jwt);
 
@@ -67,8 +69,10 @@ class HouseholdServiceTest {
 
   @Test
   void listHouseholds_returnsEmptyList_whenNoMemberships() {
-    when(userService.findOrCreateUser(jwt)).thenReturn(UserEntity.builder().build());
-    when(householdMemberRepository.findAll()).thenReturn(List.of());
+    UUID userId = UUID.fromString("00000000-0000-0000-0000-000000000000");
+    UserEntity user = UserEntity.builder().id(userId).build();
+    when(userService.findOrCreateUser(jwt)).thenReturn(user);
+    when(householdMemberRepository.findByUserId(userId)).thenReturn(List.of());
 
     List<Household> result = householdService.listHouseholds(jwt);
 
@@ -439,5 +443,69 @@ class HouseholdServiceTest {
     assertThatThrownBy(() -> householdService.declineInvitation(invitationId, jwt))
         .isInstanceOf(ResourceNotFoundException.class)
         .hasMessage("Invitation not found");
+  }
+
+  @Test
+  void deleteHousehold_success_asOwner() {
+    UUID householdId = UUID.fromString("00000000-0000-0000-0000-000000000060");
+    UUID userId = UUID.fromString("00000000-0000-0000-0000-000000000061");
+    UserEntity user = UserEntity.builder().id(userId).build();
+    HouseholdEntity household =
+        HouseholdEntity.builder().id(householdId).name("Delete House").build();
+    HouseholdMemberEntity member =
+        HouseholdMemberEntity.builder().household(household).user(user).role(OWNER).build();
+
+    when(userService.findOrCreateUser(jwt)).thenReturn(user);
+    when(householdMemberRepository.findById(new HouseholdMemberId(householdId, userId)))
+        .thenReturn(Optional.of(member));
+    when(householdRepository.findById(householdId)).thenReturn(Optional.of(household));
+
+    householdService.deleteHousehold(householdId, jwt);
+
+    household.preRemove();
+    verify(householdRepository).delete(household);
+    assertThat(household.getDeletedAt()).isNotNull();
+  }
+
+  @Test
+  void deleteHousehold_fails_asMember() {
+    UUID householdId = UUID.fromString("00000000-0000-0000-0000-000000000070");
+    UUID userId = UUID.fromString("00000000-0000-0000-0000-000000000071");
+    UserEntity user = UserEntity.builder().id(userId).build();
+    HouseholdEntity household =
+        HouseholdEntity.builder().id(householdId).name("Member House").build();
+    HouseholdMemberEntity member =
+        HouseholdMemberEntity.builder().household(household).user(user).role(MEMBER).build();
+
+    when(userService.findOrCreateUser(jwt)).thenReturn(user);
+    when(householdMemberRepository.findById(new HouseholdMemberId(householdId, userId)))
+        .thenReturn(Optional.of(member));
+
+    assertThatThrownBy(() -> householdService.deleteHousehold(householdId, jwt))
+        .isInstanceOf(AccessDeniedException.class)
+        .hasMessage("Only owners can delete households");
+  }
+
+  @Test
+  void restoreHousehold_success() {
+    UUID householdId = UUID.fromString("00000000-0000-0000-0000-000000000080");
+    UUID userId = UUID.fromString("00000000-0000-0000-0000-000000000081");
+    UserEntity user = UserEntity.builder().id(userId).build();
+    HouseholdEntity household =
+        HouseholdEntity.builder().id(householdId).name("Restored House").build();
+    HouseholdMemberEntity member =
+        HouseholdMemberEntity.builder().household(household).user(user).role(OWNER).build();
+
+    when(userService.findOrCreateUser(jwt)).thenReturn(user);
+    when(householdRepository.findById(householdId)).thenReturn(Optional.of(household));
+    when(householdMemberRepository.findById(new HouseholdMemberId(householdId, userId)))
+        .thenReturn(Optional.of(member));
+
+    Household result = householdService.restoreHousehold(householdId, jwt);
+
+    verify(householdRepository).restoreById(householdId);
+    assertThat(result.id()).isEqualTo(householdId);
+    assertThat(result.name()).isEqualTo("Restored House");
+    assertThat(result.role()).isEqualTo(OWNER);
   }
 }

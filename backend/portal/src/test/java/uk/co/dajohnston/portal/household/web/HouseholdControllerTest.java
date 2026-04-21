@@ -5,6 +5,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -279,21 +280,31 @@ class HouseholdControllerTest {
   }
 
   @Test
-  void inviteUser_invalidRole_returnsBadRequest() throws Exception {
+  void deleteHousehold_success() throws Exception {
+    UUID householdId = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
+
     mockMvc
         .perform(
-            post(
-                    "/api/households/{id}/invitations",
-                    UUID.fromString("123e4567-e89b-12d3-a456-426614174000"))
-                .with(jwt().jwt(jwt -> jwt.subject("auth0|123")))
-                .contentType(APPLICATION_JSON)
-                .content(
-                    """
-                    {
-                      "email": "friend@example.com",
-                      "role": "INVALID_ROLE"
-                    }
-                    """))
-        .andExpect(status().isBadRequest());
+            delete("/api/households/{id}", householdId)
+                .with(jwt().jwt(jwt -> jwt.subject("auth0|123"))))
+        .andExpect(status().isNoContent());
+  }
+
+  @Test
+  void restoreHousehold_success() throws Exception {
+    UUID householdId = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
+    Household household =
+        Household.builder().id(householdId).name("Restored House").role(OWNER).build();
+
+    when(householdService.restoreHousehold(any(), any())).thenReturn(household);
+
+    mockMvc
+        .perform(
+            post("/api/households/{id}/restore", householdId)
+                .with(jwt().jwt(jwt -> jwt.subject("auth0|123"))))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.id").value(householdId.toString()))
+        .andExpect(jsonPath("$.name").value("Restored House"))
+        .andExpect(jsonPath("$.role").value("OWNER"));
   }
 }

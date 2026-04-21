@@ -122,6 +122,53 @@ paths:
           description: Unauthorized
         '404':
           description: Household not found
+  /api/households/{householdId}:
+    delete:
+      tags:
+        - Households
+      summary: Soft delete a household
+      description: Marks a household as deleted. Only the owner can perform this action.
+      operationId: deleteHousehold
+      parameters:
+        - name: householdId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Successfully deleted household
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden - Only owners can delete
+        '404':
+          description: Household not found
+  /api/households/{householdId}/restore:
+    post:
+      tags:
+        - Households
+      summary: Restore a soft-deleted household
+      operationId: restoreHousehold
+      parameters:
+        - name: householdId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Successfully restored household
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Household'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Household not found
   /api/apps:
     get:
       tags:

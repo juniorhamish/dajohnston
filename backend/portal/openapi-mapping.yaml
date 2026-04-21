@@ -26,6 +26,12 @@ map:
     /api/households/{householdId}/invitations:
       parameters:
         - add: jwt => org.springframework.security.oauth2.jwt.JwtClaimAccessor
+    /api/households/{householdId}:
+      parameters:
+        - add: jwt => org.springframework.security.oauth2.jwt.JwtClaimAccessor
+    /api/households/{householdId}/restore:
+      parameters:
+        - add: jwt => org.springframework.security.oauth2.jwt.JwtClaimAccessor
     /api/invitations:
       parameters:
         - add: jwt => org.springframework.security.oauth2.jwt.JwtClaimAccessor

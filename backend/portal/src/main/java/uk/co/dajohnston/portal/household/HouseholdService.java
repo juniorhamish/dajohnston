@@ -27,6 +27,7 @@ public class HouseholdService {
 
   public static final String EMAIL_CLAIM = "email";
   public static final String PENDING_STATUS = "PENDING";
+  public static final String HOUSEHOLD_NOT_FOUND = "Household not found";
   private final HouseholdRepository householdRepository;
   private final HouseholdMemberRepository householdMemberRepository;
   private final InvitationRepository invitationRepository;
@@ -45,8 +46,9 @@ public class HouseholdService {
 
   @Transactional(readOnly = true)
   public List<Household> listHouseholds(JwtClaimAccessor jwt) {
-    userService.findOrCreateUser(jwt);
-    return householdMemberRepository.findAll().stream()
+    UserEntity user = userService.findOrCreateUser(jwt);
+    return householdMemberRepository.findByUserId(user.getId()).stream()
+        .filter(member -> member.getHousehold() != null)
         .map(
             member ->
                 Household.builder()
@@ -79,7 +81,7 @@ public class HouseholdService {
     HouseholdEntity household =
         householdRepository
             .findById(householdId)
-            .orElseThrow(() -> new IllegalArgumentException("Household not found"));
+            .orElseThrow(() -> new IllegalArgumentException(HOUSEHOLD_NOT_FOUND));
 
     InvitationEntity invitation =
         invitationRepository
@@ -123,7 +125,7 @@ public class HouseholdService {
     HouseholdEntity household =
         householdRepository
             .findById(householdId)
-            .orElseThrow(() -> new IllegalArgumentException("Household not found"));
+            .orElseThrow(() -> new IllegalArgumentException(HOUSEHOLD_NOT_FOUND));
     InvitationEntity invitation =
         invitationRepository.save(
             InvitationEntity.builder()
@@ -194,5 +196,44 @@ public class HouseholdService {
     invitationRepository.save(invitation);
 
     return toInvitation(invitation);
+  }
+
+  public void deleteHousehold(UUID householdId, JwtClaimAccessor jwt) {
+    UserEntity user = userService.findOrCreateUser(jwt);
+
+    boolean isOwner =
+        householdMemberRepository
+            .findById(new HouseholdMemberId(householdId, user.getId()))
+            .map(member -> OWNER == member.getRole())
+            .orElse(false);
+
+    if (!isOwner) {
+      throw new AccessDeniedException("Only owners can delete households");
+    }
+
+    HouseholdEntity household =
+        householdRepository
+            .findById(householdId)
+            .orElseThrow(() -> new ResourceNotFoundException(HOUSEHOLD_NOT_FOUND));
+
+    householdRepository.delete(household);
+  }
+
+  public Household restoreHousehold(UUID householdId, JwtClaimAccessor jwt) {
+    UserEntity user = userService.findOrCreateUser(jwt);
+    householdRepository.restoreById(householdId);
+    householdMemberRepository.restoreByHouseholdId(householdId);
+    HouseholdEntity household =
+        householdRepository
+            .findById(householdId)
+            .orElseThrow(() -> new ResourceNotFoundException(HOUSEHOLD_NOT_FOUND));
+
+    HouseholdRole role =
+        householdMemberRepository
+            .findById(new HouseholdMemberId(householdId, user.getId()))
+            .map(HouseholdMemberEntity::getRole)
+            .orElse(MEMBER);
+
+    return Household.builder().id(household.getId()).name(household.getName()).role(role).build();
   }
 }

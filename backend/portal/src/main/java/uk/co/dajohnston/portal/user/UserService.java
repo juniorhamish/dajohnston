@@ -30,6 +30,7 @@ public class UserService {
 
     List<Household> households =
         householdMemberRepository.findByUserId(user.getId()).stream()
+            .filter(member -> member.getHousehold() != null)
             .map(
                 member ->
                     Household.builder()

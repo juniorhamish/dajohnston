@@ -1,0 +1,4 @@
+ALTER TABLE household_members
+    ADD COLUMN deleted BOOLEAN DEFAULT FALSE NOT NULL;
+ALTER TABLE household_members
+    ADD COLUMN deleted_at TIMESTAMP WITH TIME ZONE;
