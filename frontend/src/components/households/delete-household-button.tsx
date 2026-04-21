@@ -17,7 +17,7 @@ export function DeleteHouseholdButton({
 
   const handleDelete = () => {
     if (
-      window.confirm(
+      globalThis.confirm(
         `Are you sure you want to delete the household "${householdName}"? This action can be undone by an administrator.`,
       )
     ) {

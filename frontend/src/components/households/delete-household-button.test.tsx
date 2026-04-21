@@ -25,7 +25,7 @@ describe("DeleteHouseholdButton", () => {
   });
 
   it("should call deleteHouseholdAction when confirmed", async () => {
-    vi.mocked(window.confirm).mockReturnValue(true);
+    vi.mocked(globalThis.confirm).mockReturnValue(true);
     const user = userEvent.setup();
 
     render(
@@ -33,7 +33,7 @@ describe("DeleteHouseholdButton", () => {
     );
     await user.click(screen.getByRole("button", { name: /delete household/i }));
 
-    expect(window.confirm).toHaveBeenCalledWith(
+    expect(globalThis.confirm).toHaveBeenCalledWith(
       expect.stringContaining(
         'Are you sure you want to delete the household "Test Household"?',
       ),
@@ -42,7 +42,7 @@ describe("DeleteHouseholdButton", () => {
   });
 
   it("should not call deleteHouseholdAction when cancelled", async () => {
-    vi.mocked(window.confirm).mockReturnValue(false);
+    vi.mocked(globalThis.confirm).mockReturnValue(false);
     const user = userEvent.setup();
 
     render(
@@ -50,12 +50,12 @@ describe("DeleteHouseholdButton", () => {
     );
     await user.click(screen.getByRole("button", { name: /delete household/i }));
 
-    expect(window.confirm).toHaveBeenCalled();
+    expect(globalThis.confirm).toHaveBeenCalled();
     expect(deleteHouseholdAction).not.toHaveBeenCalled();
   });
 
   it("should show alert when delete fails", async () => {
-    vi.mocked(window.confirm).mockReturnValue(true);
+    vi.mocked(globalThis.confirm).mockReturnValue(true);
     vi.mocked(deleteHouseholdAction).mockRejectedValue(new Error("Failed"));
     const user = userEvent.setup();
 
@@ -64,7 +64,7 @@ describe("DeleteHouseholdButton", () => {
     );
     await user.click(screen.getByRole("button", { name: /delete household/i }));
 
-    expect(window.alert).toHaveBeenCalledWith(
+    expect(globalThis.alert).toHaveBeenCalledWith(
       "Failed to delete household. Please try again.",
     );
   });
