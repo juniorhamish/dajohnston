@@ -80,6 +80,33 @@ class HouseholdServiceTest {
   }
 
   @Test
+  void listHouseholds_filtersOutMembershipsWithNullHousehold() {
+    UUID userId = UUID.fromString("00000000-0000-0000-0000-000000000000");
+    UserEntity user = UserEntity.builder().id(userId).build();
+    when(userService.findOrCreateUser(jwt)).thenReturn(user);
+
+    HouseholdMemberEntity memberWithHousehold =
+        HouseholdMemberEntity.builder()
+            .household(
+                HouseholdEntity.builder()
+                    .id(UUID.fromString("12345678-1234-1234-1234-123456789012"))
+                    .name("House")
+                    .build())
+            .role(MEMBER)
+            .build();
+    HouseholdMemberEntity memberWithoutHousehold =
+        HouseholdMemberEntity.builder().household(null).role(MEMBER).build();
+
+    when(householdMemberRepository.findByUserId(userId))
+        .thenReturn(List.of(memberWithHousehold, memberWithoutHousehold));
+
+    List<Household> result = householdService.listHouseholds(jwt);
+
+    assertThat(result).hasSize(1);
+    assertThat(result.getFirst().name()).isEqualTo("House");
+  }
+
+  @Test
   void createHousehold_returnsCreatedHousehold() {
     UUID userId = UUID.fromString("00000000-0000-0000-0000-000000000000");
     UUID householdId = UUID.fromString("00000000-0000-0000-0000-000000000001");
