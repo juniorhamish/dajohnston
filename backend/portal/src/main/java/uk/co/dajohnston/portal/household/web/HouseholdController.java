@@ -57,4 +57,17 @@ class HouseholdController implements HouseholdsApi {
                 householdService.inviteUser(
                     householdId, jwt, body.email(), HouseholdRole.valueOf(body.role().name()))));
   }
+
+  @Override
+  public ResponseEntity<Void> deleteHousehold(
+      UUID householdId, @AuthenticationPrincipal JwtClaimAccessor jwt) {
+    householdService.deleteHousehold(householdId, jwt);
+    return ResponseEntity.noContent().build();
+  }
+
+  @Override
+  public ResponseEntity<HouseholdDto> restoreHousehold(
+      UUID householdId, @AuthenticationPrincipal JwtClaimAccessor jwt) {
+    return ok(householdMapper.toDto(householdService.restoreHousehold(householdId, jwt)));
+  }
 }

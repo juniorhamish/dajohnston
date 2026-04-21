@@ -77,4 +77,63 @@ class UserHouseholdIT extends AbstractIntegrationTest {
         .body("name", equalTo("Joinable Household"))
         .body("role", equalTo("MEMBER"));
   }
+
+  @Test
+  void deleteAndRestoreHousehold_success() {
+    String householdId =
+        authenticated()
+            .contentType(JSON)
+            .body(Map.of("name", "Deletable Household"))
+            .when()
+            .post("/api/households")
+            .then()
+            .statusCode(201)
+            .extract()
+            .path("id");
+
+    authenticated().when().delete("/api/households/{id}", householdId).then().statusCode(204);
+
+    authenticated()
+        .when()
+        .get("/api/households")
+        .then()
+        .statusCode(200)
+        .body("id", notNullValue())
+        .body("name", org.hamcrest.Matchers.not(hasItem("Deletable Household")));
+
+    authenticated()
+        .when()
+        .post("/api/households/{id}/restore", householdId)
+        .then()
+        .statusCode(200)
+        .body("id", equalTo(householdId))
+        .body("name", equalTo("Deletable Household"));
+
+    authenticated()
+        .when()
+        .get("/api/households")
+        .then()
+        .statusCode(200)
+        .body("name", hasItem("Deletable Household"));
+  }
+
+  @Test
+  void deleteHousehold_fails_whenNotOwner() {
+    String householdId =
+        authenticated()
+            .contentType(JSON)
+            .body(Map.of("name", "Non-Deletable Household"))
+            .when()
+            .post("/api/households")
+            .then()
+            .statusCode(201)
+            .extract()
+            .path("id");
+
+    authenticatedAsUser2()
+        .when()
+        .delete("/api/households/{id}", householdId)
+        .then()
+        .statusCode(403);
+  }
 }

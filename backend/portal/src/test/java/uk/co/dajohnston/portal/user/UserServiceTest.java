@@ -17,6 +17,7 @@ import com.auth0.client.mgmt.UsersClient;
 import com.auth0.client.mgmt.types.GetUserResponseContent;
 import com.auth0.client.mgmt.types.UpdateUserRequestContent;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
@@ -111,6 +112,36 @@ class UserServiceTest {
     assertThat(profile.households().getFirst().id()).isEqualTo(householdId);
     assertThat(profile.households().getFirst().name()).isEqualTo("My Home");
     assertThat(profile.households().getFirst().role()).isEqualTo(HouseholdRole.OWNER);
+  }
+
+  @Test
+  void getCurrentUser_filtersOutMembershipsWithNullHousehold() {
+    UUID userId = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
+    UserEntity user = UserEntity.builder().id(userId).auth0Id("auth0|123").build();
+    // Member with null household
+    HouseholdMemberEntity member1 =
+        HouseholdMemberEntity.builder().household(null).role(HouseholdRole.OWNER).build();
+    // Member with valid household
+    UUID householdId = UUID.fromString("456e4567-e89b-12d3-a456-426614174000");
+    HouseholdEntity household = HouseholdEntity.builder().id(householdId).name("My Home").build();
+    HouseholdMemberEntity member2 =
+        HouseholdMemberEntity.builder().household(household).role(HouseholdRole.MEMBER).build();
+
+    GetUserResponseContent auth0User = mock(GetUserResponseContent.class);
+    when(auth0User.getGivenName()).thenReturn(Optional.empty());
+    when(auth0User.getFamilyName()).thenReturn(Optional.empty());
+    when(auth0User.getNickname()).thenReturn(Optional.empty());
+    when(auth0User.getPicture()).thenReturn(Optional.empty());
+
+    when(jwt.getSubject()).thenReturn("auth0|123");
+    when(userRepository.findByAuth0Id("auth0|123")).thenReturn(Optional.of(user));
+    when(householdMemberRepository.findByUserId(userId)).thenReturn(List.of(member1, member2));
+    when(usersClient.get("auth0|123")).thenReturn(auth0User);
+
+    UserProfile profile = userService.getCurrentUser(jwt);
+
+    assertThat(profile.households()).hasSize(1);
+    assertThat(profile.households().getFirst().id()).isEqualTo(householdId);
   }
 
   @Test

@@ -240,6 +240,68 @@ export type JoinHouseholdResponses = {
 
 export type JoinHouseholdResponse = JoinHouseholdResponses[keyof JoinHouseholdResponses];
 
+export type DeleteHouseholdData = {
+    body?: never;
+    path: {
+        householdId: string;
+    };
+    query?: never;
+    url: '/api/households/{householdId}';
+};
+
+export type DeleteHouseholdErrors = {
+    /**
+     * Unauthorized
+     */
+    401: unknown;
+    /**
+     * Forbidden - Only owners can delete
+     */
+    403: unknown;
+    /**
+     * Household not found
+     */
+    404: unknown;
+};
+
+export type DeleteHouseholdResponses = {
+    /**
+     * Successfully deleted household
+     */
+    204: void;
+};
+
+export type DeleteHouseholdResponse = DeleteHouseholdResponses[keyof DeleteHouseholdResponses];
+
+export type RestoreHouseholdData = {
+    body?: never;
+    path: {
+        householdId: string;
+    };
+    query?: never;
+    url: '/api/households/{householdId}/restore';
+};
+
+export type RestoreHouseholdErrors = {
+    /**
+     * Unauthorized
+     */
+    401: unknown;
+    /**
+     * Household not found
+     */
+    404: unknown;
+};
+
+export type RestoreHouseholdResponses = {
+    /**
+     * Successfully restored household
+     */
+    200: Household;
+};
+
+export type RestoreHouseholdResponse = RestoreHouseholdResponses[keyof RestoreHouseholdResponses];
+
 export type ListAppsData = {
     body?: never;
     path?: never;

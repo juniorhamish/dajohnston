@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { AcceptInvitationData, AcceptInvitationErrors, AcceptInvitationResponses, CreateHouseholdData, CreateHouseholdErrors, CreateHouseholdResponses, DeclineInvitationData, DeclineInvitationErrors, DeclineInvitationResponses, GetApplicationInfoData, GetApplicationInfoResponses, GetCurrentUserData, GetCurrentUserErrors, GetCurrentUserResponses, GetVapidPublicKeyData, GetVapidPublicKeyErrors, GetVapidPublicKeyResponses, InviteUserData, InviteUserErrors, InviteUserResponses, JoinHouseholdData, JoinHouseholdErrors, JoinHouseholdResponses, ListAppsData, ListAppsErrors, ListAppsResponses, ListHouseholdsData, ListHouseholdsErrors, ListHouseholdsResponses, ListPendingInvitationsData, ListPendingInvitationsErrors, ListPendingInvitationsResponses, RegisterSubscriptionData, RegisterSubscriptionErrors, RegisterSubscriptionResponses, SendNotificationData, SendNotificationErrors, SendNotificationResponses, UpdateCurrentUserData, UpdateCurrentUserErrors, UpdateCurrentUserResponses } from './types.gen';
+import type { AcceptInvitationData, AcceptInvitationErrors, AcceptInvitationResponses, CreateHouseholdData, CreateHouseholdErrors, CreateHouseholdResponses, DeclineInvitationData, DeclineInvitationErrors, DeclineInvitationResponses, DeleteHouseholdData, DeleteHouseholdErrors, DeleteHouseholdResponses, GetApplicationInfoData, GetApplicationInfoResponses, GetCurrentUserData, GetCurrentUserErrors, GetCurrentUserResponses, GetVapidPublicKeyData, GetVapidPublicKeyErrors, GetVapidPublicKeyResponses, InviteUserData, InviteUserErrors, InviteUserResponses, JoinHouseholdData, JoinHouseholdErrors, JoinHouseholdResponses, ListAppsData, ListAppsErrors, ListAppsResponses, ListHouseholdsData, ListHouseholdsErrors, ListHouseholdsResponses, ListPendingInvitationsData, ListPendingInvitationsErrors, ListPendingInvitationsResponses, RegisterSubscriptionData, RegisterSubscriptionErrors, RegisterSubscriptionResponses, RestoreHouseholdData, RestoreHouseholdErrors, RestoreHouseholdResponses, SendNotificationData, SendNotificationErrors, SendNotificationResponses, UpdateCurrentUserData, UpdateCurrentUserErrors, UpdateCurrentUserResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -81,6 +81,26 @@ export const createHousehold = <ThrowOnError extends boolean = false>(options: O
 export const joinHousehold = <ThrowOnError extends boolean = false>(options: Options<JoinHouseholdData, ThrowOnError>) => (options.client ?? client).post<JoinHouseholdResponses, JoinHouseholdErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/api/households/{householdId}/join',
+    ...options
+});
+
+/**
+ * Soft delete a household
+ *
+ * Marks a household as deleted. Only the owner can perform this action.
+ */
+export const deleteHousehold = <ThrowOnError extends boolean = false>(options: Options<DeleteHouseholdData, ThrowOnError>) => (options.client ?? client).delete<DeleteHouseholdResponses, DeleteHouseholdErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/households/{householdId}',
+    ...options
+});
+
+/**
+ * Restore a soft-deleted household
+ */
+export const restoreHousehold = <ThrowOnError extends boolean = false>(options: Options<RestoreHouseholdData, ThrowOnError>) => (options.client ?? client).post<RestoreHouseholdResponses, RestoreHouseholdErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/households/{householdId}/restore',
     ...options
 });
 
