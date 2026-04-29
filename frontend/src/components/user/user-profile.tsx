@@ -5,6 +5,7 @@ import { InviteUserForm } from "@/components/invitations/invite-user-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getCurrentUser } from "@/generated";
 import { auth0 } from "@/lib/auth0";
+import { UserProfileClient } from "./user-profile-client";
 
 export async function UserProfileCard() {
   const session = await auth0.getSession();
@@ -49,9 +50,12 @@ export async function UserProfileCard() {
               </p>
             )}
             {userProfile?.id && (
-              <p className="text-[10px] text-muted-foreground/40 mt-1 font-mono uppercase tracking-wider">
-                ID: {userProfile?.id}
-              </p>
+              <>
+                <p className="text-[10px] text-muted-foreground/40 mt-1 font-mono uppercase tracking-wider">
+                  ID: {userProfile?.id}
+                </p>
+                <UserProfileClient userProfile={userProfile} />
+              </>
             )}
           </div>
         </div>

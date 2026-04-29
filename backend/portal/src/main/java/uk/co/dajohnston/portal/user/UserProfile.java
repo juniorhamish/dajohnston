@@ -14,4 +14,6 @@ public record UserProfile(
     String familyName,
     String nickname,
     String picture,
+    String manualPictureUrl,
+    boolean useGravatar,
     List<Household> households) {}

@@ -387,6 +387,10 @@ components:
           type: string
         picture:
           type: string
+        manualPictureUrl:
+          type: string
+        useGravatar:
+          type: boolean
         households:
           type: array
           items:
@@ -395,7 +399,7 @@ components:
         - id
         - auth0Id
         - email
-        - displayName
+        - useGravatar
         - households
     Household:
       type: object
