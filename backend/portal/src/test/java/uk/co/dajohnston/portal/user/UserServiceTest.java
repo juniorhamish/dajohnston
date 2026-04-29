@@ -343,4 +343,51 @@ class UserServiceTest {
 
     verify(usersClient, never()).update(anyString(), any(UpdateUserRequestContent.class));
   }
+
+  @Test
+  void getCurrentUser_userExists_returnsUserProfileWithManualPictureUrl() {
+    UUID userId = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
+    UserEntity user =
+        UserEntity.builder()
+            .id(userId)
+            .auth0Id("auth0|123")
+            .email("test@example.com")
+            .useGravatar(true)
+            .build();
+
+    GetUserResponseContent auth0User = mock(GetUserResponseContent.class);
+    when(auth0User.getGivenName()).thenReturn(Optional.empty());
+    when(auth0User.getFamilyName()).thenReturn(Optional.empty());
+    when(auth0User.getNickname()).thenReturn(Optional.empty());
+    when(auth0User.getPicture()).thenReturn(Optional.of("http://example.com/manual.jpg"));
+
+    when(jwt.getSubject()).thenReturn("auth0|123");
+    when(userRepository.findByAuth0Id("auth0|123")).thenReturn(Optional.of(user));
+    when(householdMemberRepository.findByUserId(userId)).thenReturn(Collections.emptyList());
+    when(usersClient.get("auth0|123")).thenReturn(auth0User);
+    when(gravatarService.getGravatarUrl("test@example.com"))
+        .thenReturn("http://gravatar.com/gravatar.jpg");
+
+    UserProfile profile = userService.getCurrentUser(jwt);
+
+    assertThat(profile.picture()).isEqualTo("http://gravatar.com/gravatar.jpg");
+    assertThat(profile.manualPictureUrl()).isEqualTo("http://example.com/manual.jpg");
+    assertThat(profile.useGravatar()).isTrue();
+  }
+
+  @Test
+  void updateCurrentUser_withPicture_doesNotUpdateLocalUser() {
+    UUID userId = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
+    UserEntity user = UserEntity.builder().id(userId).auth0Id("auth0|123").build();
+
+    when(jwt.getSubject()).thenReturn("auth0|123");
+    when(userRepository.findByAuth0Id("auth0|123")).thenReturn(Optional.of(user));
+    when(usersClient.get("auth0|123")).thenReturn(mock(GetUserResponseContent.class));
+    when(householdMemberRepository.findByUserId(userId)).thenReturn(Collections.emptyList());
+
+    userService.updateCurrentUser(
+        jwt, new UpdateUserProfileRequestDto(null, null, null, "https://manual.jpg", null));
+
+    verify(userRepository, never()).save(user);
+  }
 }

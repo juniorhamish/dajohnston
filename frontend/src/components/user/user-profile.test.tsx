@@ -25,6 +25,11 @@ vi.mock("@/components/households/delete-household-button", () => ({
     <div data-testid="delete-button">Delete {householdName}</div>
   ),
 }));
+vi.mock("./user-profile-client", () => ({
+  UserProfileClient: () => (
+    <div data-testid="user-profile-client">Edit Profile</div>
+  ),
+}));
 
 describe("UserProfileCard", () => {
   beforeEach(() => {

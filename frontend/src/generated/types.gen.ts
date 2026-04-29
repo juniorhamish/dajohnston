@@ -21,6 +21,8 @@ export type UserProfile = {
     familyName?: string;
     nickname?: string;
     picture?: string;
+    manualPictureUrl?: string;
+    useGravatar: boolean;
     households: Array<Household>;
 };
 

@@ -49,6 +49,8 @@ public class UserService {
         .familyName(auth0User.getFamilyName().orElse(null))
         .nickname(auth0User.getNickname().orElse(null))
         .picture(getPictureUrl(user, auth0User))
+        .manualPictureUrl(auth0User.getPicture().orElse(null))
+        .useGravatar(user.isUseGravatar())
         .households(households)
         .build();
   }
@@ -62,8 +64,13 @@ public class UserService {
 
   public UserProfile updateCurrentUser(JwtClaimAccessor jwt, UpdateUserProfileRequestDto request) {
     var user = findOrCreateUser(jwt);
+    var userUpdated = false;
     if (request.useGravatar() != null) {
       user.setUseGravatar(request.useGravatar());
+      userUpdated = true;
+    }
+
+    if (userUpdated) {
       userRepository.save(user);
     }
 
