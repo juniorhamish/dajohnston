@@ -77,12 +77,12 @@ follows a phased approach to build a solid foundation before adding individual s
 
 **Goal:** Verify the "Low Effort" promise by implementing the first app.
 
-| Task ID | Task Description                 | Success Criteria                                               |
-|:--------|:---------------------------------|:---------------------------------------------------------------|
-| **6.1** | Spice Tracker Backend Module     | New Gradle/Maven module using the shared security/DB layer.    |
-| **6.2** | Spice Tracker UI (Inside Portal) | Dedicated route `/apps/spice-tracker` with its own theme.      |
-| **6.3** | Inventory Management Logic       | CRUD operations for spices, scoped by `household_id`.          |
-| **6.4** | Performance & Integration Tests  | k6 script for data fetching; Testcontainers for DB/Auth tests. |
+| Task ID | Task Description                 | Success Criteria                                                |
+|:--------|:---------------------------------|:----------------------------------------------------------------|
+| **6.1** | Spice Tracker Backend Module     | New Gradle/Maven module using the shared security/DB layer. [✓] |
+| **6.2** | Spice Tracker UI (Inside Portal) | Dedicated route `/apps/spice-tracker` with its own theme.       |
+| **6.3** | Inventory Management Logic       | CRUD operations for spices, scoped by `household_id`.           |
+| **6.4** | Performance & Integration Tests  | k6 script for data fetching; Testcontainers for DB/Auth tests.  |
 
 ---
 

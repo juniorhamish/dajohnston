@@ -6,6 +6,7 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/portal/portal-backend.portal.main.iml" filepath="$PROJECT_DIR$/.idea/modules/portal/portal-backend.portal.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/portal/portal-backend.portal.test.iml" filepath="$PROJECT_DIR$/.idea/modules/portal/portal-backend.portal.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/shared-security/portal-backend.shared-security.main.iml" filepath="$PROJECT_DIR$/.idea/modules/shared-security/portal-backend.shared-security.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/spice-tracker/portal-backend.spice-tracker.main.iml" filepath="$PROJECT_DIR$/.idea/modules/spice-tracker/portal-backend.spice-tracker.main.iml" />
     </modules>
   </component>
 </project>
