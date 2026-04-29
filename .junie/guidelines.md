@@ -175,6 +175,8 @@ as the API reference.
     - household/ — Household domain (entities, service, controller, invitations)
     - config/ — Tenant interceptor, RLS, web config, logging
 - backend/shared-security/ — Shared OAuth2/JWT security config
+- backend/Dockerfile
+    - used to build the production docker image to run the API
 - frontend/src/ — Next.js 16 app
     - generated/ — DO NOT READ (auto-generated from OpenAPI)
     - lib/ — Auth0, test utils

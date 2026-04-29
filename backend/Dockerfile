@@ -16,6 +16,7 @@ COPY backend/settings.gradle .
 COPY backend/gradle.properties .
 COPY backend/portal/build.gradle portal/
 COPY backend/shared-security/build.gradle shared-security/
+COPY backend/spice-tracker/build.gradle spice-tracker/
 
 # Build only dependencies to cache them in a separate layer
 # This helps when only source code changes
@@ -25,6 +26,8 @@ RUN ./gradlew :portal:dependencies --no-daemon
 COPY backend/portal/src portal/src
 COPY backend/portal/openapi-mapping.yaml portal
 COPY backend/shared-security/src shared-security/src
+COPY backend/spice-tracker/src spice-tracker/src
+COPY backend/spice-tracker/openapi-mapping.yaml spice-tracker
 
 # Build the application
 ARG VERSION=0.0.1-SNAPSHOT
