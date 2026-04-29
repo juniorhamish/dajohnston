@@ -219,8 +219,8 @@ describe("UpdateUserProfileForm", () => {
   });
 
   it("shows saving state when pending", async () => {
-    let resolveAction: (value: unknown) => void;
-    const promise = new Promise((resolve) => {
+    let resolveAction!: (value: void | PromiseLike<void>) => void;
+    const promise = new Promise<void>((resolve) => {
       resolveAction = resolve;
     });
     mockPartial(updateUserProfileAction).mockReturnValueOnce(promise);
@@ -239,7 +239,7 @@ describe("UpdateUserProfileForm", () => {
     ).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /Saving.../i })).toBeDisabled();
 
-    resolveAction(undefined);
+    resolveAction();
     await vi.waitFor(() => {
       expect(onCancel).toHaveBeenCalled();
     });
