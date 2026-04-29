@@ -1,8 +1,8 @@
 plugins {
   id 'org.springframework.boot'
   id 'io.spring.dependency-management'
-  id 'com.github.ben-manes.versions' version '0.53.0'
-  id 'io.openapiprocessor.openapi-processor' version '2026.1'
+  id 'com.github.ben-manes.versions' version '0.54.0'
+  id 'io.openapiprocessor.openapi-processor' version '2026.2'
 }
 
 description = 'Multi-App Portal Backend'
@@ -26,15 +26,16 @@ dependencies {
   implementation 'org.springframework.boot:spring-boot-starter-aspectj'
   implementation 'org.springframework.boot:spring-boot-starter-flyway'
   implementation 'org.springframework.boot:spring-boot-starter-validation'
-  implementation 'org.zalando:logbook-spring-boot-starter:4.0.3'
-  implementation 'org.zalando:logbook-logstash:4.0.3'
+  implementation 'org.zalando:logbook-spring-boot-starter:4.0.4'
+  implementation 'org.zalando:logbook-logstash:4.0.4'
   implementation 'net.logstash.logback:logstash-logback-encoder:9.0'
-  implementation 'com.auth0:auth0:3.3.0'
+  implementation 'com.auth0:auth0:3.4.0'
   implementation 'nl.martijndwars:web-push:5.1.2'
   implementation 'org.bouncycastle:bcprov-jdk18on:1.84'
   implementation 'org.apache.httpcomponents:httpclient:4.5.14'
   implementation 'org.bitbucket.b_c:jose4j:0.9.6'
   implementation project(':shared-security')
+  implementation project(':spice-tracker')
   runtimeOnly 'org.flywaydb:flyway-database-postgresql'
   runtimeOnly 'org.postgresql:postgresql'
   compileOnly 'org.projectlombok:lombok'
@@ -143,7 +144,7 @@ tasks.named('bootJar') {
 openapiProcessor {
   apiPath = layout.projectDirectory.file("../../api/v1/portal.yaml")
   spring {
-    processor 'io.openapiprocessor:openapi-processor-spring:2026.2'
+    processor 'io.openapiprocessor:openapi-processor-spring:2026.3'
     targetDir layout.buildDirectory.dir("openapi")
     mapping layout.projectDirectory.file("./openapi-mapping.yaml")
   }

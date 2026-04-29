@@ -1,3 +1,4 @@
 rootProject.name = 'portal-backend'
 include 'portal'
 include 'shared-security'
+include 'spice-tracker'

@@ -1,0 +1,65 @@
+openapi: 3.1.1
+info:
+  title: Spice Tracker API
+  version: 1.0.0
+  description: API for the Spice Tracker sub-application.
+
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+
+paths:
+  /api/spices:
+    get:
+      tags:
+        - Spices
+      summary: List spices in the household
+      operationId: listSpices
+      responses:
+        '200':
+          description: Successfully retrieved spices
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Spices'
+        '401':
+          description: Unauthorized
+
+components:
+  securitySchemes:
+    oauth:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://dajohnston.eu.auth0.com/authorize
+          tokenUrl: https://dajohnston.eu.auth0.com/oauth/token
+          scopes:
+            openid: Grant audience to retrieve user profile
+            email: Include email address
+            offline_access: Grant access to refresh tokens
+  schemas:
+    Spice:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        quantity:
+          type: string
+      required:
+        - id
+        - name
+    Spices:
+      type: object
+      properties:
+        spices:
+          type: array
+          items:
+            $ref: '#/components/schemas/Spice'
+      required:
+        - spices
+
+security:
+  - oauth: [ openid, email, offline_access ]

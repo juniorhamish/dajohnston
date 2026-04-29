@@ -1,0 +1,15 @@
+openapi-processor-mapping: v17
+
+options:
+  package-name: uk.co.dajohnston.spicetracker
+  model-name-suffix: Dto
+  javadoc: true
+  format-code: false
+  bean-validation: jakarta
+  model-type: record
+map:
+  result: org.springframework.http.ResponseEntity
+  types:
+    - type: string:uuid => java.util.UUID
+    - type: array => java.util.List
+    - type: object @ lombok.Builder

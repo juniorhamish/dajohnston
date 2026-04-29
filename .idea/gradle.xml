@@ -12,6 +12,7 @@
             <option value="$PROJECT_DIR$/backend" />
             <option value="$PROJECT_DIR$/backend/portal" />
             <option value="$PROJECT_DIR$/backend/shared-security" />
+            <option value="$PROJECT_DIR$/backend/spice-tracker" />
           </set>
         </option>
       </GradleProjectSettings>
