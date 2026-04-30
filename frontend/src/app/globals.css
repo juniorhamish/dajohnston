@@ -84,6 +84,19 @@
     --chart-3: #e23670;
     --chart-4: #af57db;
     --chart-5: #f97316;
+    --radius: 0.5rem;
+  }
+
+  .spice-tracker {
+    --primary: #16a34a;
+    --primary-foreground: #ffffff;
+    --ring: #16a34a;
+  }
+
+  .dark .spice-tracker {
+    --primary: #22c55e;
+    --primary-foreground: #052e16;
+    --ring: #22c55e;
   }
 }
 
