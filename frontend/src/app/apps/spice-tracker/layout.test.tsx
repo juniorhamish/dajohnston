@@ -19,7 +19,7 @@ describe("SpiceTrackerLayout", () => {
 
     const child = screen.getByTestId("child");
     const container = child.closest(".spice-tracker");
-    
+
     expect(container).toBeInTheDocument();
     expect(container).toHaveClass("spice-tracker", "min-h-screen");
 
