@@ -1,4 +1,4 @@
-package uk.co.dajohnston.spicetracker;
+package uk.co.dajohnston.portal.spicetracker;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

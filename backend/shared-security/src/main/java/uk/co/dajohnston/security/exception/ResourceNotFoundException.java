@@ -1,7 +1,6 @@
-package uk.co.dajohnston.portal.config;
+package uk.co.dajohnston.security.exception;
 
 public class ResourceNotFoundException extends RuntimeException {
-
   public ResourceNotFoundException(String message) {
     super(message);
   }

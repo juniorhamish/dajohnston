@@ -24,6 +24,118 @@ paths:
                 $ref: '#/components/schemas/Spices'
         '401':
           description: Unauthorized
+    post:
+      tags:
+        - Spices
+      summary: Define a new spice
+      operationId: createSpice
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSpice'
+      responses:
+        '201':
+          description: Spice created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Spice'
+        '400':
+          description: Invalid input
+        '401':
+          description: Unauthorized
+
+  /api/pantry:
+    get:
+      tags:
+        - Pantry
+      summary: List jars in the pantry
+      operationId: listPantryJars
+      responses:
+        '200':
+          description: Successfully retrieved pantry jars
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PantryJars'
+        '401':
+          description: Unauthorized
+    post:
+      tags:
+        - Pantry
+      summary: Add a jar to the pantry
+      operationId: addPantryJar
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddPantryJar'
+      responses:
+        '201':
+          description: Jar added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PantryJar'
+        '400':
+          description: Invalid input
+        '401':
+          description: Unauthorized
+
+  /api/pantry/{id}:
+    patch:
+      tags:
+        - Pantry
+      summary: Update a jar in the pantry
+      operationId: updatePantryJar
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatePantryJar'
+      responses:
+        '200':
+          description: Jar updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PantryJar'
+        '400':
+          description: Invalid input
+        '401':
+          description: Unauthorized
+        '404':
+          description: Jar not found
+    delete:
+      tags:
+        - Pantry
+      summary: Remove a jar from the pantry
+      operationId: removePantryJar
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Jar removed
+        '401':
+          description: Unauthorized
+        '404':
+          description: Jar not found
 
 components:
   securitySchemes:
@@ -46,8 +158,6 @@ components:
           format: uuid
         name:
           type: string
-        quantity:
-          type: string
       required:
         - id
         - name
@@ -60,6 +170,65 @@ components:
             $ref: '#/components/schemas/Spice'
       required:
         - spices
+    CreateSpice:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+      required:
+        - name
+    PantryJar:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        spiceId:
+          type: string
+          format: uuid
+        spiceName:
+          type: string
+        quantity:
+          type: integer
+          minimum: 0
+          maximum: 100
+      required:
+        - id
+        - spiceId
+        - spiceName
+        - quantity
+    PantryJars:
+      type: object
+      properties:
+        jars:
+          type: array
+          items:
+            $ref: '#/components/schemas/PantryJar'
+      required:
+        - jars
+    AddPantryJar:
+      type: object
+      properties:
+        spiceId:
+          type: string
+          format: uuid
+        quantity:
+          type: integer
+          minimum: 0
+          maximum: 100
+          default: 100
+      required:
+        - spiceId
+    UpdatePantryJar:
+      type: object
+      properties:
+        quantity:
+          type: integer
+          minimum: 0
+          maximum: 100
+      required:
+        - quantity
 
 security:
   - oauth: [ openid, email, offline_access ]

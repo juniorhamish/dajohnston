@@ -1,7 +1,7 @@
 openapi-processor-mapping: v17
 
 options:
-  package-name: uk.co.dajohnston.spicetracker
+  package-name: uk.co.dajohnston.portal.spicetracker
   model-name-suffix: Dto
   javadoc: true
   format-code: false

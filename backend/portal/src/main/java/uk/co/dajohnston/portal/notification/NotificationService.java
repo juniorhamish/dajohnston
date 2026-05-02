@@ -16,11 +16,11 @@ import org.jose4j.lang.JoseException;
 import org.springframework.security.oauth2.jwt.JwtClaimAccessor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import uk.co.dajohnston.portal.config.ResourceNotFoundException;
 import uk.co.dajohnston.portal.notification.config.VapidProperties;
 import uk.co.dajohnston.portal.notification.entity.PushSubscriptionEntity;
 import uk.co.dajohnston.portal.notification.entity.PushSubscriptionRepository;
 import uk.co.dajohnston.portal.user.UserService;
+import uk.co.dajohnston.security.exception.ResourceNotFoundException;
 
 @Service
 @RequiredArgsConstructor

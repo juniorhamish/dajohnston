@@ -29,12 +29,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.oauth2.jwt.JwtClaimAccessor;
-import uk.co.dajohnston.portal.config.ResourceNotFoundException;
 import uk.co.dajohnston.portal.notification.config.VapidProperties;
 import uk.co.dajohnston.portal.notification.entity.PushSubscriptionEntity;
 import uk.co.dajohnston.portal.notification.entity.PushSubscriptionRepository;
 import uk.co.dajohnston.portal.user.UserService;
 import uk.co.dajohnston.portal.user.entity.UserEntity;
+import uk.co.dajohnston.security.exception.ResourceNotFoundException;
 
 @ExtendWith(MockitoExtension.class)
 class NotificationServiceTest {
