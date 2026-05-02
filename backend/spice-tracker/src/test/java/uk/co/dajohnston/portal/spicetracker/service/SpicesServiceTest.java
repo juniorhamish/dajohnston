@@ -1,6 +1,7 @@
 package uk.co.dajohnston.portal.spicetracker.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.verify;
@@ -19,6 +20,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import uk.co.dajohnston.portal.spicetracker.repository.SpiceEntity;
 import uk.co.dajohnston.portal.spicetracker.repository.SpiceRepository;
 import uk.co.dajohnston.security.context.TenantContext;
+import uk.co.dajohnston.security.exception.DuplicateResourceException;
 
 @ExtendWith(MockitoExtension.class)
 class SpicesServiceTest {
@@ -56,6 +58,7 @@ class SpicesServiceTest {
 
   @Test
   void createSpice_savesSpiceToRepository() {
+    when(spiceRepository.existsByHouseholdIdAndName(householdId, "Cumin")).thenReturn(false);
     when(spiceRepository.save(any(SpiceEntity.class)))
         .thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -65,5 +68,14 @@ class SpicesServiceTest {
     assertThat(result.getHouseholdId()).isEqualTo(householdId);
     assertThat(result.getId()).isNotNull();
     verify(spiceRepository).save(any(SpiceEntity.class));
+  }
+
+  @Test
+  void createSpice_duplicateName_throwsException() {
+    when(spiceRepository.existsByHouseholdIdAndName(householdId, "Cumin")).thenReturn(true);
+
+    assertThatThrownBy(() -> spicesService.createSpice("Cumin"))
+        .isInstanceOf(DuplicateResourceException.class)
+        .hasMessage("Spice with name Cumin already exists");
   }
 }

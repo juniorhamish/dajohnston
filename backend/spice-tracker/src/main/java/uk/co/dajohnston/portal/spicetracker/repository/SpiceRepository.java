@@ -6,4 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface SpiceRepository extends JpaRepository<SpiceEntity, UUID> {
   List<SpiceEntity> findAllByHouseholdId(UUID householdId);
+
+  boolean existsByHouseholdIdAndName(UUID householdId, String name);
 }
