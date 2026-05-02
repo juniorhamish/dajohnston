@@ -22,15 +22,15 @@ import org.springframework.security.authentication.TestingAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
-import uk.co.dajohnston.portal.household.entity.HouseholdMemberId;
-import uk.co.dajohnston.portal.household.entity.HouseholdMemberRepository;
+import uk.co.dajohnston.portal.household.HouseholdService;
 import uk.co.dajohnston.portal.user.UserService;
 import uk.co.dajohnston.portal.user.entity.UserEntity;
+import uk.co.dajohnston.security.context.TenantContext;
 
 @ExtendWith(MockitoExtension.class)
 class TenantInterceptorTest {
 
-  @Mock private HouseholdMemberRepository householdMemberRepository;
+  @Mock private HouseholdService householdService;
   @Mock private UserService userService;
 
   @InjectMocks private TenantInterceptor tenantInterceptor;
@@ -55,7 +55,7 @@ class TenantInterceptorTest {
     UUID userId = UUID.fromString("a1b2c3d4-e5f6-7890-abcd-ef1234567890");
     Jwt jwt = createJwt();
     setAuthentication(jwt);
-    UserEntity user = UserEntity.builder().id(userId).build();
+    UserEntity user = UserEntity.builder().id(userId).email("user@example.com").build();
     when(userService.findOrCreateUser(jwt)).thenReturn(user);
 
     boolean result = tenantInterceptor.preHandle(request, response, new Object());
@@ -71,10 +71,9 @@ class TenantInterceptorTest {
     UUID householdId = UUID.fromString("b2c3d4e5-f6a7-8901-bcde-f12345678901");
     Jwt jwt = createJwt();
     setAuthentication(jwt);
-    UserEntity user = UserEntity.builder().id(userId).build();
+    UserEntity user = UserEntity.builder().id(userId).email("user@example.com").build();
     when(userService.findOrCreateUser(jwt)).thenReturn(user);
-    when(householdMemberRepository.existsById(new HouseholdMemberId(householdId, userId)))
-        .thenReturn(true);
+    when(householdService.isUserMemberOfHousehold(userId, householdId)).thenReturn(true);
 
     request.addHeader("X-Household-Id", householdId.toString());
 
@@ -91,10 +90,9 @@ class TenantInterceptorTest {
     UUID householdId = UUID.fromString("b2c3d4e5-f6a7-8901-bcde-f12345678901");
     Jwt jwt = createJwt();
     setAuthentication(jwt);
-    UserEntity user = UserEntity.builder().id(userId).build();
+    UserEntity user = UserEntity.builder().id(userId).email("user@example.com").build();
     when(userService.findOrCreateUser(jwt)).thenReturn(user);
-    when(householdMemberRepository.existsById(new HouseholdMemberId(householdId, userId)))
-        .thenReturn(false);
+    when(householdService.isUserMemberOfHousehold(userId, householdId)).thenReturn(false);
 
     request.addHeader("X-Household-Id", householdId.toString());
 
@@ -130,7 +128,7 @@ class TenantInterceptorTest {
     UUID userId = UUID.fromString("a1b2c3d4-e5f6-7890-abcd-ef1234567890");
     Jwt jwt = createJwt();
     setAuthentication(jwt);
-    UserEntity user = UserEntity.builder().id(userId).build();
+    UserEntity user = UserEntity.builder().id(userId).email("user@example.com").build();
     when(userService.findOrCreateUser(jwt)).thenReturn(user);
 
     request.addHeader("X-Household-Id", "  ");
@@ -140,7 +138,7 @@ class TenantInterceptorTest {
     assertThat(result).isTrue();
     assertThat(TenantContext.getUserId()).isEqualTo(userId);
     assertThat(TenantContext.getTenantId()).isNull();
-    verify(householdMemberRepository, never()).existsById(any());
+    verify(householdService, never()).isUserMemberOfHousehold(any(), any());
   }
 
   @Test

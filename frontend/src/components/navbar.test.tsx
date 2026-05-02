@@ -16,6 +16,12 @@ vi.mock("@/components/notifications/notification-manager", () => ({
   ),
 }));
 
+vi.mock("@/components/households/active-household-switcher", () => ({
+  ActiveHouseholdSwitcher: () => (
+    <div data-testid="active-household-switcher">Household Switcher</div>
+  ),
+}));
+
 describe("Navbar", () => {
   it("should render the navbar with logo and navigation links", () => {
     render(<Navbar />);
@@ -25,5 +31,6 @@ describe("Navbar", () => {
     expect(screen.getByTestId("theme-toggle")).toBeInTheDocument();
     expect(screen.getByTestId("auth-buttons")).toBeInTheDocument();
     expect(screen.getByTestId("notification-manager")).toBeInTheDocument();
+    expect(screen.getByTestId("active-household-switcher")).toBeInTheDocument();
   });
 });

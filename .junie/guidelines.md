@@ -138,6 +138,8 @@ registry for the latest versions.
   properties)
 - Use vitest + react testing library for tests
 - Prefer the use of userEvent over fireEvent for interactions in tests
+- When mocking an object where we only care about partial details, use the mockPartial function from
+  the test utils rather than casting to any
 
 # API Guidelines
 

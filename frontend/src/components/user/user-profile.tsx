@@ -1,6 +1,8 @@
+import { cookies } from "next/headers";
 import Image from "next/image";
 import { CreateHouseholdForm } from "@/components/households/create-household-form";
 import { DeleteHouseholdButton } from "@/components/households/delete-household-button";
+import { SetActiveHouseholdButton } from "@/components/households/set-active-household-button";
 import { InviteUserForm } from "@/components/invitations/invite-user-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getCurrentUser } from "@/generated";
@@ -8,6 +10,8 @@ import { auth0 } from "@/lib/auth0";
 import { UserProfileClient } from "./user-profile-client";
 
 export async function UserProfileCard() {
+  const cookieStore = await cookies();
+  const activeHouseholdId = cookieStore.get("selected_household_id")?.value;
   const session = await auth0.getSession();
   const user = session?.user;
 
@@ -76,9 +80,15 @@ export async function UserProfileCard() {
                 >
                   <div className="flex items-center justify-between mb-2">
                     <span className="font-semibold">{h.name}</span>
-                    <span className="text-[10px] font-bold uppercase px-2 py-1 bg-primary text-primary-foreground rounded-md">
-                      {h.role}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <SetActiveHouseholdButton
+                        householdId={h.id}
+                        isActive={h.id === activeHouseholdId}
+                      />
+                      <span className="text-[10px] font-bold uppercase px-2 py-1 bg-primary text-primary-foreground rounded-md">
+                        {h.role}
+                      </span>
+                    </div>
                   </div>
                   {h.role === "OWNER" && (
                     <div className="mt-2 pt-2 border-t border-border/50 flex justify-between items-center">

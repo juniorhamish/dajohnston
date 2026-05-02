@@ -11,10 +11,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
-import uk.co.dajohnston.portal.household.entity.HouseholdMemberId;
-import uk.co.dajohnston.portal.household.entity.HouseholdMemberRepository;
+import uk.co.dajohnston.portal.household.HouseholdService;
 import uk.co.dajohnston.portal.user.UserService;
 import uk.co.dajohnston.portal.user.entity.UserEntity;
+import uk.co.dajohnston.security.context.TenantContext;
 
 @Component
 @RequiredArgsConstructor
@@ -22,7 +22,7 @@ import uk.co.dajohnston.portal.user.entity.UserEntity;
 public class TenantInterceptor implements HandlerInterceptor {
 
   private static final String HOUSEHOLD_ID_HEADER = "X-Household-Id";
-  private final HouseholdMemberRepository householdMemberRepository;
+  private final HouseholdService householdService;
   private final UserService userService;
 
   @Override
@@ -37,8 +37,7 @@ public class TenantInterceptor implements HandlerInterceptor {
       String householdIdHeader = request.getHeader(HOUSEHOLD_ID_HEADER);
       if (householdIdHeader != null && !householdIdHeader.isBlank()) {
         var householdId = UUID.fromString(householdIdHeader);
-        if (!householdMemberRepository.existsById(
-            new HouseholdMemberId(householdId, user.getId()))) {
+        if (!householdService.isUserMemberOfHousehold(user.getId(), householdId)) {
           throw new AccessDeniedException("User is not a member of the requested household");
         }
         TenantContext.setTenantId(householdId);

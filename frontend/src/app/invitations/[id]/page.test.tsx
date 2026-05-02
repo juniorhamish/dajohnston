@@ -29,6 +29,12 @@ vi.mock("@/components/invitations/invitation-card", () => ({
   ),
 }));
 
+vi.mock("@/components/households/active-household-switcher", () => ({
+  ActiveHouseholdSwitcher: () => (
+    <div data-testid="active-household-switcher" />
+  ),
+}));
+
 describe("InvitationPage", () => {
   beforeEach(() => {
     vi.clearAllMocks();

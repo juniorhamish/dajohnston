@@ -7,6 +7,14 @@ import { auth0 } from "@/lib/auth0";
 import { mockPartial } from "@/lib/test-utils";
 import { UserProfileCard } from "./user-profile";
 
+vi.mock("next/headers", () => ({
+  cookies: vi.fn().mockResolvedValue({
+    get: vi.fn(),
+  }),
+}));
+vi.mock("@/components/households/set-active-household-button", () => ({
+  SetActiveHouseholdButton: () => <div data-testid="set-active-button" />,
+}));
 vi.mock("@/lib/auth0", () => ({
   auth0: {
     getSession: vi.fn(),

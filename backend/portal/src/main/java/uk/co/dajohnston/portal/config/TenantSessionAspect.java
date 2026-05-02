@@ -5,49 +5,54 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
-import org.springframework.core.annotation.Order;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import uk.co.dajohnston.security.context.TenantContext;
 
 @Aspect
 @Component
-@Order
 @RequiredArgsConstructor
 @Slf4j
 public class TenantSessionAspect {
 
   private final JdbcTemplate jdbcTemplate;
 
-  @Before("@within(org.springframework.transaction.annotation.Transactional)")
+  @Before(
+      "@within(org.springframework.transaction.annotation.Transactional) "
+          + "|| @annotation(org.springframework.transaction.annotation.Transactional)")
   public void setTenantSessionVariable() {
     UUID userId = TenantContext.getUserId();
     if (userId != null) {
       log.debug("Setting PostgreSQL session variable app.current_user_id to {}", userId);
       jdbcTemplate.queryForObject(
-          "SELECT set_config('app.current_user_id', ?, false)", String.class, userId.toString());
+          "SELECT set_config('app.current_user_id', ?, true)", String.class, userId.toString());
     } else {
-      jdbcTemplate.execute("RESET app.current_user_id");
+      log.debug("No user context found, clearing PostgreSQL session variable");
+      jdbcTemplate.queryForObject(
+          "SELECT set_config('app.current_user_id', '', true)", String.class);
     }
 
     String email = TenantContext.getUserEmail();
     if (email != null) {
       log.debug("Setting PostgreSQL session variable app.current_user_email to {}", email);
       jdbcTemplate.queryForObject(
-          "SELECT set_config('app.current_user_email', ?, false)", String.class, email);
+          "SELECT set_config('app.current_user_email', ?, true)", String.class, email);
     } else {
-      jdbcTemplate.execute("RESET app.current_user_email");
+      jdbcTemplate.queryForObject(
+          "SELECT set_config('app.current_user_email', '', true)", String.class);
     }
 
     UUID tenantId = TenantContext.getTenantId();
     if (tenantId != null) {
       log.debug("Setting PostgreSQL session variable app.current_household_id to {}", tenantId);
       jdbcTemplate.queryForObject(
-          "SELECT set_config('app.current_household_id', ?, false)",
+          "SELECT set_config('app.current_household_id', ?, true)",
           String.class,
           tenantId.toString());
     } else {
       log.debug("No tenant context found, clearing PostgreSQL session variable");
-      jdbcTemplate.execute("RESET app.current_household_id");
+      jdbcTemplate.queryForObject(
+          "SELECT set_config('app.current_household_id', '', true)", String.class);
     }
   }
 }

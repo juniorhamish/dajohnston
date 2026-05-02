@@ -146,6 +146,11 @@ public class HouseholdService {
   }
 
   @Transactional(readOnly = true)
+  public boolean isUserMemberOfHousehold(UUID userId, UUID householdId) {
+    return householdMemberRepository.existsById(new HouseholdMemberId(householdId, userId));
+  }
+
+  @Transactional(readOnly = true)
   public List<Invitation> listPendingInvitations(JwtClaimAccessor jwt) {
     userService.findOrCreateUser(jwt);
     var email = jwt.getClaimAsString(EMAIL_CLAIM);
