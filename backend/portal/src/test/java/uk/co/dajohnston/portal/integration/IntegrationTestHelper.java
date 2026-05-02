@@ -9,6 +9,14 @@ import lombok.experimental.UtilityClass;
 @UtilityClass
 public class IntegrationTestHelper {
 
+  private static final String ACCESS_TOKEN_USER_1;
+  private static final String ACCESS_TOKEN_USER_2;
+
+  static {
+    ACCESS_TOKEN_USER_1 = getAccessToken();
+    ACCESS_TOKEN_USER_2 = getAccessTokenUser2();
+  }
+
   private static String getAccessToken() {
     return requestToken(System.getenv("TEST_AUTH0_USERNAME"), System.getenv("TEST_AUTH0_PASSWORD"));
   }
@@ -54,10 +62,10 @@ public class IntegrationTestHelper {
   }
 
   public static RequestSpecification authenticated() {
-    return given().header("Authorization", "Bearer %s".formatted(getAccessToken()));
+    return given().header("Authorization", "Bearer %s".formatted(ACCESS_TOKEN_USER_1));
   }
 
   public static RequestSpecification authenticatedAsUser2() {
-    return given().header("Authorization", "Bearer %s".formatted(getAccessTokenUser2()));
+    return given().header("Authorization", "Bearer %s".formatted(ACCESS_TOKEN_USER_2));
   }
 }

@@ -1,4 +1,4 @@
-package uk.co.dajohnston.portal.config;
+package uk.co.dajohnston.security.context;
 
 import java.util.UUID;
 import lombok.experimental.UtilityClass;

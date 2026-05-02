@@ -2,6 +2,12 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { auth0 } from "@/lib/auth0";
 import { mockPartial } from "@/lib/test-utils";
 
+vi.mock("next/headers", () => ({
+  cookies: vi.fn().mockResolvedValue({
+    get: vi.fn(),
+  }),
+}));
+
 vi.mock("server-only", () => ({}));
 vi.mock("@/lib/auth0", () => ({
   auth0: {
@@ -53,5 +59,21 @@ describe("api config", () => {
 
     const callHeaders = vi.mocked(fetch).mock.calls[0][1]?.headers as Headers;
     expect(callHeaders.get("Authorization")).toBe("Bearer test-token-abc");
+  });
+
+  it("should include X-Household-Id header if cookie is present", async () => {
+    mockPartial(auth0.getSession).mockResolvedValue({
+      tokenSet: { accessToken: "test-token" },
+    });
+    const { cookies } = await import("next/headers");
+    mockPartial(cookies).mockResolvedValue({
+      get: vi.fn().mockReturnValue({ value: "h1" }),
+    });
+
+    const { getApplicationInfo } = await import("@/generated/sdk.gen");
+    await getApplicationInfo();
+
+    const callHeaders = vi.mocked(fetch).mock.calls[0][1]?.headers as Headers;
+    expect(callHeaders.get("X-Household-Id")).toBe("h1");
   });
 });

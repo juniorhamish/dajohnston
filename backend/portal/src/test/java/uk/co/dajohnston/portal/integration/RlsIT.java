@@ -8,6 +8,7 @@ import static uk.co.dajohnston.portal.integration.IntegrationTestHelper.authenti
 import static uk.co.dajohnston.portal.integration.IntegrationTestHelper.authenticatedAsUser2;
 
 import java.util.Map;
+import java.util.UUID;
 import org.junit.jupiter.api.Test;
 
 class RlsIT extends AbstractIntegrationTest {
@@ -112,5 +113,41 @@ class RlsIT extends AbstractIntegrationTest {
         .then()
         .statusCode(200)
         .body("name", hasItem(householdName));
+  }
+
+  @Test
+  void requestWithValidHouseholdIdHeader_shouldSucceed() {
+    String householdName = "Header-Household-%s".formatted(System.currentTimeMillis());
+
+    String householdId =
+        authenticated()
+            .contentType(JSON)
+            .body(Map.of("name", householdName))
+            .when()
+            .post("/api/households")
+            .then()
+            .statusCode(201)
+            .extract()
+            .path("id");
+
+    authenticated()
+        .header("X-Household-Id", householdId)
+        .when()
+        .get("/api/households")
+        .then()
+        .statusCode(200)
+        .body("name", hasItem(householdName));
+  }
+
+  @Test
+  void requestWithInvalidHouseholdIdHeader_shouldReturn403() {
+    String householdId = UUID.fromString("00000000-0000-0000-0000-000000000000").toString();
+
+    authenticated()
+        .header("X-Household-Id", householdId)
+        .when()
+        .get("/api/households")
+        .then()
+        .statusCode(403);
   }
 }
