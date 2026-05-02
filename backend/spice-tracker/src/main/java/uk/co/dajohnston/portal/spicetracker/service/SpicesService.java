@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import uk.co.dajohnston.portal.spicetracker.repository.SpiceEntity;
 import uk.co.dajohnston.portal.spicetracker.repository.SpiceRepository;
 import uk.co.dajohnston.security.context.TenantContext;
+import uk.co.dajohnston.security.exception.DuplicateResourceException;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +23,9 @@ public class SpicesService {
 
   @Transactional
   public SpiceEntity createSpice(String name) {
+    if (spiceRepository.existsByHouseholdIdAndName(TenantContext.getTenantId(), name)) {
+      throw new DuplicateResourceException("Spice with name %s already exists".formatted(name));
+    }
     SpiceEntity spice =
         SpiceEntity.builder()
             .id(UUID.randomUUID())
