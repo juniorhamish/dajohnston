@@ -25,7 +25,7 @@ class PantryController implements PantryApi {
   private final PantryJarMapper pantryJarMapper;
 
   @Override
-  public ResponseEntity<PantryJarsDto> listPantryJars() {
+  public ResponseEntity<PantryJarsDto> listPantryJars(UUID xHouseholdId) {
     log.info("Listing pantry jars");
     List<PantryJarDto> jars =
         pantryService.listPantryJars().stream().map(pantryJarMapper::toDto).toList();
@@ -33,7 +33,8 @@ class PantryController implements PantryApi {
   }
 
   @Override
-  public ResponseEntity<PantryJarDto> addPantryJar(AddPantryJarDto addPantryJarDto) {
+  public ResponseEntity<PantryJarDto> addPantryJar(
+      UUID xHouseholdId, AddPantryJarDto addPantryJarDto) {
     log.info("Adding pantry jar for spice: {}", addPantryJarDto.spiceId());
     PantryJarEntity jar =
         pantryService.addPantryJar(addPantryJarDto.spiceId(), addPantryJarDto.quantity());
@@ -43,14 +44,14 @@ class PantryController implements PantryApi {
 
   @Override
   public ResponseEntity<PantryJarDto> updatePantryJar(
-      UUID id, UpdatePantryJarDto updatePantryJarDto) {
+      UUID id, UUID xHouseholdId, UpdatePantryJarDto updatePantryJarDto) {
     log.info("Updating pantry jar: {}", id);
     PantryJarEntity jar = pantryService.updatePantryJar(id, updatePantryJarDto.quantity());
     return ResponseEntity.ok(pantryJarMapper.toDto(jar));
   }
 
   @Override
-  public ResponseEntity<Void> removePantryJar(UUID id) {
+  public ResponseEntity<Void> removePantryJar(UUID id, UUID xHouseholdId) {
     log.info("Removing pantry jar: {}", id);
     pantryService.removePantryJar(id);
     return ResponseEntity.noContent().build();

@@ -33,7 +33,12 @@ class SpicesControllerTest {
   @Test
   void listSpices_returnsOk() throws Exception {
     when(spicesService.listSpices()).thenReturn(List.of());
-    mockMvc.perform(get("/api/spices").with(jwt())).andExpect(status().isOk());
+    mockMvc
+        .perform(
+            get("/api/spices")
+                .header("X-Household-Id", "0161bbeb-a639-dc15-61c7-4cd55c7537b8")
+                .with(jwt()))
+        .andExpect(status().isOk());
   }
 
   @Test
@@ -45,6 +50,7 @@ class SpicesControllerTest {
     mockMvc
         .perform(
             post("/api/spices")
+                .header("X-Household-Id", "0161bbeb-a639-dc15-61c7-4cd55c7537b8")
                 .with(jwt())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"name\": \"Cumin\"}"))

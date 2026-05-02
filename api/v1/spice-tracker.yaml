@@ -15,6 +15,8 @@ paths:
         - Spices
       summary: List spices in the household
       operationId: listSpices
+      parameters:
+        - $ref: '#/components/parameters/HouseholdHeader'
       responses:
         '200':
           description: Successfully retrieved spices
@@ -29,6 +31,8 @@ paths:
         - Spices
       summary: Define a new spice
       operationId: createSpice
+      parameters:
+        - $ref: '#/components/parameters/HouseholdHeader'
       requestBody:
         required: true
         content:
@@ -53,6 +57,8 @@ paths:
         - Pantry
       summary: List jars in the pantry
       operationId: listPantryJars
+      parameters:
+        - $ref: '#/components/parameters/HouseholdHeader'
       responses:
         '200':
           description: Successfully retrieved pantry jars
@@ -67,6 +73,8 @@ paths:
         - Pantry
       summary: Add a jar to the pantry
       operationId: addPantryJar
+      parameters:
+        - $ref: '#/components/parameters/HouseholdHeader'
       requestBody:
         required: true
         content:
@@ -98,6 +106,7 @@ paths:
           schema:
             type: string
             format: uuid
+        - $ref: '#/components/parameters/HouseholdHeader'
       requestBody:
         required: true
         content:
@@ -129,6 +138,7 @@ paths:
           schema:
             type: string
             format: uuid
+        - $ref: '#/components/parameters/HouseholdHeader'
       responses:
         '204':
           description: Jar removed
@@ -138,6 +148,14 @@ paths:
           description: Jar not found
 
 components:
+  parameters:
+    HouseholdHeader:
+      in: header
+      name: X-Household-Id
+      required: true
+      schema:
+        type: string
+        format: uuid
   securitySchemes:
     oauth:
       type: oauth2

@@ -2,6 +2,7 @@ package uk.co.dajohnston.portal.spicetracker.web;
 
 import java.net.URI;
 import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -23,14 +24,14 @@ class SpicesController implements SpicesApi {
   private final SpiceMapper spiceMapper;
 
   @Override
-  public ResponseEntity<SpicesDto> listSpices() {
+  public ResponseEntity<SpicesDto> listSpices(UUID xHouseholdId) {
     log.info("Listing spices");
     List<SpiceDto> spices = spicesService.listSpices().stream().map(spiceMapper::toDto).toList();
     return ResponseEntity.ok(SpicesDto.builder().spices(spices).build());
   }
 
   @Override
-  public ResponseEntity<SpiceDto> createSpice(CreateSpiceDto createSpiceDto) {
+  public ResponseEntity<SpiceDto> createSpice(UUID xHouseholdId, CreateSpiceDto createSpiceDto) {
     log.info("Creating spice: {}", createSpiceDto.name());
     SpiceEntity spice = spicesService.createSpice(createSpiceDto.name());
     SpiceDto dto = spiceMapper.toDto(spice);

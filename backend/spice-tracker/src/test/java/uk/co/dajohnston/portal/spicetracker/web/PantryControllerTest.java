@@ -36,7 +36,12 @@ class PantryControllerTest {
   @Test
   void listPantryJars_returnsOk() throws Exception {
     when(pantryService.listPantryJars()).thenReturn(List.of());
-    mockMvc.perform(get("/api/pantry").with(jwt())).andExpect(status().isOk());
+    mockMvc
+        .perform(
+            get("/api/pantry")
+                .header("X-Household-Id", "0161bbeb-a639-dc15-61c7-4cd55c7537b8")
+                .with(jwt()))
+        .andExpect(status().isOk());
   }
 
   @Test
@@ -56,6 +61,7 @@ class PantryControllerTest {
     mockMvc
         .perform(
             post("/api/pantry")
+                .header("X-Household-Id", "0161bbeb-a639-dc15-61c7-4cd55c7537b8")
                 .with(jwt())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"spiceId\": \"" + spiceId + "\"}"))
@@ -79,6 +85,7 @@ class PantryControllerTest {
     mockMvc
         .perform(
             patch("/api/pantry/" + jarId)
+                .header("X-Household-Id", "0161bbeb-a639-dc15-61c7-4cd55c7537b8")
                 .with(jwt())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"quantity\": 50}"))
@@ -88,6 +95,11 @@ class PantryControllerTest {
   @Test
   void removePantryJar_returnsNoContent() throws Exception {
     UUID jarId = UUID.fromString("6f369f9e-3d1b-4b1a-9f9e-3d1b4b1a9f9e");
-    mockMvc.perform(delete("/api/pantry/" + jarId).with(jwt())).andExpect(status().isNoContent());
+    mockMvc
+        .perform(
+            delete("/api/pantry/" + jarId)
+                .header("X-Household-Id", "0161bbeb-a639-dc15-61c7-4cd55c7537b8")
+                .with(jwt()))
+        .andExpect(status().isNoContent());
   }
 }
