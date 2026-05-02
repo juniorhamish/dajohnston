@@ -1,5 +1,6 @@
 resource "neon_project" "portal_project" {
   name                      = var.neon_project_name
+  region_id                 = "aws-eu-west-2"
   history_retention_seconds = 21600
 }
 

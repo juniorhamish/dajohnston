@@ -1,7 +1,7 @@
 package uk.co.dajohnston.portal.config;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
 
@@ -25,11 +25,8 @@ class TenantSessionAspectTest {
   @BeforeEach
   void setUp() {
     tenantSessionAspect = new TenantSessionAspect(jdbcTemplate);
-    // Standard lenient stubbing for all set_config calls to avoid PotentialStubbingProblem
-    lenient().when(jdbcTemplate.queryForObject(anyString(), eq(String.class))).thenReturn("");
-    lenient()
-        .when(jdbcTemplate.queryForObject(anyString(), eq(String.class), anyString()))
-        .thenReturn("");
+    // Standard lenient stubbing for the batched call
+    lenient().when(jdbcTemplate.queryForList(anyString(), any(), any(), any())).thenReturn(null);
   }
 
   @AfterEach
@@ -45,12 +42,13 @@ class TenantSessionAspectTest {
     tenantSessionAspect.setTenantSessionVariable();
 
     verify(jdbcTemplate)
-        .queryForObject(
-            "SELECT set_config('app.current_user_id', ?, true)", String.class, userId.toString());
-    verify(jdbcTemplate)
-        .queryForObject("SELECT set_config('app.current_user_email', '', true)", String.class);
-    verify(jdbcTemplate)
-        .queryForObject("SELECT set_config('app.current_household_id', '', true)", String.class);
+        .queryForList(
+            "SELECT set_config('app.current_user_id', ?, true), "
+                + "set_config('app.current_user_email', ?, true), "
+                + "set_config('app.current_household_id', ?, true)",
+            userId.toString(),
+            "",
+            "");
   }
 
   @Test
@@ -58,11 +56,13 @@ class TenantSessionAspectTest {
     tenantSessionAspect.setTenantSessionVariable();
 
     verify(jdbcTemplate)
-        .queryForObject("SELECT set_config('app.current_user_id', '', true)", String.class);
-    verify(jdbcTemplate)
-        .queryForObject("SELECT set_config('app.current_user_email', '', true)", String.class);
-    verify(jdbcTemplate)
-        .queryForObject("SELECT set_config('app.current_household_id', '', true)", String.class);
+        .queryForList(
+            "SELECT set_config('app.current_user_id', ?, true), "
+                + "set_config('app.current_user_email', ?, true), "
+                + "set_config('app.current_household_id', ?, true)",
+            "",
+            "",
+            "");
   }
 
   @Test
@@ -73,13 +73,12 @@ class TenantSessionAspectTest {
     tenantSessionAspect.setTenantSessionVariable();
 
     verify(jdbcTemplate)
-        .queryForObject("SELECT set_config('app.current_user_id', '', true)", String.class);
-    verify(jdbcTemplate)
-        .queryForObject("SELECT set_config('app.current_user_email', '', true)", String.class);
-    verify(jdbcTemplate)
-        .queryForObject(
-            "SELECT set_config('app.current_household_id', ?, true)",
-            String.class,
+        .queryForList(
+            "SELECT set_config('app.current_user_id', ?, true), "
+                + "set_config('app.current_user_email', ?, true), "
+                + "set_config('app.current_household_id', ?, true)",
+            "",
+            "",
             tenantId.toString());
   }
 
@@ -93,14 +92,12 @@ class TenantSessionAspectTest {
     tenantSessionAspect.setTenantSessionVariable();
 
     verify(jdbcTemplate)
-        .queryForObject(
-            "SELECT set_config('app.current_user_id', ?, true)", String.class, userId.toString());
-    verify(jdbcTemplate)
-        .queryForObject("SELECT set_config('app.current_user_email', '', true)", String.class);
-    verify(jdbcTemplate)
-        .queryForObject(
-            "SELECT set_config('app.current_household_id', ?, true)",
-            String.class,
+        .queryForList(
+            "SELECT set_config('app.current_user_id', ?, true), "
+                + "set_config('app.current_user_email', ?, true), "
+                + "set_config('app.current_household_id', ?, true)",
+            userId.toString(),
+            "",
             tenantId.toString());
   }
 
@@ -114,12 +111,12 @@ class TenantSessionAspectTest {
     tenantSessionAspect.setTenantSessionVariable();
 
     verify(jdbcTemplate)
-        .queryForObject(
-            "SELECT set_config('app.current_user_id', ?, true)", String.class, userId.toString());
-    verify(jdbcTemplate)
-        .queryForObject(
-            "SELECT set_config('app.current_user_email', ?, true)", String.class, email);
-    verify(jdbcTemplate)
-        .queryForObject("SELECT set_config('app.current_household_id', '', true)", String.class);
+        .queryForList(
+            "SELECT set_config('app.current_user_id', ?, true), "
+                + "set_config('app.current_user_email', ?, true), "
+                + "set_config('app.current_household_id', ?, true)",
+            userId.toString(),
+            email,
+            "");
   }
 }
