@@ -6,6 +6,7 @@ import com.auth0.client.mgmt.types.UpdateUserRequestContent;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.jwt.JwtClaimAccessor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +19,7 @@ import uk.co.dajohnston.portal.user.entity.UserRepository;
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class UserService {
 
   private final UserRepository userRepository;
@@ -40,7 +42,9 @@ public class UserService {
                         .build())
             .toList();
 
+    log.debug("Requesting user details for Auth0 ID: {}", user.getAuth0Id());
     GetUserResponseContent auth0User = auth0ManagementApi.users().get(user.getAuth0Id());
+    log.debug("Received user details for Auth0 ID: {}", user.getAuth0Id());
     return UserProfile.builder()
         .id(user.getId())
         .auth0Id(user.getAuth0Id())
@@ -95,7 +99,20 @@ public class UserService {
 
   public UserEntity findOrCreateUser(JwtClaimAccessor jwt) {
     String auth0Id = jwt.getSubject();
-    return userRepository.findByAuth0Id(auth0Id).orElseGet(() -> createUser(jwt));
+    log.debug("Creating or updating user for Auth0 ID: {}", auth0Id);
+    var userEntity =
+        userRepository
+            .findByAuth0Id(auth0Id)
+            .orElseGet(
+                () -> {
+                  log.debug(
+                      "User not found in database, creating new user for Auth0 ID: {}", auth0Id);
+                  UserEntity user = createUser(jwt);
+                  log.debug("Created new user for Auth0 ID: {}", auth0Id);
+                  return user;
+                });
+    log.debug("Got user entity for Auth0 ID: {}", auth0Id);
+    return userEntity;
   }
 
   public Optional<UserEntity> findByEmail(String email) {
