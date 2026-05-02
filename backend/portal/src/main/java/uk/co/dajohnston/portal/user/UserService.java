@@ -30,6 +30,7 @@ public class UserService {
   public UserProfile getCurrentUser(JwtClaimAccessor jwt) {
     var user = findOrCreateUser(jwt);
 
+    log.debug("Retrieving user households for user ID: {}", user.getId());
     List<Household> households =
         householdMemberRepository.findByUserId(user.getId()).stream()
             .filter(member -> member.getHousehold() != null)
