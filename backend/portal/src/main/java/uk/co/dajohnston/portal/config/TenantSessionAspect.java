@@ -21,6 +21,7 @@ public class TenantSessionAspect {
       "@within(org.springframework.transaction.annotation.Transactional) "
           + "|| @annotation(org.springframework.transaction.annotation.Transactional)")
   public void setTenantSessionVariable() {
+    long start = System.currentTimeMillis();
     UUID userId = TenantContext.getUserId();
     if (userId != null) {
       log.debug("Setting PostgreSQL session variable app.current_user_id to {}", userId);
@@ -54,5 +55,7 @@ public class TenantSessionAspect {
       jdbcTemplate.queryForObject(
           "SELECT set_config('app.current_household_id', '', true)", String.class);
     }
+    log.debug(
+        "Completed setting tenant session variables in [{}ms]", System.currentTimeMillis() - start);
   }
 }
