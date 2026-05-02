@@ -9,7 +9,6 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.oauth2.jwt.JwtClaimAccessor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import uk.co.dajohnston.portal.config.ResourceNotFoundException;
 import uk.co.dajohnston.portal.household.entity.HouseholdEntity;
 import uk.co.dajohnston.portal.household.entity.HouseholdMemberEntity;
 import uk.co.dajohnston.portal.household.entity.HouseholdMemberId;
@@ -19,6 +18,7 @@ import uk.co.dajohnston.portal.household.entity.InvitationEntity;
 import uk.co.dajohnston.portal.household.entity.InvitationRepository;
 import uk.co.dajohnston.portal.user.UserService;
 import uk.co.dajohnston.portal.user.entity.UserEntity;
+import uk.co.dajohnston.security.exception.ResourceNotFoundException;
 
 @Service
 @RequiredArgsConstructor

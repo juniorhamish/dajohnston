@@ -21,11 +21,11 @@ import org.springframework.context.annotation.Import;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import uk.co.dajohnston.portal.config.ResourceNotFoundException;
 import uk.co.dajohnston.portal.config.TenantInterceptor;
 import uk.co.dajohnston.portal.notification.NotificationMapperImpl;
 import uk.co.dajohnston.portal.notification.NotificationService;
 import uk.co.dajohnston.security.config.SecurityConfig;
+import uk.co.dajohnston.security.exception.ResourceNotFoundException;
 
 @WebMvcTest(NotificationController.class)
 @Import({SecurityConfig.class, NotificationMapperImpl.class})
