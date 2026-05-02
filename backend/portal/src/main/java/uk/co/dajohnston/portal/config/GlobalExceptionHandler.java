@@ -13,9 +13,4 @@ class GlobalExceptionHandler {
   ProblemDetail handleResourceNotFound(ResourceNotFoundException ex) {
     return ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
   }
-
-  @ExceptionHandler(IllegalArgumentException.class)
-  ProblemDetail handleIllegalArgument(IllegalArgumentException ex) {
-    return ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, ex.getMessage());
-  }
 }
