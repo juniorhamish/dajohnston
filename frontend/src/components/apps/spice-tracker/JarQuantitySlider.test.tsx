@@ -188,4 +188,131 @@ describe("JarQuantitySlider", () => {
     fireEvent.touchEnd(window);
     expect(onChange).toHaveBeenCalledWith(100);
   });
+
+  it("should handle keyboard navigation", () => {
+    const onChange = vi.fn();
+    render(<JarQuantitySlider value={50} onChange={onChange} />);
+    const slider = screen.getByRole("slider");
+
+    // ArrowUp
+    fireEvent.keyDown(slider, { key: "ArrowUp" });
+    expect(onChange).toHaveBeenCalledWith(51);
+    onChange.mockClear();
+
+    // ArrowDown
+    fireEvent.keyDown(slider, { key: "ArrowDown" });
+    expect(onChange).toHaveBeenCalledWith(50);
+    onChange.mockClear();
+
+    // ArrowRight
+    fireEvent.keyDown(slider, { key: "ArrowRight" });
+    expect(onChange).toHaveBeenCalledWith(51);
+    onChange.mockClear();
+
+    // ArrowLeft
+    fireEvent.keyDown(slider, { key: "ArrowLeft" });
+    expect(onChange).toHaveBeenCalledWith(50);
+    onChange.mockClear();
+
+    // PageUp
+    fireEvent.keyDown(slider, { key: "PageUp" });
+    expect(onChange).toHaveBeenCalledWith(60);
+    onChange.mockClear();
+
+    // PageDown
+    fireEvent.keyDown(slider, { key: "PageDown" });
+    expect(onChange).toHaveBeenCalledWith(50);
+    onChange.mockClear();
+
+    // Home
+    fireEvent.keyDown(slider, { key: "Home" });
+    expect(onChange).toHaveBeenCalledWith(0);
+    onChange.mockClear();
+
+    // End
+    fireEvent.keyDown(slider, { key: "End" });
+    expect(onChange).toHaveBeenCalledWith(100);
+    onChange.mockClear();
+
+    // Other key
+    fireEvent.keyDown(slider, { key: "Enter" });
+    expect(onChange).not.toHaveBeenCalled();
+  });
+
+  it("should respect min/max during keyboard navigation", () => {
+    const onChange = vi.fn();
+
+    // Max limit
+    const { unmount } = render(
+      <JarQuantitySlider value={100} onChange={onChange} />,
+    );
+    fireEvent.keyDown(screen.getByRole("slider"), { key: "ArrowUp" });
+    expect(onChange).toHaveBeenCalledWith(100);
+    unmount();
+
+    // Min limit
+    onChange.mockClear();
+    render(<JarQuantitySlider value={0} onChange={onChange} />);
+    fireEvent.keyDown(screen.getByRole("slider"), { key: "ArrowDown" });
+    expect(onChange).toHaveBeenCalledWith(0);
+  });
+
+  it("should not update internal value from props while dragging", () => {
+    const { rerender } = render(
+      <JarQuantitySlider value={50} onChange={vi.fn()} />,
+    );
+    const jar = screen.getByRole("slider");
+
+    // Mock getBoundingClientRect
+    jar.getBoundingClientRect = vi.fn(
+      () =>
+        ({
+          width: 80,
+          height: 128,
+          top: 0,
+          left: 0,
+        }) as DOMRect,
+    );
+
+    // Start dragging
+    fireEvent.mouseDown(jar, { clientY: 50 });
+
+    // Prop changes while dragging
+    rerender(<JarQuantitySlider value={100} onChange={vi.fn()} />);
+
+    // Internal value should still be from drag, not prop
+    expect(jar).toHaveAttribute("aria-valuenow", "61"); // Math.round((1 - 50/128) * 100) = 61
+  });
+
+  it("should ignore mouse/touch move when not dragging", () => {
+    const onChange = vi.fn();
+    render(<JarQuantitySlider value={50} onChange={onChange} />);
+
+    fireEvent.mouseMove(window, { clientY: 0 });
+    expect(screen.getByRole("slider")).toHaveAttribute("aria-valuenow", "50");
+
+    fireEvent.touchMove(window, { touches: [{ clientY: 0 }] });
+    expect(screen.getByRole("slider")).toHaveAttribute("aria-valuenow", "50");
+  });
+
+  it("should apply custom className", () => {
+    render(
+      <JarQuantitySlider
+        value={50}
+        onChange={vi.fn()}
+        className="custom-class"
+      />,
+    );
+    expect(screen.getByRole("slider")).toHaveClass("custom-class");
+  });
+
+  it("should change text color based on value", () => {
+    const { rerender } = render(
+      <JarQuantitySlider value={60} onChange={vi.fn()} />,
+    );
+    expect(screen.getByText("60%")).toHaveClass("text-primary-foreground");
+
+    rerender(<JarQuantitySlider value={40} onChange={vi.fn()} />);
+    expect(screen.getByText("40%")).toHaveClass("text-primary");
+  });
 });

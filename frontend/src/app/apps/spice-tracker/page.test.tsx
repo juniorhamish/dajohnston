@@ -57,4 +57,41 @@ describe("SpiceTrackerPage", () => {
     expect(screen.getByText("Cumin")).toBeInTheDocument();
     expect(screen.getByText("50% total")).toBeInTheDocument();
   });
+
+  it("should handle error when fetching spices", async () => {
+    const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    mockPartial(listSpices).mockRejectedValue(new Error("API Error"));
+    mockPartial(listPantryJars).mockResolvedValue({ data: { jars: [] } });
+
+    render(await SpiceTrackerPage());
+
+    expect(consoleSpy).toHaveBeenCalledWith(
+      "Failed to fetch spices:",
+      expect.any(Error),
+    );
+    expect(screen.getByText("Spice Tracker")).toBeInTheDocument();
+  });
+
+  it("should handle error when fetching pantry jars", async () => {
+    const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    mockPartial(listSpices).mockResolvedValue({ data: { spices: [] } });
+    mockPartial(listPantryJars).mockRejectedValue(new Error("API Error"));
+
+    render(await SpiceTrackerPage());
+
+    expect(consoleSpy).toHaveBeenCalledWith(
+      "Failed to fetch pantry jars:",
+      expect.any(Error),
+    );
+    expect(screen.getByText("Spice Tracker")).toBeInTheDocument();
+  });
+
+  it("should handle missing data in responses", async () => {
+    mockPartial(listSpices).mockResolvedValue({});
+    mockPartial(listPantryJars).mockResolvedValue({ data: null });
+
+    render(await SpiceTrackerPage());
+
+    expect(screen.getByText("Spice Tracker")).toBeInTheDocument();
+  });
 });
