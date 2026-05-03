@@ -49,7 +49,7 @@ export function JarQuantitySlider({
 
   const handleTouchStart = (e: React.TouchEvent) => {
     setIsDragging(true);
-    updateValue(e.touches[0].clientY);
+    updateValue(e.changedTouches[0].clientY);
   };
 
   useEffect(() => {
@@ -58,7 +58,7 @@ export function JarQuantitySlider({
     };
 
     const handleTouchMove = (e: TouchEvent) => {
-      updateValue(e.touches[0].clientY);
+      updateValue(e.changedTouches[0].clientY);
     };
 
     const handleMouseUp = () => {

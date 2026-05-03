@@ -179,10 +179,10 @@ describe("JarQuantitySlider", () => {
         }) as DOMRect,
     );
 
-    fireEvent.touchStart(jar, { touches: [{ clientY: 64 }] });
+    fireEvent.touchStart(jar, { changedTouches: [{ clientY: 64 }] });
     expect(onChange).not.toHaveBeenCalled();
 
-    fireEvent.touchMove(globalThis, { touches: [{ clientY: 0 }] });
+    fireEvent.touchMove(globalThis, { changedTouches: [{ clientY: 0 }] });
     expect(onChange).not.toHaveBeenCalled();
 
     fireEvent.touchEnd(globalThis);
