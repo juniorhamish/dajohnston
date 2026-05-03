@@ -51,6 +51,28 @@ paths:
         '401':
           description: Unauthorized
 
+  /api/spices/{id}:
+    delete:
+      tags:
+        - Spices
+      summary: Remove a spice
+      operationId: removeSpice
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - $ref: '#/components/parameters/HouseholdHeader'
+      responses:
+        '204':
+          description: Spice removed
+        '401':
+          description: Unauthorized
+        '404':
+          description: Spice not found
+
   /api/pantry:
     get:
       tags:

@@ -3,6 +3,7 @@ package uk.co.dajohnston.portal.spicetracker.web;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -55,5 +56,15 @@ class SpicesControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"name\": \"Cumin\"}"))
         .andExpect(status().isCreated());
+  }
+
+  @Test
+  void removeSpice_returnsNoContent() throws Exception {
+    mockMvc
+        .perform(
+            delete("/api/spices/6f369f9e-3d1b-4b1a-9f9e-3d1b4b1a9f9e")
+                .header("X-Household-Id", "0161bbeb-a639-dc15-61c7-4cd55c7537b8")
+                .with(jwt()))
+        .andExpect(status().isNoContent());
   }
 }

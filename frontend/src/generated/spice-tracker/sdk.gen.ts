@@ -2,7 +2,7 @@
 
 import type { Client, Options as Options2, TDataShape } from './client';
 import { client } from './client.gen';
-import type { ListSpicesData, ListSpicesErrors, ListSpicesResponses } from './types.gen';
+import type { AddPantryJarData, AddPantryJarErrors, AddPantryJarResponses, CreateSpiceData, CreateSpiceErrors, CreateSpiceResponses, ListPantryJarsData, ListPantryJarsErrors, ListPantryJarsResponses, ListSpicesData, ListSpicesErrors, ListSpicesResponses, RemovePantryJarData, RemovePantryJarErrors, RemovePantryJarResponses, RemoveSpiceData, RemoveSpiceErrors, RemoveSpiceResponses, UpdatePantryJarData, UpdatePantryJarErrors, UpdatePantryJarResponses } from './types.gen';
 
 export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends boolean = boolean, TResponse = unknown> = Options2<TData, ThrowOnError, TResponse> & {
     /**
@@ -21,8 +21,74 @@ export type Options<TData extends TDataShape = TDataShape, ThrowOnError extends 
 /**
  * List spices in the household
  */
-export const listSpices = <ThrowOnError extends boolean = false>(options?: Options<ListSpicesData, ThrowOnError>) => (options?.client ?? client).get<ListSpicesResponses, ListSpicesErrors, ThrowOnError>({
+export const listSpices = <ThrowOnError extends boolean = false>(options: Options<ListSpicesData, ThrowOnError>) => (options.client ?? client).get<ListSpicesResponses, ListSpicesErrors, ThrowOnError>({
     security: [{ scheme: 'bearer', type: 'http' }],
     url: '/api/spices',
     ...options
+});
+
+/**
+ * Define a new spice
+ */
+export const createSpice = <ThrowOnError extends boolean = false>(options: Options<CreateSpiceData, ThrowOnError>) => (options.client ?? client).post<CreateSpiceResponses, CreateSpiceErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/spices',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Remove a spice
+ */
+export const removeSpice = <ThrowOnError extends boolean = false>(options: Options<RemoveSpiceData, ThrowOnError>) => (options.client ?? client).delete<RemoveSpiceResponses, RemoveSpiceErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/spices/{id}',
+    ...options
+});
+
+/**
+ * List jars in the pantry
+ */
+export const listPantryJars = <ThrowOnError extends boolean = false>(options: Options<ListPantryJarsData, ThrowOnError>) => (options.client ?? client).get<ListPantryJarsResponses, ListPantryJarsErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/pantry',
+    ...options
+});
+
+/**
+ * Add a jar to the pantry
+ */
+export const addPantryJar = <ThrowOnError extends boolean = false>(options: Options<AddPantryJarData, ThrowOnError>) => (options.client ?? client).post<AddPantryJarResponses, AddPantryJarErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/pantry',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
+});
+
+/**
+ * Remove a jar from the pantry
+ */
+export const removePantryJar = <ThrowOnError extends boolean = false>(options: Options<RemovePantryJarData, ThrowOnError>) => (options.client ?? client).delete<RemovePantryJarResponses, RemovePantryJarErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/pantry/{id}',
+    ...options
+});
+
+/**
+ * Update a jar in the pantry
+ */
+export const updatePantryJar = <ThrowOnError extends boolean = false>(options: Options<UpdatePantryJarData, ThrowOnError>) => (options.client ?? client).patch<UpdatePantryJarResponses, UpdatePantryJarErrors, ThrowOnError>({
+    security: [{ scheme: 'bearer', type: 'http' }],
+    url: '/api/pantry/{id}',
+    ...options,
+    headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+    }
 });

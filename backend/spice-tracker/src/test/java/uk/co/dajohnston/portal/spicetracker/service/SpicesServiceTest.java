@@ -17,16 +17,19 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.co.dajohnston.portal.spicetracker.repository.PantryJarRepository;
 import uk.co.dajohnston.portal.spicetracker.repository.SpiceEntity;
 import uk.co.dajohnston.portal.spicetracker.repository.SpiceRepository;
 import uk.co.dajohnston.security.context.TenantContext;
 import uk.co.dajohnston.security.exception.DuplicateResourceException;
+import uk.co.dajohnston.security.exception.ResourceNotFoundException;
 
 @ExtendWith(MockitoExtension.class)
 class SpicesServiceTest {
 
   private final UUID householdId = UUID.fromString("6f369f9e-3d1b-4b1a-9f9e-3d1b4b1a9f9e");
   @Mock private SpiceRepository spiceRepository;
+  @Mock private PantryJarRepository pantryJarRepository;
   @InjectMocks private SpicesService spicesService;
   private MockedStatic<TenantContext> tenantContextMock;
 
@@ -77,5 +80,29 @@ class SpicesServiceTest {
     assertThatThrownBy(() -> spicesService.createSpice("Cumin"))
         .isInstanceOf(DuplicateResourceException.class)
         .hasMessage("Spice with name Cumin already exists");
+  }
+
+  @Test
+  void removeSpice_deletesFromRepository() {
+    UUID spiceId = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
+    SpiceEntity spice = SpiceEntity.builder().id(spiceId).householdId(householdId).build();
+    when(spiceRepository.findByHouseholdIdAndId(householdId, spiceId))
+        .thenReturn(java.util.Optional.of(spice));
+
+    spicesService.removeSpice(spiceId);
+
+    verify(pantryJarRepository).deleteAllBySpice(spice);
+    verify(spiceRepository).delete(spice);
+  }
+
+  @Test
+  void removeSpice_notFound_throwsException() {
+    UUID spiceId = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
+    when(spiceRepository.findByHouseholdIdAndId(householdId, spiceId))
+        .thenReturn(java.util.Optional.empty());
+
+    assertThatThrownBy(() -> spicesService.removeSpice(spiceId))
+        .isInstanceOf(ResourceNotFoundException.class)
+        .hasMessage("Spice not found");
   }
 }
