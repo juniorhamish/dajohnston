@@ -110,7 +110,7 @@ describe("SpiceTracker", () => {
 
     // Drag to 100% (top)
     fireEvent.mouseDown(slider, { clientY: 0 });
-    fireEvent.mouseUp(window);
+    fireEvent.mouseUp(globalThis);
 
     expect(updatePantryJarAction).toHaveBeenCalledWith("j1", 100);
   });
@@ -163,7 +163,7 @@ describe("SpiceTracker", () => {
 
   it("should call removeSpiceAction when delete button is clicked and confirmed", async () => {
     const { removeSpiceAction } = await import("./spice-actions");
-    vi.spyOn(window, "confirm").mockReturnValue(true);
+    vi.spyOn(globalThis, "confirm").mockReturnValue(true);
 
     render(<SpiceTracker spices={mockSpices} jars={mockJars} />);
 
@@ -176,7 +176,7 @@ describe("SpiceTracker", () => {
 
   it("should not call removeSpiceAction when delete button is clicked but not confirmed", async () => {
     const { removeSpiceAction } = await import("./spice-actions");
-    vi.spyOn(window, "confirm").mockReturnValue(false);
+    vi.spyOn(globalThis, "confirm").mockReturnValue(false);
 
     render(<SpiceTracker spices={mockSpices} jars={mockJars} />);
 
@@ -263,7 +263,7 @@ describe("SpiceTracker", () => {
 
     const slider = screen.getAllByRole("slider")[0];
     fireEvent.mouseDown(slider, { clientY: 0 });
-    fireEvent.mouseUp(window);
+    fireEvent.mouseUp(globalThis);
 
     await vi.waitFor(() => {
       expect(consoleSpy).toHaveBeenCalledWith(expect.any(Error));

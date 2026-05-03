@@ -36,17 +36,17 @@ describe("JarQuantitySlider", () => {
 
     // Click at the top (should be 100%)
     fireEvent.mouseDown(jar, { clientY: 0 });
-    fireEvent.mouseUp(window);
+    fireEvent.mouseUp(globalThis);
     expect(onChange).toHaveBeenCalledWith(100);
 
     // Click at the bottom (should be 0%)
     fireEvent.mouseDown(jar, { clientY: 128 });
-    fireEvent.mouseUp(window);
+    fireEvent.mouseUp(globalThis);
     expect(onChange).toHaveBeenCalledWith(0);
 
     // Click in the middle (should be 50%)
     fireEvent.mouseDown(jar, { clientY: 64 });
-    fireEvent.mouseUp(window);
+    fireEvent.mouseUp(globalThis);
     expect(onChange).toHaveBeenCalledWith(50);
   });
 
@@ -78,7 +78,7 @@ describe("JarQuantitySlider", () => {
     expect(getByText("100%")).toBeInTheDocument();
 
     // Release - isDragging becomes false
-    fireEvent.mouseUp(window);
+    fireEvent.mouseUp(globalThis);
 
     // IMMEDIATELY after mouseUp, it should STILL be 100%
     // If it jumps back, it would show 50% here
@@ -118,7 +118,7 @@ describe("JarQuantitySlider", () => {
     );
 
     fireEvent.mouseDown(jar, { clientY: 0 }); // 100%
-    fireEvent.mouseUp(window);
+    fireEvent.mouseUp(globalThis);
 
     expect(getByText("100%")).toBeInTheDocument();
 
@@ -151,13 +151,13 @@ describe("JarQuantitySlider", () => {
     fireEvent.mouseDown(jar, { clientY: 64 }); // 50%
     expect(onChange).not.toHaveBeenCalled();
 
-    fireEvent.mouseMove(window, { clientY: 32 }); // 75%
+    fireEvent.mouseMove(globalThis, { clientY: 32 }); // 75%
     expect(onChange).not.toHaveBeenCalled();
 
-    fireEvent.mouseMove(window, { clientY: 0 }); // 100%
+    fireEvent.mouseMove(globalThis, { clientY: 0 }); // 100%
     expect(onChange).not.toHaveBeenCalled();
 
-    fireEvent.mouseUp(window);
+    fireEvent.mouseUp(globalThis);
     expect(onChange).toHaveBeenCalledOnce();
     expect(onChange).toHaveBeenCalledWith(100);
   });
@@ -182,10 +182,10 @@ describe("JarQuantitySlider", () => {
     fireEvent.touchStart(jar, { touches: [{ clientY: 64 }] });
     expect(onChange).not.toHaveBeenCalled();
 
-    fireEvent.touchMove(window, { touches: [{ clientY: 0 }] });
+    fireEvent.touchMove(globalThis, { touches: [{ clientY: 0 }] });
     expect(onChange).not.toHaveBeenCalled();
 
-    fireEvent.touchEnd(window);
+    fireEvent.touchEnd(globalThis);
     expect(onChange).toHaveBeenCalledWith(100);
   });
 
@@ -282,7 +282,7 @@ describe("JarQuantitySlider", () => {
 
     // Internal value should still be from drag, not prop
     expect(jar).toHaveAttribute("aria-valuenow", "61"); // Math.round((1 - 50/128) * 100) = 61
-    fireEvent.mouseUp(window);
+    fireEvent.mouseUp(globalThis);
   });
 
   it("should handle edge cases for coverage", () => {
@@ -297,10 +297,10 @@ describe("JarQuantitySlider", () => {
     const onChange = vi.fn();
     render(<JarQuantitySlider value={50} onChange={onChange} />);
 
-    fireEvent.mouseMove(window, { clientY: 0 });
+    fireEvent.mouseMove(globalThis, { clientY: 0 });
     expect(screen.getByRole("slider")).toHaveAttribute("aria-valuenow", "50");
 
-    fireEvent.touchMove(window, { touches: [{ clientY: 0 }] });
+    fireEvent.touchMove(globalThis, { touches: [{ clientY: 0 }] });
     expect(screen.getByRole("slider")).toHaveAttribute("aria-valuenow", "50");
   });
 
