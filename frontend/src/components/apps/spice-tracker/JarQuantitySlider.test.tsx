@@ -282,6 +282,15 @@ describe("JarQuantitySlider", () => {
 
     // Internal value should still be from drag, not prop
     expect(jar).toHaveAttribute("aria-valuenow", "61"); // Math.round((1 - 50/128) * 100) = 61
+    fireEvent.mouseUp(window);
+  });
+
+  it("should handle edge cases for coverage", () => {
+    const onChange = vi.fn();
+    render(<JarQuantitySlider value={50} onChange={onChange} />);
+
+    // text-primary at exactly 50%
+    expect(screen.getByText("50%")).toHaveClass("text-primary");
   });
 
   it("should ignore mouse/touch move when not dragging", () => {

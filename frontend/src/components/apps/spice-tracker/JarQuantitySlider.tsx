@@ -30,8 +30,8 @@ export function JarQuantitySlider({
   }
 
   const updateValue = useCallback((clientY: number) => {
-    if (!jarRef.current) return;
-    const rect = jarRef.current.getBoundingClientRect();
+    // biome-ignore lint/style/noNonNullAssertion: jarRef.current is always set when this is called via interaction
+    const rect = jarRef.current!.getBoundingClientRect();
     const height = rect.height;
     const y = clientY - rect.top;
     // value is bottom-up, so 0 is bottom, 100 is top
@@ -54,15 +54,11 @@ export function JarQuantitySlider({
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
-      if (isDragging) {
-        updateValue(e.clientY);
-      }
+      updateValue(e.clientY);
     };
 
     const handleTouchMove = (e: TouchEvent) => {
-      if (isDragging) {
-        updateValue(e.touches[0].clientY);
-      }
+      updateValue(e.touches[0].clientY);
     };
 
     const handleMouseUp = () => {
