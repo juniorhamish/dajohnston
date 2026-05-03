@@ -30,9 +30,13 @@ user should provide the name of the skill and the required parameters.
           guidelines.
         - **Technical Details**: Database schema, RLS policies, and Flyway/Liquibase migration
           plans.
+        - **Implementation Plan**: A detailed, bit-by-bit breakdown of the task into individual
+          steps (e.g., Step 1: Base Entities, Step 2: Core Services, etc.) to facilitate
+          incremental implementation.
     - `refactor.md` (Optional): If architectural or code refactors are needed in the shared layers
-      or existing portal to support the new app, document them here. These should be kept separate
-      so they can be addressed in a distinct session.
+      or existing portal, document them here. These represent higher-level changes that must be
+      applied outside the app-specific plan and should be addressed in a separate session as a
+      prerequisite.
 4. **User Review**: Inform the user that they can now modify the generated markdown files to further
    clarify intentions or plans.
 
@@ -46,13 +50,15 @@ user should provide the name of the skill and the required parameters.
 
 **Workflow**:
 
-1. **Preparation**: Read the `design.md` and the associated `refactor.md` (if it exists).
-2. **Step-by-Step Implementation**:
-    - **Step 1: Refactoring**: Apply any changes documented in `refactor.md` first.
-    - **Step 2: Backend**: Implement the new backend module/package, including entities,
-      repositories, services, and controllers. Ensure OpenAPI specs are updated.
-    - **Step 3: Database**: Create and run the necessary database migrations.
-    - **Step 4: Frontend**: Implement the UI components and routes in the Next.js application.
+1. **Preparation**: Read the `design.md`. Ensure any prerequisite refactors (from a separate
+   `refactor.md` or session) have already been applied.
+2. **Step-by-Step Implementation**: Follow the bit-by-bit **Implementation Plan** defined in the
+   `design.md`. Each step should be completed and verified independently where possible.
+    - Typically, steps will cover:
+        - **Backend**: Entities, repositories, services, and controllers. Ensure OpenAPI specs are
+          updated.
+        - **Database**: Necessary database migrations.
+        - **Frontend**: UI components and routes in the Next.js application.
 3. **Verification**:
     - Ensure 100% test coverage for the new code.
     - Verify the integration with the shared security and multi-tenancy layers.

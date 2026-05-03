@@ -174,14 +174,57 @@ CASE
 END
 ```
 
-### Migration Plans (Flyway)
+### Implementation Plan
 
-The implementation will follow these migration steps:
+#### Phase 1: Backend Foundation & Template Management
 
-1. **V14 (Portal)**: Create helper functions `current_user_id()` and `current_household_id()` as
-   documented in `refactor.md`.
-2. **V15 (Listz)**: Create `listz_items`, `listz_templates`, and `listz_template_items` tables with
-   RLS enabled.
-3. **V16 (Listz)**: Create `listz_instances`, `listz_instance_templates`,
-   `listz_instance_item_states`, and `listz_instance_shares` tables with RLS enabled.
-4. **V17 (Listz)**: Register the "Listz" app in the `apps` table.
+1. **Database Migration (V15)**: Create `listz_items`, `listz_templates`, and `listz_template_items`
+   tables with RLS enabled.
+2. **Item Catalog**:
+    * Implement `ListzItemEntity`, `ListzItemRepository`.
+    * Create `ListzItemService` for catalog search and deduplication logic (ensure `household_id`
+      isolation).
+3. **Template Management**:
+    * Implement `ListzTemplateEntity`, `ListzTemplateItemEntity`, and their repositories.
+    * Create `ListzTemplateService` and `ListzTemplateController` for CRUD operations on templates
+      and their items.
+4. **Verification**: Write unit tests for services and integration tests for template/catalog
+   endpoints.
+
+#### Phase 2: Checklist Instances & Dynamic Logic
+
+1. **Database Migration (V16)**: Create `listz_instances`, `listz_instance_templates`,
+   `listz_instance_item_states`, and `listz_instance_shares` tables with RLS.
+2. **Instance Core**:
+    * Implement `ListzInstanceEntity`, `ListzInstanceItemStateEntity`, `ListzInstanceShareEntity`.
+    * Implement `ListzInstanceService` with the dynamic quantity calculation logic and template
+      composition.
+3. **Instance API**:
+    * Create `ListzInstanceController` for instance CRUD, item toggling, and quantity overrides.
+    * Implement sharing logic (`POST /share`).
+4. **Verification**: Write integration tests covering instance creation from multiple templates
+   and "live" item list generation.
+
+#### Phase 3: Frontend - Templates & Catalog
+
+1. **API Client Generation**: Run `hey-api` to generate Next.js clients from `listz.yaml`.
+2. **Template Management UI**:
+    * Create template list and creation screens.
+    * Implement template editor with item auto-complete (fetching from catalog).
+3. **Verification**: Vitest for UI components and basic interaction tests.
+
+#### Phase 4: Frontend - Active Checklists
+
+1. **Instance Management UI**:
+    * Create instance list and "New Instance" wizard (multi-template selection).
+2. **Checklist UI**:
+    * Implement the active checklist view with grouping by category and template.
+    * Add indicators for items added to templates after instance creation.
+3. **Sharing UI**: Implement share dialog and user selection within household.
+4. **Verification**: End-to-end flow tests for creating, sharing, and using a checklist.
+
+#### Phase 5: Registration & Final Polish
+
+1. **App Registration (V17)**: Add Listz to the `apps` table.
+2. **RLS Audit**: Final security review of RLS policies.
+3. **Deployment**: Update PWA manifest and check mobile responsiveness.

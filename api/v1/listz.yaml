@@ -301,6 +301,32 @@ paths:
         '200':
           description: Quantity updated
 
+  /api/v1/listz/instances/{id}/share:
+    post:
+      tags:
+        - Instances
+      summary: Share an instance with another user in the household
+      operationId: shareInstance
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - $ref: '#/components/parameters/HouseholdHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ShareInstanceRequest'
+      responses:
+        '204':
+          description: Instance shared
+        '400':
+          description: Invalid input or user not in household
+
 components:
   parameters:
     HouseholdHeader:
@@ -474,6 +500,14 @@ components:
           items:
             type: string
             format: uuid
+
+    ShareInstanceRequest:
+      type: object
+      properties:
+        userId:
+          type: string
+          description: Auth0 sub of the user to share with
+      required: [ userId ]
 
     InstanceDetails:
       allOf:
