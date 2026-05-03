@@ -88,7 +88,7 @@ describe("SpiceTrackerPage", () => {
 
   it("should handle missing data in responses", async () => {
     mockPartial(listSpices).mockResolvedValue({});
-    mockPartial(listPantryJars).mockResolvedValue({ data: null });
+    mockPartial(listPantryJars).mockResolvedValue({ data: undefined });
 
     render(await SpiceTrackerPage());
 

@@ -34,6 +34,7 @@ We follow a standard testing pyramid to balance execution speed, isolation, and 
 - **Scope:** Reusable components (from `shadcn/ui`), form validation, and complex UI logic in
   sub-apps (e.g., Spice Tracker dashboard).
 - **Strategy:** Verify accessibility (ARIA roles) and user-centric interactions (clicks, input).
+  Prefer `userEvent` over `fireEvent` for more realistic event simulation.
 
 #### 4. Integration Testing
 
@@ -97,7 +98,8 @@ To maintain low effort when adding new apps:
 
 - Use the shared Testing Base classes in the Backend to quickly set up Integration tests with
   Testcontainers.
-- Leverage shared RTL utilities in the Frontend for consistent UI testing.
+- Leverage shared RTL utilities in the Frontend (available in `@/lib/test-utils`) for
+  consistent UI testing.
 - Add at least one "Happy Path" E2E test for the new sub-app to ensure core functionality is
   integrated with the Portal.
 - **Performance:** For new apps with complex data sets, add a basic k6 script to verify the response

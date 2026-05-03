@@ -19,6 +19,7 @@ export default defineConfig({
         "src/next-env.d.ts",
         "src/app/globals.css",
         "src/generated/**",
+        "src/lib/test-utils.ts",
       ],
       reporter: ["text", "lcov"],
     },

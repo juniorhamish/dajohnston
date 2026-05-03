@@ -137,10 +137,20 @@ registry for the latest versions.
 - TypeScript: write erasableSyntaxOnly compliant code (no enums, namespaces, class parameter
   properties)
 - Use vitest + react testing library for tests
-- Prefer the use of userEvent over fireEvent for interactions in tests
-- When mocking an object where we only care about partial details, use the mockPartial function from
-  the test utils rather than casting to any
-
+- Prefer using accessible selectors (e.g. `getByRole`, `getByLabelText`, `getByPlaceholderText`) in
+  tests. Add `aria-label` to interactive elements (like icon buttons) when necessary.
+- Prefer the use of `userEvent` over `fireEvent` for interactions in tests:
+    - Call `const user = userEvent.setup()` before rendering and use the returned `user` object for
+      interactions.
+    - All `userEvent` interactions are asynchronous and MUST be awaited.
+- Use convenience methods from `@/lib/test-utils` for common testing patterns:
+    - `mockPartial(obj)`: When mocking an object where only partial details are needed, use this
+      instead of casting to `any`.
+    - `mockSizeForComponent(element, width, height)`: Use this to mock `getBoundingClientRect` for
+      components that depend on their size.
+    - `clickAtPoint(element, y, user)`: Use this to simulate clicks at specific coordinates within
+      an element (e.g. for sliders).
+ 
 # API Guidelines
 
 - Define APIs using OpenAPI 3.1.1 [specification](https://spec.openapis.org/oas/v3.1.1).

@@ -312,7 +312,7 @@ export default function SpiceTracker({
                     No jars in pantry
                   </p>
                 ) : (
-                  spice.jars.map((jar) => (
+                  spice.jars.map((jar, index) => (
                     <div
                       key={jar.id}
                       className="flex items-center gap-4 bg-background p-3 rounded-lg border shadow-sm"
@@ -335,6 +335,7 @@ export default function SpiceTracker({
                         size="icon"
                         className="text-destructive hover:text-destructive hover:bg-destructive/10"
                         onClick={() => handleRemoveJar(jar.id)}
+                        aria-label={`Delete Jar ${index + 1}`}
                       >
                         <Trash2 className="h-4 w-4" />
                       </Button>
