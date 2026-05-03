@@ -5,16 +5,19 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import uk.co.dajohnston.portal.spicetracker.repository.PantryJarRepository;
 import uk.co.dajohnston.portal.spicetracker.repository.SpiceEntity;
 import uk.co.dajohnston.portal.spicetracker.repository.SpiceRepository;
 import uk.co.dajohnston.security.context.TenantContext;
 import uk.co.dajohnston.security.exception.DuplicateResourceException;
+import uk.co.dajohnston.security.exception.ResourceNotFoundException;
 
 @Service
 @RequiredArgsConstructor
 public class SpicesService {
 
   private final SpiceRepository spiceRepository;
+  private final PantryJarRepository pantryJarRepository;
 
   @Transactional(readOnly = true)
   public List<SpiceEntity> listSpices() {
@@ -33,5 +36,15 @@ public class SpicesService {
             .name(name)
             .build();
     return spiceRepository.save(spice);
+  }
+
+  @Transactional
+  public void removeSpice(UUID id) {
+    SpiceEntity spice =
+        spiceRepository
+            .findByHouseholdIdAndId(TenantContext.getTenantId(), id)
+            .orElseThrow(() -> new ResourceNotFoundException("Spice not found"));
+    pantryJarRepository.deleteAllBySpice(spice);
+    spiceRepository.delete(spice);
   }
 }

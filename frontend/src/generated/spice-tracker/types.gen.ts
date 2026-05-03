@@ -7,15 +7,43 @@ export type ClientOptions = {
 export type Spice = {
     id: string;
     name: string;
-    quantity?: string;
 };
 
 export type Spices = {
     spices: Array<Spice>;
 };
 
+export type CreateSpice = {
+    name: string;
+};
+
+export type PantryJar = {
+    id: string;
+    spiceId: string;
+    spiceName: string;
+    quantity: number;
+};
+
+export type PantryJars = {
+    jars: Array<PantryJar>;
+};
+
+export type AddPantryJar = {
+    spiceId: string;
+    quantity?: number;
+};
+
+export type UpdatePantryJar = {
+    quantity: number;
+};
+
+export type HouseholdHeader = string;
+
 export type ListSpicesData = {
     body?: never;
+    headers: {
+        'X-Household-Id': string;
+    };
     path?: never;
     query?: never;
     url: '/api/spices';
@@ -36,3 +64,189 @@ export type ListSpicesResponses = {
 };
 
 export type ListSpicesResponse = ListSpicesResponses[keyof ListSpicesResponses];
+
+export type CreateSpiceData = {
+    body: CreateSpice;
+    headers: {
+        'X-Household-Id': string;
+    };
+    path?: never;
+    query?: never;
+    url: '/api/spices';
+};
+
+export type CreateSpiceErrors = {
+    /**
+     * Invalid input
+     */
+    400: unknown;
+    /**
+     * Unauthorized
+     */
+    401: unknown;
+};
+
+export type CreateSpiceResponses = {
+    /**
+     * Spice created
+     */
+    201: Spice;
+};
+
+export type CreateSpiceResponse = CreateSpiceResponses[keyof CreateSpiceResponses];
+
+export type RemoveSpiceData = {
+    body?: never;
+    headers: {
+        'X-Household-Id': string;
+    };
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/spices/{id}';
+};
+
+export type RemoveSpiceErrors = {
+    /**
+     * Unauthorized
+     */
+    401: unknown;
+    /**
+     * Spice not found
+     */
+    404: unknown;
+};
+
+export type RemoveSpiceResponses = {
+    /**
+     * Spice removed
+     */
+    204: void;
+};
+
+export type RemoveSpiceResponse = RemoveSpiceResponses[keyof RemoveSpiceResponses];
+
+export type ListPantryJarsData = {
+    body?: never;
+    headers: {
+        'X-Household-Id': string;
+    };
+    path?: never;
+    query?: never;
+    url: '/api/pantry';
+};
+
+export type ListPantryJarsErrors = {
+    /**
+     * Unauthorized
+     */
+    401: unknown;
+};
+
+export type ListPantryJarsResponses = {
+    /**
+     * Successfully retrieved pantry jars
+     */
+    200: PantryJars;
+};
+
+export type ListPantryJarsResponse = ListPantryJarsResponses[keyof ListPantryJarsResponses];
+
+export type AddPantryJarData = {
+    body: AddPantryJar;
+    headers: {
+        'X-Household-Id': string;
+    };
+    path?: never;
+    query?: never;
+    url: '/api/pantry';
+};
+
+export type AddPantryJarErrors = {
+    /**
+     * Invalid input
+     */
+    400: unknown;
+    /**
+     * Unauthorized
+     */
+    401: unknown;
+};
+
+export type AddPantryJarResponses = {
+    /**
+     * Jar added
+     */
+    201: PantryJar;
+};
+
+export type AddPantryJarResponse = AddPantryJarResponses[keyof AddPantryJarResponses];
+
+export type RemovePantryJarData = {
+    body?: never;
+    headers: {
+        'X-Household-Id': string;
+    };
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/pantry/{id}';
+};
+
+export type RemovePantryJarErrors = {
+    /**
+     * Unauthorized
+     */
+    401: unknown;
+    /**
+     * Jar not found
+     */
+    404: unknown;
+};
+
+export type RemovePantryJarResponses = {
+    /**
+     * Jar removed
+     */
+    204: void;
+};
+
+export type RemovePantryJarResponse = RemovePantryJarResponses[keyof RemovePantryJarResponses];
+
+export type UpdatePantryJarData = {
+    body: UpdatePantryJar;
+    headers: {
+        'X-Household-Id': string;
+    };
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/pantry/{id}';
+};
+
+export type UpdatePantryJarErrors = {
+    /**
+     * Invalid input
+     */
+    400: unknown;
+    /**
+     * Unauthorized
+     */
+    401: unknown;
+    /**
+     * Jar not found
+     */
+    404: unknown;
+};
+
+export type UpdatePantryJarResponses = {
+    /**
+     * Jar updated
+     */
+    200: PantryJar;
+};
+
+export type UpdatePantryJarResponse = UpdatePantryJarResponses[keyof UpdatePantryJarResponses];

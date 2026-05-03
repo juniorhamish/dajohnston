@@ -6,4 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PantryJarRepository extends JpaRepository<PantryJarEntity, UUID> {
   List<PantryJarEntity> findAllByHouseholdId(UUID householdId);
+
+  void deleteAllBySpice(SpiceEntity spice);
 }

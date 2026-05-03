@@ -37,4 +37,11 @@ class SpicesController implements SpicesApi {
     SpiceDto dto = spiceMapper.toDto(spice);
     return ResponseEntity.created(URI.create("/api/spices/" + dto.id())).body(dto);
   }
+
+  @Override
+  public ResponseEntity<Void> removeSpice(UUID id, UUID xHouseholdId) {
+    log.info("Removing spice: {}", id);
+    spicesService.removeSpice(id);
+    return ResponseEntity.noContent().build();
+  }
 }
