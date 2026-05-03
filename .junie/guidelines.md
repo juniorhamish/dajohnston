@@ -150,7 +150,7 @@ registry for the latest versions.
       components that depend on their size.
     - `clickAtPoint(element, y, user)`: Use this to simulate clicks at specific coordinates within
       an element (e.g. for sliders).
- 
+
 # API Guidelines
 
 - Define APIs using OpenAPI 3.1.1 [specification](https://spec.openapis.org/oas/v3.1.1).
@@ -163,6 +163,10 @@ registry for the latest versions.
 
 Generated client code is in frontend/src/generated/ — do not read or modify; use api/v1/portal.yaml
 as the API reference.
+
+# Skills
+
+Refer to `.junie/skills.md` for specific workflows like `plan-app` and `implement-app`.
 
 ## Reference Docs (read only when relevant to the task)
 

@@ -1,0 +1,511 @@
+openapi: 3.1.1
+info:
+  title: Listz API
+  version: 1.0.0
+  description: API for the Listz checklist sub-application.
+
+servers:
+  - url: http://localhost:8080
+    description: Local development server
+
+paths:
+  /api/v1/listz/templates:
+    get:
+      tags:
+        - Templates
+      summary: List all checklist templates in the current household
+      operationId: listTemplates
+      parameters:
+        - $ref: '#/components/parameters/HouseholdHeader'
+      responses:
+        '200':
+          description: Successfully retrieved templates
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Templates'
+    post:
+      tags:
+        - Templates
+      summary: Create a new checklist template
+      operationId: createTemplate
+      parameters:
+        - $ref: '#/components/parameters/HouseholdHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTemplateRequest'
+      responses:
+        '201':
+          description: Template created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Template'
+
+  /api/v1/listz/templates/{id}:
+    get:
+      tags:
+        - Templates
+      summary: Get template details including items
+      operationId: getTemplate
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - $ref: '#/components/parameters/HouseholdHeader'
+      responses:
+        '200':
+          description: Template details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Template'
+    put:
+      tags:
+        - Templates
+      summary: Update template name
+      operationId: updateTemplate
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - $ref: '#/components/parameters/HouseholdHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTemplateRequest'
+      responses:
+        '200':
+          description: Template updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Template'
+    delete:
+      tags:
+        - Templates
+      summary: Soft-delete a template
+      operationId: deleteTemplate
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - $ref: '#/components/parameters/HouseholdHeader'
+      responses:
+        '204':
+          description: Template deleted
+
+  /api/v1/listz/templates/{id}/items:
+    post:
+      tags:
+        - Templates
+      summary: Add an item to a template
+      operationId: addTemplateItem
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - $ref: '#/components/parameters/HouseholdHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddTemplateItemRequest'
+      responses:
+        '201':
+          description: Item added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TemplateItem'
+
+  /api/v1/listz/items/search:
+    get:
+      tags:
+        - Items
+      summary: Search for items in the household for auto-complete
+      operationId: searchItems
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+        - $ref: '#/components/parameters/HouseholdHeader'
+      responses:
+        '200':
+          description: List of matching items
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Items'
+
+  /api/v1/listz/instances:
+    get:
+      tags:
+        - Instances
+      summary: List all checklist instances for the user
+      operationId: listInstances
+      parameters:
+        - $ref: '#/components/parameters/HouseholdHeader'
+      responses:
+        '200':
+          description: Successfully retrieved instances
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Instances'
+    post:
+      tags:
+        - Instances
+      summary: Create a new checklist instance
+      operationId: createInstance
+      parameters:
+        - $ref: '#/components/parameters/HouseholdHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateInstanceRequest'
+      responses:
+        '201':
+          description: Instance created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Instance'
+
+  /api/v1/listz/instances/{id}:
+    get:
+      tags:
+        - Instances
+      summary: Get instance details and the dynamic list of items
+      operationId: getInstance
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - $ref: '#/components/parameters/HouseholdHeader'
+      responses:
+        '200':
+          description: Instance details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InstanceDetails'
+    patch:
+      tags:
+        - Instances
+      summary: Update instance parameters
+      operationId: updateInstance
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - $ref: '#/components/parameters/HouseholdHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateInstanceRequest'
+      responses:
+        '200':
+          description: Instance updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Instance'
+
+  /api/v1/listz/instances/{id}/items/{itemId}/check:
+    put:
+      tags:
+        - Instances
+      summary: Toggle checked status of an item in an instance
+      operationId: toggleItemCheck
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: itemId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - $ref: '#/components/parameters/HouseholdHeader'
+      responses:
+        '200':
+          description: Status updated
+
+  /api/v1/listz/instances/{id}/items/{itemId}/quantity:
+    put:
+      tags:
+        - Instances
+      summary: Override quantity of an item in an instance
+      operationId: overrideItemQuantity
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: itemId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - $ref: '#/components/parameters/HouseholdHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                quantity:
+                  type: number
+              required:
+                - quantity
+      responses:
+        '200':
+          description: Quantity updated
+
+components:
+  parameters:
+    HouseholdHeader:
+      in: header
+      name: X-Household-Id
+      required: true
+      schema:
+        type: string
+        format: uuid
+
+  securitySchemes:
+    oauth:
+      type: oauth2
+      flows:
+        authorizationCode:
+          authorizationUrl: https://dajohnston.eu.auth0.com/authorize
+          tokenUrl: https://dajohnston.eu.auth0.com/oauth/token
+          scopes:
+            openid: Grant audience to retrieve user profile
+            email: Include email address
+            offline_access: Grant access to refresh tokens
+
+  schemas:
+    Item:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        defaultCategory:
+          type: string
+      required: [ id, name ]
+
+    Items:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Item'
+      required: [ items ]
+
+    Template:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/TemplateItem'
+      required: [ id, name ]
+
+    Templates:
+      type: object
+      properties:
+        templates:
+          type: array
+          items:
+            $ref: '#/components/schemas/Template'
+      required: [ templates ]
+
+    TemplateItem:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        itemId:
+          type: string
+          format: uuid
+        name:
+          type: string
+        quantityRuleType:
+          type: string
+          enum: [ FIXED, PER_DAY ]
+        quantityRuleValue:
+          type: number
+        categoryOverride:
+          type: string
+      required: [ id, itemId, name, quantityRuleType, quantityRuleValue ]
+
+    CreateTemplateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+      required: [ name ]
+
+    UpdateTemplateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+      required: [ name ]
+
+    AddTemplateItemRequest:
+      type: object
+      properties:
+        itemName:
+          type: string
+          description: Name of the item (will search or create in catalog)
+        quantityRuleType:
+          type: string
+          enum: [ FIXED, PER_DAY ]
+          default: FIXED
+        quantityRuleValue:
+          type: number
+          default: 1
+        categoryOverride:
+          type: string
+      required: [ itemName ]
+
+    Instance:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        durationDays:
+          type: integer
+        ownerUserId:
+          type: string
+      required: [ id, name, durationDays, ownerUserId ]
+
+    Instances:
+      type: object
+      properties:
+        instances:
+          type: array
+          items:
+            $ref: '#/components/schemas/Instance'
+      required: [ instances ]
+
+    CreateInstanceRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+        durationDays:
+          type: integer
+          minimum: 1
+          default: 1
+        templateIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+      required: [ name ]
+
+    UpdateInstanceRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        durationDays:
+          type: integer
+          minimum: 1
+        templateIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+
+    InstanceDetails:
+      allOf:
+        - $ref: '#/components/schemas/Instance'
+        - type: object
+          properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/InstanceItem'
+          required: [ items ]
+
+    InstanceItem:
+      type: object
+      properties:
+        itemId:
+          type: string
+          format: uuid
+        name:
+          type: string
+        category:
+          type: string
+        quantity:
+          type: number
+        isChecked:
+          type: boolean
+        templateId:
+          type: string
+          format: uuid
+        templateName:
+          type: string
+      required: [ itemId, name, quantity, isChecked ]
+
+security:
+  - oauth: [ openid, email, offline_access ]
