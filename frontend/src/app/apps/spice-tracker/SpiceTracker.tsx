@@ -320,7 +320,6 @@ export default function SpiceTracker({
                       <JarQuantitySlider
                         value={jar.quantity}
                         onChange={(val) => handleUpdateJar(jar.id, val)}
-                        className="w-12 h-20"
                       />
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium truncate">

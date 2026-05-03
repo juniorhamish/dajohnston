@@ -92,7 +92,7 @@ describe("SpiceTracker", () => {
     // Find the slider for the first jar (30%)
     const slider = screen.getAllByRole("slider")[0];
     if (!slider) throw new Error("Slider not found");
-    mockSizeForComponent(slider, 80, 128);
+    mockSizeForComponent(slider, 112, 176);
 
     // Drag to 100% (top)
     await clickAtPoint(slider, 0, user);

@@ -95,7 +95,7 @@ export function JarQuantitySlider({
       aria-valuemax={100}
       aria-valuenow={internalValue}
       className={cn(
-        "relative w-20 h-32 border-2 border-primary rounded-t-xl rounded-b-lg overflow-hidden cursor-pointer select-none bg-background touch-none focus:outline-none focus:ring-2 focus:ring-ring",
+        "relative w-28 h-44 border-2 border-primary rounded-t-xl rounded-b-lg overflow-hidden cursor-pointer select-none bg-background touch-none focus:outline-none focus:ring-2 focus:ring-ring",
         className,
       )}
       onMouseDown={handleMouseDown}
@@ -123,7 +123,7 @@ export function JarQuantitySlider({
       }}
     >
       {/* Jar Cap Area */}
-      <div className="absolute top-0 left-0 right-0 h-4 bg-muted border-b-2 border-primary" />
+      <div className="absolute top-0 left-0 right-0 h-6 bg-muted border-b-2 border-primary" />
 
       {/* Jar Fill */}
       <div
@@ -138,7 +138,7 @@ export function JarQuantitySlider({
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
         <span
           className={cn(
-            "text-xs font-bold",
+            "text-sm font-bold",
             internalValue > 50 ? "text-primary-foreground" : "text-primary",
           )}
         >

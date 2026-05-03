@@ -20,6 +20,7 @@ resource "auth0_client" "portal_frontend" {
   callbacks = [
     "http://localhost:3000/auth/callback",
     "https://192.168.1.90:3000/auth/callback",
+    "http://192.168.1.90:3000/auth/callback",
     "https://portal.dajohnston.co.uk/auth/callback",
     "https://dajohnston-portal.vercel.app/auth/callback",
     "https://oauth.pstmn.io/v1/callback"
@@ -28,6 +29,7 @@ resource "auth0_client" "portal_frontend" {
   allowed_logout_urls = [
     "http://localhost:3000/",
     "https://192.168.1.90:3000/",
+    "http://192.168.1.90:3000/",
     "https://portal.dajohnston.co.uk/",
     "https://dajohnston-portal.vercel.app/"
   ]
@@ -35,6 +37,7 @@ resource "auth0_client" "portal_frontend" {
   web_origins = [
     "http://localhost:3000",
     "https://192.168.1.90:3000",
+    "http://192.168.1.90:3000/",
     "https://portal.dajohnston.co.uk",
     "https://dajohnston-portal.vercel.app/"
   ]

@@ -19,16 +19,16 @@ describe("JarQuantitySlider", () => {
     render(<JarQuantitySlider value={50} onChange={onChange} />);
 
     const jar = screen.getByRole("slider");
-    mockSizeForComponent(jar, 80, 128);
+    mockSizeForComponent(jar, 112, 176);
 
     // Click at the top (should be 100%)
     await clickAtPoint(jar, 0, user);
     expect(onChange).toHaveBeenCalledWith(100);
     // Click at the bottom (should be 0%)
-    await clickAtPoint(jar, 128, user);
+    await clickAtPoint(jar, 176, user);
     expect(onChange).toHaveBeenCalledWith(0);
     // Click in the middle (should be 50%)
-    await clickAtPoint(jar, 64, user);
+    await clickAtPoint(jar, 88, user);
     expect(onChange).toHaveBeenCalledWith(50);
   });
 
@@ -45,7 +45,7 @@ describe("JarQuantitySlider", () => {
 
     render(<TestWrapper />);
     const jar = screen.getByRole("slider");
-    mockSizeForComponent(jar, 80, 128);
+    mockSizeForComponent(jar, 112, 176);
 
     // Drag to 100%
     await clickAtPoint(jar, 0, user, true);
@@ -80,7 +80,7 @@ describe("JarQuantitySlider", () => {
 
     render(<TestWrapper />);
     const jar = screen.getByRole("slider");
-    mockSizeForComponent(jar, 80, 128);
+    mockSizeForComponent(jar, 112, 176);
 
     await clickAtPoint(jar, 0, user);
 
@@ -101,11 +101,11 @@ describe("JarQuantitySlider", () => {
     render(<JarQuantitySlider value={50} onChange={onChange} />);
 
     const jar = screen.getByRole("slider");
-    mockSizeForComponent(jar, 80, 128);
+    mockSizeForComponent(jar, 112, 176);
 
-    await clickAtPoint(jar, 64, user, true); // 50%
+    await clickAtPoint(jar, 88, user, true); // 50%
     expect(onChange).not.toHaveBeenCalled();
-    await user.pointer({ coords: { x: 0, y: 32 } }); // 75%
+    await user.pointer({ coords: { x: 0, y: 44 } }); // 75%
     expect(onChange).not.toHaveBeenCalled();
     await user.pointer({ coords: { x: 0, y: 0 } }); // 100%
     expect(onChange).not.toHaveBeenCalled();
@@ -120,9 +120,9 @@ describe("JarQuantitySlider", () => {
     render(<JarQuantitySlider value={50} onChange={onChange} />);
 
     const jar = screen.getByRole("slider");
-    mockSizeForComponent(jar, 80, 128);
+    mockSizeForComponent(jar, 112, 176);
 
-    fireEvent.touchStart(jar, { changedTouches: [{ clientY: 64 }] });
+    fireEvent.touchStart(jar, { changedTouches: [{ clientY: 88 }] });
     expect(onChange).not.toHaveBeenCalled();
 
     fireEvent.touchMove(jar, { changedTouches: [{ clientY: 0 }] });
@@ -211,7 +211,7 @@ describe("JarQuantitySlider", () => {
       <JarQuantitySlider value={50} onChange={vi.fn()} />,
     );
     const jar = screen.getByRole("slider");
-    mockSizeForComponent(jar, 80, 128);
+    mockSizeForComponent(jar, 112, 176);
 
     // Start dragging
     await clickAtPoint(jar, 50, user, true);
@@ -220,6 +220,6 @@ describe("JarQuantitySlider", () => {
     rerender(<JarQuantitySlider value={100} onChange={vi.fn()} />);
 
     // Internal value should still be from drag, not prop
-    expect(jar).toHaveAttribute("aria-valuenow", "61"); // Math.round((1 - 50/128) * 100) = 61
+    expect(jar).toHaveAttribute("aria-valuenow", "72"); // Math.round((1 - 50/176) * 100) = 72
   });
 });
