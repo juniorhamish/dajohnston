@@ -36,6 +36,7 @@ dependencies {
   implementation 'org.bitbucket.b_c:jose4j:0.9.6'
   implementation project(':shared-security')
   implementation project(':spice-tracker')
+  implementation project(':listz')
   runtimeOnly 'org.flywaydb:flyway-database-postgresql'
   runtimeOnly 'org.postgresql:postgresql'
   compileOnly 'org.projectlombok:lombok'
