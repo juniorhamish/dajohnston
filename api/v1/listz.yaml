@@ -137,6 +137,50 @@ paths:
               schema:
                 $ref: '#/components/schemas/TemplateItem'
 
+  /api/v1/listz/template-items/{id}:
+    put:
+      tags:
+        - Templates
+      summary: Update quantity rule or category for a template item
+      operationId: updateTemplateItem
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - $ref: '#/components/parameters/HouseholdHeader'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTemplateItemRequest'
+      responses:
+        '200':
+          description: Item updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TemplateItem'
+    delete:
+      tags:
+        - Templates
+      summary: Remove an item from a template
+      operationId: deleteTemplateItem
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - $ref: '#/components/parameters/HouseholdHeader'
+      responses:
+        '204':
+          description: Item removed
+
   /api/v1/listz/items/search:
     get:
       tags:
@@ -429,6 +473,17 @@ components:
           type: string
           minLength: 1
       required: [ name ]
+    
+    UpdateTemplateItemRequest:
+      type: object
+      properties:
+        quantityRuleType:
+          type: string
+          enum: [ FIXED, PER_DAY ]
+        quantityRuleValue:
+          type: number
+        categoryOverride:
+          type: string
 
     AddTemplateItemRequest:
       type: object

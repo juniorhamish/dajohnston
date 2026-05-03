@@ -1,0 +1,67 @@
+plugins {
+  id 'java-library'
+  id 'org.springframework.boot'
+  id 'io.spring.dependency-management'
+  id 'io.openapiprocessor.openapi-processor' version '2026.2'
+}
+
+description = 'Listz Backend Module'
+
+bootJar {
+  enabled = false
+}
+
+jar {
+  enabled = true
+}
+
+dependencies {
+  implementation 'org.springframework.boot:spring-boot-starter-web'
+  implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+  implementation 'org.springframework.boot:spring-boot-starter-validation'
+  implementation project(':shared-security')
+
+  compileOnly 'org.projectlombok:lombok'
+  annotationProcessor 'org.projectlombok:lombok'
+
+  implementation 'org.mapstruct:mapstruct:1.6.3'
+  annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.3'
+  annotationProcessor 'org.projectlombok:lombok-mapstruct-binding:0.2.0'
+
+  testImplementation 'org.springframework.boot:spring-boot-starter-test'
+  testImplementation 'org.springframework.security:spring-security-test'
+  testImplementation 'org.springframework.boot:spring-boot-webmvc-test'
+  testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+openapiProcessor {
+  apiPath = layout.projectDirectory.file("../../api/v1/listz.yaml")
+  spring {
+    processor 'io.openapiprocessor:openapi-processor-spring:2026.3'
+    targetDir layout.buildDirectory.dir("openapi")
+    mapping layout.projectDirectory.file("./openapi-mapping.yaml")
+  }
+}
+
+compileJava {
+  options.compilerArgs += [
+    '-Amapstruct.suppressGeneratorTimestamp=true',
+    '-Amapstruct.suppressGeneratorVersionInfoComment=true',
+    '-Amapstruct.defaultComponentModel=spring',
+    '-Amapstruct.unmappedTargetPolicy=ERROR'
+  ]
+}
+
+compileJava.dependsOn('processSpring')
+
+sourceSets {
+  main {
+    java {
+      srcDir layout.buildDirectory.dir("openapi")
+    }
+  }
+}
+
+tasks.named('test') {
+  useJUnitPlatform()
+}
