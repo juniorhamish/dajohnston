@@ -84,7 +84,7 @@ class SpicesServiceTest {
 
   @Test
   void removeSpice_deletesFromRepository() {
-    UUID spiceId = UUID.randomUUID();
+    UUID spiceId = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
     SpiceEntity spice = SpiceEntity.builder().id(spiceId).householdId(householdId).build();
     when(spiceRepository.findByHouseholdIdAndId(householdId, spiceId))
         .thenReturn(java.util.Optional.of(spice));
@@ -97,7 +97,7 @@ class SpicesServiceTest {
 
   @Test
   void removeSpice_notFound_throwsException() {
-    UUID spiceId = UUID.randomUUID();
+    UUID spiceId = UUID.fromString("123e4567-e89b-12d3-a456-426614174000");
     when(spiceRepository.findByHouseholdIdAndId(householdId, spiceId))
         .thenReturn(java.util.Optional.empty());
 
