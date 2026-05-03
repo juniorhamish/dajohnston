@@ -8,6 +8,7 @@ import {
   removeSpice,
   updatePantryJar,
 } from "@/generated/spice-tracker";
+import { mockPartial } from "@/lib/test-utils";
 import {
   addPantryJarAction,
   createSpiceAction,
@@ -40,9 +41,9 @@ describe("spice-actions", () => {
   const mockHouseholdId = "test-household-id";
 
   const setupCookies = (id: string | undefined) => {
-    vi.mocked(cookies).mockResolvedValue({
+    mockPartial(cookies).mockResolvedValue({
       get: vi.fn().mockReturnValue(id ? { value: id } : undefined),
-    } as unknown as Awaited<ReturnType<typeof cookies>>);
+    });
   };
 
   describe("getHouseholdId", () => {
@@ -57,7 +58,7 @@ describe("spice-actions", () => {
   describe("createSpiceAction", () => {
     it("should create a spice successfully", async () => {
       setupCookies(mockHouseholdId);
-      vi.mocked(createSpice).mockResolvedValue({
+      mockPartial(createSpice).mockResolvedValue({
         data: { id: "1", name: "Cumin" },
       });
 
@@ -98,7 +99,7 @@ describe("spice-actions", () => {
   describe("removeSpiceAction", () => {
     it("should remove a spice successfully", async () => {
       setupCookies(mockHouseholdId);
-      vi.mocked(removeSpice).mockResolvedValue({});
+      mockPartial(removeSpice).mockResolvedValue({});
 
       await removeSpiceAction("1");
 
@@ -125,7 +126,7 @@ describe("spice-actions", () => {
   describe("addPantryJarAction", () => {
     it("should add a jar successfully", async () => {
       setupCookies(mockHouseholdId);
-      vi.mocked(addPantryJar).mockResolvedValue({ data: { id: "j1" } });
+      mockPartial(addPantryJar).mockResolvedValue({ data: { id: "j1" } });
 
       await addPantryJarAction("1", 50);
 
@@ -152,7 +153,7 @@ describe("spice-actions", () => {
   describe("updatePantryJarAction", () => {
     it("should update a jar successfully", async () => {
       setupCookies(mockHouseholdId);
-      vi.mocked(updatePantryJar).mockResolvedValue({
+      mockPartial(updatePantryJar).mockResolvedValue({
         data: { id: "j1", quantity: 60 },
       });
 
@@ -184,7 +185,7 @@ describe("spice-actions", () => {
   describe("removePantryJarAction", () => {
     it("should remove a jar successfully", async () => {
       setupCookies(mockHouseholdId);
-      vi.mocked(removePantryJar).mockResolvedValue({});
+      mockPartial(removePantryJar).mockResolvedValue({});
 
       await removePantryJarAction("j1");
 
